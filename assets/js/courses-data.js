@@ -57,6 +57,23 @@
         url: "https://www.udemy.com/user/mohamed-tamer-15/"
       }
     ],
+    instructorProfile: {
+      image: {
+        src: "./assets/images/Me.png",
+        width: 948,
+        height: 1659,
+        alt: "Mohamed Tamer"
+      },
+      totalLearners: "21,682",
+      totalReviews: "731"
+    },
+    reviewsGallery: {
+      images: Array.from({ length: 31 }, (_, index) => ({
+        src: `./assets/images/reviews/thumbs/${index + 1}.jpg`,
+        width: 960,
+        height: 1200
+      }))
+    },
     paymentMethods: [
       {
         id: "udemy",
@@ -153,6 +170,8 @@
         navigation: [
           { label: "الرئيسية", href: "#top" },
           { label: "الكورسات", href: "#courses" },
+          { label: "المدرّس", href: "#instructor" },
+          { label: "التقييمات", href: "#reviews" },
           { label: "طرق الدفع", href: "#payment" },
           { label: "تواصل معنا", href: "#contact" }
         ],
@@ -172,6 +191,45 @@
             label: "صفحة المدرّس على Udemy",
             href: "https://www.udemy.com/user/mohamed-tamer-15/"
           }
+        },
+        instructor: {
+          eyebrow: "المدرّس",
+          name: "محمد تامر",
+          headline: "مهندس برمجيات | سابقًا في السويدي إليكتريك | المؤسس والرئيس التنفيذي | مدرّس على Udemy | موجّه مهني | دبلومة دراسات عليا في علوم الحاسب | ITIL® v4 | كاتب مقالات تقنية",
+          learnersLabel: "إجمالي المتعلمين",
+          reviewsLabel: "التقييمات",
+          summary: [
+            "أنا محمد تامر، مهندس برمجيات ومدرّس تقني وصانع محتوى وموجّه وكاتب تقني، أمتلك أكثر من 7 سنوات من الخبرة في تطوير البرمجيات.",
+            "أنا المؤسس والرئيس التنفيذي لشركة MT Software Solutions، حيث أعمل على برمجيات المؤسسات والحلول الرقمية، كما أسست MT Academy لمساعدة المطورين على بناء مهارات عملية واتخاذ قرارات مهنية أفضل."
+          ],
+          moreLabel: "اقرأ النبذة الكاملة",
+          biography: [
+            "بدأت رحلتي في هندسة البرمجيات بالتعلّم الذاتي المكثف من دون موجّه رسمي. هذه التجربة شكّلت أسلوبي في الهندسة اليوم: فهم الأساسيات بعمق، وحل المشكلات بطريقة منهجية، وبناء حلول عملية وقابلة للتوسع والصيانة.",
+            "عملت لمدة عامين في تطوير تطبيقات Android Native باستخدام Java وKotlin، ثم قضيت ثلاث سنوات مهندس برمجيات في السويدي إليكتريك، وشاركت في تكامل الأنظمة المعقدة، وتطوير الأنظمة الخلفية، وحلول RFID، وقواعد بيانات المؤسسات، وتطبيقات Oracle APEX.",
+            "أعمل أيضًا مدرّسًا على Udemy منذ أكثر من ثلاث سنوات، ودرّست لأكثر من 21,000 طالب حول العالم. وخلال العامين الماضيين عملت مباشرة مع أكثر من 133 متدرّبًا من أكثر من 14 دولة في جلسات توجيه فردية، وساعدتهم على تطوير مهاراتهم والاستعداد للفرص واتخاذ قرارات مهنية أوضح، وحصل هذا العمل على أكثر من 133 تقييمًا.",
+            "أدرس حاليًا دبلومة دراسات عليا في علوم الحاسب بجامعة القاهرة، مع التركيز على هندسة الحاسب ومعمارية البرمجيات وتصميم الأنظمة.",
+            "أساهم كذلك في مشاريع مفتوحة المصدر، وأكتب مقالات تقنية عن المبادئ الهندسية والمعمارية وتطوير البرمجيات في الواقع العملي. وقد تم تقدير نشاطي على GitHub ضمن تصنيفات المطورين الإقليمية، ومنها المركز 64 بين المطورين المؤثرين في أفريقيا والمركز 88 في مصر وفقًا للمساهمات العامة.",
+            "يدفعني التعلّم المستمر والهندسة العملية ومشاركة المعرفة التي تساعد الناس على بناء مسارات مهنية أقوى وبرمجيات أفضل."
+          ],
+          focusTitle: "مجالات التركيز والخبرة",
+          focusAreas: [
+            "معمارية البرمجيات وتصميم الأنظمة: Microservices وAPIs وأنماط التصميم والأنظمة القابلة للتوسع.",
+            "الأنظمة الخلفية والموزعة: Java وKotlin وSpring Boot وNode.js وASP.NET وKafka وRabbitMQ.",
+            "قواعد البيانات: Oracle Database وPostgreSQL وMongoDB وSQL وNoSQL وPL/SQL.",
+            "السحابة وDevOps: OCI وDocker وKubernetes ومسارات النشر.",
+            "حلول المؤسسات: ERP وCRM وEdTech وتكامل الأنظمة وRFID/QR وOracle APEX.",
+            "تطوير الموبايل والويب: Android Native وiOS وتقنيات الويب.",
+            "هندسة الحاسب والأنظمة المدمجة والبرمجة منخفضة المستوى."
+          ]
+        },
+        reviewsSection: {
+          eyebrow: "آراء المتعلمين",
+          title: "تقييمات طلاب MT Academy",
+          description: "نماذج حقيقية من تقييمات المتعلمين على كورساتنا في Udemy.",
+          previousLabel: "عرض مجموعة التقييمات السابقة",
+          nextLabel: "عرض مجموعة التقييمات التالية",
+          pageTemplate: "{current} / {total}",
+          imageAltPrefix: "صورة تقييم طالب رقم"
         },
         catalog: {
           eyebrow: "الكورسات المتاحة",
@@ -271,6 +329,8 @@
         navigation: [
           { label: "Home", href: "#top" },
           { label: "Courses", href: "#courses" },
+          { label: "Instructor", href: "#instructor" },
+          { label: "Reviews", href: "#reviews" },
           { label: "Payment", href: "#payment" },
           { label: "Contact", href: "#contact" }
         ],
@@ -290,6 +350,45 @@
             label: "Instructor page on Udemy",
             href: "https://www.udemy.com/user/mohamed-tamer-15/"
           }
+        },
+        instructor: {
+          eyebrow: "Instructor",
+          name: "Mohamed Tamer",
+          headline: "Software Engineer | Ex- Elsewedy Electric | Founder & CEO | Udemy Instructor | Mentor | Computer Science Postgraduate Diploma | ITIL® v4 | Technical Articles Writer",
+          learnersLabel: "Total learners",
+          reviewsLabel: "Reviews",
+          summary: [
+            "I’m Mohamed Tamer, a Software Engineer, technical educator, content creator, mentor, and technical writer with 7+ years of experience in software development.",
+            "I’m the Founder & CEO of MT Software Solutions, where I work on enterprise software and digital solutions, and the Founder & Mentor at MT Academy, where I help developers build practical skills and make better career decisions."
+          ],
+          moreLabel: "Read the full bio",
+          biography: [
+            "My journey into software engineering began with intensive self-study and no formal mentor. That experience shaped how I approach engineering today: learning the fundamentals deeply, solving problems systematically, and building solutions that are practical, scalable, and maintainable.",
+            "I spent two years in Android Native development using Java and Kotlin, followed by three years as a Software Engineer at Elsewedy Electric. There, I worked on complex system integrations, backend development, RFID solutions, enterprise databases, and low-code applications using Oracle APEX.",
+            "For more than three years, I have also been a Udemy instructor, teaching over 21,000 students worldwide. Over the past two years, I have worked directly with 133+ mentees from 14+ countries through 1:1 mentorship, helping them develop their technical skills, prepare for opportunities, and make clearer career decisions. This work has received 133+ reviews.",
+            "I’m currently pursuing a postgraduate diploma in Computer Science at Cairo University, focusing on Computer Engineering, Software Architecture, and System Design.",
+            "I also contribute to open-source projects and write technical articles about engineering principles, architecture, and real-world software development. My GitHub work has been recognized in regional developer rankings, including #64 among influential developers in Africa and #88 in Egypt by public contributions.",
+            "I’m driven by continuous learning, practical engineering, and sharing knowledge that helps people build stronger careers and better software."
+          ],
+          focusTitle: "Main areas of focus",
+          focusAreas: [
+            "Software Architecture & System Design: microservices, APIs, design patterns, and scalable systems.",
+            "Backend & Distributed Systems: Java, Kotlin, Spring Boot, Node.js, ASP.NET, Kafka, and RabbitMQ.",
+            "Databases: Oracle Database, PostgreSQL, MongoDB, SQL, NoSQL, and PL/SQL.",
+            "Cloud & DevOps: OCI, Docker, Kubernetes, and deployment workflows.",
+            "Enterprise Solutions: ERP, CRM, EdTech, system integration, RFID/QR, and Oracle APEX.",
+            "Mobile & Web Development: Android Native, iOS, and web technologies.",
+            "Computer Engineering, embedded systems, and low-level programming."
+          ]
+        },
+        reviewsSection: {
+          eyebrow: "Learner feedback",
+          title: "MT Academy student reviews",
+          description: "A selection of real learner feedback from our courses on Udemy.",
+          previousLabel: "Show the previous group of reviews",
+          nextLabel: "Show the next group of reviews",
+          pageTemplate: "{current} / {total}",
+          imageAltPrefix: "Student review image"
         },
         catalog: {
           eyebrow: "Available courses",

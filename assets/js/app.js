@@ -1869,6 +1869,127 @@
     }, { passive: true });
   };
 
+  const initReviewsCarousel = (initialConfig) => {
+    const track = document.querySelector("[data-reviews-track]");
+    const previousButton = document.querySelector("[data-reviews-previous]");
+    const nextButton = document.querySelector("[data-reviews-next]");
+    const status = document.querySelector("[data-reviews-status]");
+    const controls = previousButton && previousButton.closest(".reviews-controls");
+    if (!track || !(previousButton instanceof HTMLButtonElement) || !(nextButton instanceof HTMLButtonElement)) {
+      return { update: () => {} };
+    }
+
+    let config = initialConfig;
+    let images = [];
+    let pageSize = 1;
+    let pageIndex = 0;
+
+    const getPageSize = () => {
+      if (window.matchMedia("(min-width: 56rem)").matches) return 3;
+      if (window.matchMedia("(min-width: 42rem)").matches) return 2;
+      return 1;
+    };
+
+    const localizedLabel = (key, fallback) => textValue(
+      getByPath(config, `reviewsSection.${key}`)
+    ) || fallback;
+
+    const render = () => {
+      const totalPages = Math.max(1, Math.ceil(images.length / pageSize));
+      pageIndex = Math.min(Math.max(0, pageIndex), totalPages - 1);
+      const startIndex = pageIndex * pageSize;
+      const visibleImages = Array.from(
+        { length: Math.min(pageSize, images.length) },
+        (_, offset) => {
+          const imageIndex = (startIndex + offset) % images.length;
+          return { imageData: images[imageIndex], imageIndex };
+        }
+      );
+      const fragment = document.createDocumentFragment();
+      const altPrefix = localizedLabel("imageAltPrefix", "Student review image");
+
+      visibleImages.forEach(({ imageData, imageIndex }) => {
+        const source = safeMediaSource(
+          typeof imageData === "string" ? imageData : imageData && imageData.src
+        );
+        if (!source) return;
+
+        const slide = createElement("figure", "review-slide");
+        const image = createElement("img", "review-slide__image");
+        image.src = source;
+        image.alt = `${altPrefix} ${imageIndex + 1}`;
+        image.loading = "lazy";
+        image.decoding = "async";
+        if (imageData && typeof imageData === "object") {
+          const width = Number(imageData.width);
+          const height = Number(imageData.height);
+          if (Number.isFinite(width) && width > 0) image.width = Math.round(width);
+          if (Number.isFinite(height) && height > 0) image.height = Math.round(height);
+        }
+        slide.append(image);
+        fragment.append(slide);
+      });
+
+      track.replaceChildren(fragment);
+      track.hidden = visibleImages.length === 0;
+      if (controls) controls.hidden = images.length <= pageSize;
+
+      const isRtl = textValue(config.direction || config.dir).toLowerCase() === "rtl";
+      previousButton.textContent = isRtl ? "→" : "←";
+      nextButton.textContent = isRtl ? "←" : "→";
+      previousButton.setAttribute("aria-label", localizedLabel("previousLabel", "Previous reviews"));
+      nextButton.setAttribute("aria-label", localizedLabel("nextLabel", "Next reviews"));
+
+      if (status) {
+        status.textContent = localizedLabel("pageTemplate", "{current} / {total}")
+          .replaceAll("{current}", String(pageIndex + 1))
+          .replaceAll("{total}", String(totalPages));
+      }
+    };
+
+    const update = (nextConfig) => {
+      const firstVisibleIndex = pageIndex * pageSize;
+      config = nextConfig || config;
+      const gallery = config.reviewsGallery && typeof config.reviewsGallery === "object"
+        ? config.reviewsGallery
+        : {};
+      images = Array.isArray(gallery.images) ? gallery.images : [];
+      pageSize = getPageSize();
+      pageIndex = Math.floor(firstVisibleIndex / pageSize);
+      render();
+    };
+
+    previousButton.addEventListener("click", () => {
+      const totalPages = Math.max(1, Math.ceil(images.length / pageSize));
+      pageIndex = (pageIndex - 1 + totalPages) % totalPages;
+      render();
+    });
+
+    nextButton.addEventListener("click", () => {
+      const totalPages = Math.max(1, Math.ceil(images.length / pageSize));
+      pageIndex = (pageIndex + 1) % totalPages;
+      render();
+    });
+
+    let resizeScheduled = false;
+    window.addEventListener("resize", () => {
+      if (resizeScheduled) return;
+      resizeScheduled = true;
+      window.requestAnimationFrame(() => {
+        resizeScheduled = false;
+        const nextPageSize = getPageSize();
+        if (nextPageSize === pageSize) return;
+        const firstVisibleIndex = pageIndex * pageSize;
+        pageSize = nextPageSize;
+        pageIndex = Math.floor(firstVisibleIndex / pageSize);
+        render();
+      });
+    }, { passive: true });
+
+    update(initialConfig);
+    return { update };
+  };
+
   const initActiveNavigation = () => {
     const candidates = document.querySelectorAll(
       "[data-nav-link][href^='#'], header nav a[href^='#'], #mobile-nav a[href^='#']"
@@ -1976,6 +2097,7 @@
     let dialogController = { open: () => {}, refresh: () => {} };
     let catalogController = { update: () => {} };
     let languageController = { update: () => {} };
+    let reviewsController = { update: () => {} };
     const isErrorPage = document.body.dataset.page === "404";
 
     const hydrateLocale = (locale) => {
@@ -1997,10 +2119,12 @@
         mobileController = initMobileNavigation(siteConfig);
         dialogController = initCourseDialog(courses, siteConfig, copy);
         catalogController = initCatalog(courses, siteConfig, copy, dialogController.open);
+        reviewsController = initReviewsCarousel(siteConfig);
       } else {
         mobileController.update(siteConfig);
         catalogController.update(courses, siteConfig, copy, dialogController.open);
         dialogController.refresh();
+        reviewsController.update(siteConfig);
       }
       initFaq(siteConfig);
       renderPaymentMethods(siteConfig);
