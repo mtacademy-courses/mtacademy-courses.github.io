@@ -34,11 +34,11 @@
       height: 1000
     },
     colors: {
-      background: "#08090d",
-      surface: "#11131a",
-      primary: "#7c3aed",
-      accent: "#ff7a1a",
-      text: "#f7f7fb"
+      background: "#f8f6f2",
+      surface: "#ffffff",
+      primary: "#c9a84c",
+      accent: "#0a0a0a",
+      text: "#0a0a0a"
     },
     seo: {
       canonicalUrl: "https://mtacademy-courses.github.io/",

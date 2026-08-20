@@ -191,6 +191,14 @@
     return supported.includes(fallback) ? fallback : (supported[0] || fallback);
   };
 
+  const removeLocaleParameterFromUrl = () => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("lang")) return;
+
+    url.searchParams.delete("lang");
+    history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
+  };
+
   const getCourseImage = (course) => {
     if (typeof course.image === "string") {
       return { src: textValue(course.image), alt: "", width: 1200, height: 1600 };
@@ -340,18 +348,7 @@
       ? (textValue(errorPage.description) || textValue(seo.description))
       : textValue(seo.description);
     const baseCanonicalUrl = safeHref(seo.canonicalUrl || siteConfig.siteUrl);
-    const defaultLocale = textValue(siteConfig.defaultLocale || "ar").toLowerCase();
-    let canonicalUrl = baseCanonicalUrl;
-    if (baseCanonicalUrl && locale && locale.toLowerCase() !== defaultLocale) {
-      try {
-        const localizedCanonical = new URL(baseCanonicalUrl, document.baseURI);
-        localizedCanonical.searchParams.set("lang", locale.toLowerCase());
-        localizedCanonical.hash = "";
-        canonicalUrl = localizedCanonical.href;
-      } catch {
-        canonicalUrl = baseCanonicalUrl;
-      }
-    }
+    const canonicalUrl = baseCanonicalUrl;
     const configuredBase = baseCanonicalUrl || safeHref(siteConfig.siteUrl) || document.baseURI;
     const socialImage = absoluteHttpUrl(seo.socialImage, configuredBase);
     if (seoTitle) document.title = seoTitle;
@@ -376,9 +373,7 @@
 
     document.querySelectorAll("[data-home-link]").forEach((link) => {
       if (!(link instanceof HTMLAnchorElement)) return;
-      link.href = locale === textValue(siteConfig.defaultLocale || "ar").toLowerCase()
-        ? "/"
-        : `/?lang=${encodeURIComponent(locale)}`;
+      link.href = "/";
     });
   };
 
@@ -1974,6 +1969,7 @@
     const siteConfig = {};
     const courses = rawCourses.map(() => ({}));
     let currentLocale = getInitialLocale(rawSiteConfig);
+    removeLocaleParameterFromUrl();
     let copyImplementation = () => "";
     const copy = (key, replacements) => copyImplementation(key, replacements);
     let mobileController = { update: () => {} };
@@ -2020,9 +2016,6 @@
       } catch {
         // The preference remains active for this page even without storage.
       }
-      const url = new URL(window.location.href);
-      url.searchParams.set("lang", locale);
-      history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
       hydrateLocale(locale);
       renderLocale(false);
     };
