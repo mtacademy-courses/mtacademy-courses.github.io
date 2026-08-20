@@ -69,7 +69,7 @@
     },
     reviewsGallery: {
       images: Array.from({ length: 31 }, (_, index) => ({
-        src: `./assets/images/reviews/thumbs/${index + 1}.jpg`,
+        src: `./assets/images/reviews/${index + 1}.png`,
         width: 960,
         height: 1200
       }))
