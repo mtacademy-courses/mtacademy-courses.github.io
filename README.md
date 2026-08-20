@@ -1,105 +1,187 @@
 # MT Academy Course Catalog
 
-A static, bilingual Arabic/English course catalog for MT Academy. Arabic is the default language, and visitors can switch to English with their preference saved locally. The site uses semantic HTML, vanilla CSS, and vanilla JavaScript with no frameworks, package manager, build step, external fonts, or runtime dependencies.
+[![Live Website](https://img.shields.io/badge/Live_Website-Visit_MT_Academy-0b4f3f?style=for-the-badge)](https://mtacademy-courses.github.io/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-c9a84c?style=for-the-badge)](LICENSE)
+
+![MT Academy Course Catalog](assets/images/brand/social-preview.png)
+
+A fast, responsive, bilingual course catalog for **MT Academy**, built to help Arabic-speaking learners discover practical programming courses and continue enrollment on Udemy.
+
+The website is Arabic-first, includes a complete English interface, and is built with semantic HTML, modern CSS, and vanilla JavaScript. It has no framework, package manager, build step, external font, or runtime dependency.
+
+## Live website
+
+**[mtacademy-courses.github.io](https://mtacademy-courses.github.io/)**
+
+## Highlights
+
+- Arabic and English interfaces with automatic RTL/LTR layout switching
+- Saved language preference across visits
+- Responsive course catalog with search and category filters
+- Detailed course dialogs with shareable URL hashes and browser history support
+- Instructor profile, learner reviews, payment methods, and contact options
+- Centralized, data-driven content in one JavaScript configuration file
+- Accessible keyboard navigation, labels, dialogs, and live result announcements
+- SEO metadata, Open Graph preview, sitemap, robots file, and structured data
+- Graceful no-JavaScript enrollment links
+- Custom GitHub Pages 404 page
+- No installation, compilation, or build process required
+
+## Courses
+
+The catalog currently features six Arabic programming courses:
+
+- Master SOLID Principles
+- Master Oracle Database SQL
+- Learn HTML — Full Tutorial
+- Kotlin for Beginners: From Zero to Hero
+- Android Kotlin Development: From Zero to Hero
+- Build a REST API with Ktor — CRUD API
+
+Course details, ratings, enrollment links, categories, learning outcomes, and localized copy are maintained in [`assets/js/courses-data.js`](assets/js/courses-data.js).
+
+## Technology
+
+| Area | Technology |
+| --- | --- |
+| Structure | HTML5 |
+| Styling | CSS3 with custom properties and responsive layouts |
+| Interactivity | Vanilla JavaScript |
+| Content | Centralized JavaScript configuration |
+| Hosting | GitHub Pages |
+| Languages | Arabic and English |
+
+## Run locally
+
+Clone the repository and start any static HTTP server:
+
+```bash
+git clone https://github.com/mtacademy-courses/mtacademy-courses.github.io.git
+cd mtacademy-courses.github.io
+python3 -m http.server 8000
+```
+
+Then open [http://localhost:8000](http://localhost:8000).
+
+Opening `index.html` directly is not recommended because URL hashes, navigation history, and 404 behavior are best tested through a local server.
 
 ## Project structure
 
 ```text
 .
-├── index.html
-├── 404.html
+├── index.html                  # Main website
+├── 404.html                    # GitHub Pages error page
 ├── assets/
 │   ├── css/
-│   │   └── styles.css
-│   ├── images/
-│   │   ├── brand/
-│   │   │   ├── mt-academy-logo.jpg
-│   │   │   └── social-preview.png
-│   │   ├── courses/
-│   │   │   ├── android-kotlin-development.webp
-│   │   │   ├── kotlin-for-beginners.webp
-│   │   │   ├── ktor-rest-api.webp
-│   │   │   ├── learn-html-full-tutorial.webp
-│   │   │   ├── master-oracle-database-sql.webp
-│   │   │   └── master-solid-principles.webp
-│   │   └── payment/
-│   │       ├── instapay.webp
-│   │       ├── paypal.webp
-│   │       ├── udemy.webp
-│   │       └── vodafone-cash.webp
-│   └── js/
-│       ├── courses-data.js
-│       └── app.js
+│   │   └── styles.css          # Layout, components, and responsive styles
+│   ├── js/
+│   │   ├── courses-data.js     # Site configuration and course content
+│   │   └── app.js              # Rendering, localization, and interactions
+│   └── images/
+│       ├── brand/              # Logo and social preview
+│       ├── courses/            # Course artwork
+│       ├── payment/            # Payment method artwork
+│       ├── reviews/            # Learner review gallery
+│       └── Me.png              # Instructor portrait
 ├── robots.txt
 ├── sitemap.xml
+├── LICENSE
 └── README.md
 ```
 
-## Edit brand and interface settings
+## Customize the website
 
-All editable content lives in [`assets/js/courses-data.js`](assets/js/courses-data.js). Edit `siteConfig` there to change:
+Most website content is managed from [`assets/js/courses-data.js`](assets/js/courses-data.js). The file exposes a deeply frozen `window.MTAcademyData` object containing `siteConfig` and `courses`.
 
-- Brand name, logo, colors, supported locales, and default language
+Use `siteConfig` to update:
+
+- Brand details, colors, logo, and default language
 - SEO title, description, canonical URL, and social image
-- Navigation, hero, catalog, dialog, and interface labels
-- WhatsApp and Udemy profile links
-- Payment methods, FAQ items, and footer text
+- Navigation, hero content, interface labels, and footer copy
+- Instructor information and statistics
+- Review gallery images
+- Payment methods
+- WhatsApp, Udemy, and other contact links
+- FAQ content when available
 
-Localized interface copy lives under `siteConfig.translations.ar` and `siteConfig.translations.en`. Shared URLs and facts stay outside the translation objects so they are maintained only once. Change `siteConfig.defaultLocale` to switch the initial language.
+Localized interface text belongs under:
 
-The file exposes one read-only global, `window.MTAcademyData`, containing `siteConfig` and `courses`. Keep `courses-data.js` loaded before `app.js`.
-
-## Add, update, or remove a course
-
-Open `assets/js/courses-data.js` and edit the `courses` array.
-
-- **Add:** copy one complete course object, then give it a unique `id` and URL-safe `slug`.
-- **Update:** change only the relevant values. Keep external enrollment links as complete `https://` URLs.
-- **Remove:** delete the complete course object, including its surrounding comma where applicable.
-- Leave unavailable optional values empty (`""`), `null`, or `[]`. The interface hides them rather than rendering blank labels.
-- Add both `translations.ar` and `translations.en` for every visible course field.
-- Ratings use `rating.value`, `rating.max`, and `rating.reviewCount`. Because marketplace ratings can change, update all three together from an approved source.
-- Do not add prices, discounts, student counts, certificates, or other claims unless MT Academy has supplied and approved them.
-
-Categories, cards, search results, dialogs, footer category links, and course structured data are generated from this array. `index.html` contains only a deliberately minimal `<noscript>` enrollment-link fallback for visitors who disable JavaScript.
-
-## Replace course images
-
-1. Export the replacement as WebP.
-2. Use the matching lowercase filename in `assets/images/courses/`, or update `image.src` in `courses-data.js`.
-3. Update `image.alt`, `image.width`, and `image.height` when the content or dimensions change.
-4. Preserve exact filename casing; GitHub Pages paths are case-sensitive.
-
-The current course artwork has a **1:1 square ratio**. A recommended export is **1200 × 1200 px WebP**, compressed for the web. Keep comfortable breathing room around important text and artwork.
-
-The single canonical logo is stored at `assets/images/brand/mt-academy-logo.jpg` with its original **1000 × 1000 px** dimensions. The site also uses this same file as its favicon, so there is no separate duplicate icon asset. Update `siteConfig.logo` and both HTML favicon links if its filename or dimensions change. The replaceable social preview image is `assets/images/brand/social-preview.png`; **1200 × 630 px** is recommended for link previews.
-
-Payment illustrations are stored in `assets/images/payment/`. The current assets use a consistent **720 × 420 px WebP** format. If one is replaced, update the matching `paymentMethods[].image` dimensions and the Arabic and English alternative text in `courses-data.js`.
-
-## Preview locally
-
-From the project directory, start any basic static server. For example, if Python 3 is already installed:
-
-```bash
-python3 -m http.server 8000
+```text
+siteConfig.translations.ar
+siteConfig.translations.en
 ```
 
-Then open `http://localhost:8000/`. Do not open `index.html` directly when testing URL hashes, navigation history, or 404 behavior.
+Keep `courses-data.js` loaded before `app.js` in `index.html`.
 
-Before publishing, test both language directions, keyboard navigation, the mobile menu, filters, search, course dialogs, back/forward hash behavior, all external links, and the browser console. If FAQ content is later added, test its accordion as well. Check layouts at approximately 320, 390, 768, 1024, and 1440 pixels.
+## Add or update a course
+
+Edit the `courses` array in [`assets/js/courses-data.js`](assets/js/courses-data.js).
+
+When adding a course:
+
+1. Copy an existing course object.
+2. Assign a unique `id` and URL-safe `slug`.
+3. Add the course image to `assets/images/courses/`.
+4. Update the image path, alternative text, width, and height.
+5. Provide both Arabic and English translations for every visible field.
+6. Use complete `https://` URLs for enrollment links.
+7. Update `rating.value`, `rating.max`, and `rating.reviewCount` together.
+
+Optional values may be `""`, `null`, or `[]`; the interface hides unavailable content instead of showing empty fields.
+
+Do not publish prices, discounts, student counts, certificates, or similar claims unless they have been supplied and approved by MT Academy.
+
+## Image guidelines
+
+- Course artwork: `1200 × 1200` WebP, optimized for the web and using the filename configured in the course object
+- Main logo: `assets/images/brand/mt-academy-logo.jpg` at `1000 × 1000`
+- Social preview: `assets/images/brand/social-preview.png` at `1200 × 630`
+- Payment artwork: `720 × 420` WebP
+
+Preserve exact filename casing because GitHub Pages paths are case-sensitive. When replacing an image, update its configured dimensions and localized alternative text when necessary.
+
+## Quality checklist
+
+Before publishing changes, verify:
+
+- Arabic and English layouts
+- RTL and LTR direction switching
+- Mobile navigation and keyboard navigation
+- Search, category filters, and empty states
+- Course dialogs and browser back/forward behavior
+- Instructor, review, payment, and contact sections
+- External enrollment and contact links
+- Browser console errors
+- Responsive layouts around `320`, `390`, `768`, `1024`, and `1440` pixels
+- Social preview, structured data, sitemap, and canonical URL
 
 ## Deploy to GitHub Pages
 
-1. Push these files to the default branch of the `mtacademy-courses.github.io` repository.
-2. On GitHub, open **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select the default branch and the `/(root)` folder, then save.
-5. After GitHub finishes deployment, verify `https://mtacademy-courses.github.io/`.
+This repository is designed for direct deployment with GitHub Pages:
 
-No build command is required. If the repository is already configured as a user or organization Pages site, pushing to its publishing branch is sufficient.
+1. Push changes to the repository's default branch.
+2. Open **Settings → Pages** on GitHub.
+3. Select **Deploy from a branch**.
+4. Choose the default branch and the `/(root)` directory.
+5. Save and wait for the Pages deployment to finish.
 
-## Intentionally omitted information
+No build command or generated distribution directory is required.
 
-The supplied content does not define course prices, durations, lesson counts, certificates, detailed curricula, FAQ answers, legal/privacy pages, an email address, a standalone telephone number, or social accounts other than Udemy and WhatsApp. Those elements remain hidden until real information is added to `assets/js/courses-data.js`.
+## Contributing
 
-Course ratings and review totals currently use the values supplied in the approved Udemy screenshots. They are centralized in `courses-data.js` so they can be refreshed without editing HTML. Student counts, discounts, countdowns, prices, and marketplace badges remain excluded because they were not approved as catalog facts and can change over time.
+Contributions that improve accessibility, performance, localization, content accuracy, or maintainability are welcome.
+
+Please keep changes focused, test both languages, avoid introducing unnecessary dependencies, and preserve the site's lightweight static architecture.
+
+## License
+
+This project is licensed under the [Apache License 2.0](LICENSE).
+
+## Contact
+
+- [MT Academy on Udemy](https://www.udemy.com/user/mohamed-tamer-15/)
+- [Contact MT Academy on WhatsApp](https://wa.me/201032105166)
+
+---
+
+Built for learners who want practical programming education in Arabic.

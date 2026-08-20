@@ -487,7 +487,7 @@
       id: "course-001",
       slug: "master-solid-principles-arabic",
       image: {
-        src: "./assets/images/courses/master-solid-principles.png",
+        src: "./assets/images/courses/master-solid-principles.webp",
         width: 1200,
         height: 1200
       },
@@ -546,7 +546,7 @@
       id: "course-002",
       slug: "master-oracle-database-sql-arabic",
       image: {
-        src: "./assets/images/courses/master-oracle-database-sql.png",
+        src: "./assets/images/courses/master-oracle-database-sql.webp",
         width: 1200,
         height: 1200
       },
@@ -603,7 +603,7 @@
       id: "course-003",
       slug: "learn-html-full-tutorial-arabic",
       image: {
-        src: "./assets/images/courses/learn-html-full-tutorial.png",
+        src: "./assets/images/courses/learn-html-full-tutorial.webp",
         width: 1200,
         height: 1200
       },
@@ -660,7 +660,7 @@
       id: "course-004",
       slug: "kotlin-for-beginners-arabic",
       image: {
-        src: "./assets/images/courses/kotlin-for-beginners.png",
+        src: "./assets/images/courses/kotlin-for-beginners.webp",
         width: 1200,
         height: 1200
       },
@@ -721,7 +721,7 @@
       id: "course-005",
       slug: "android-kotlin-development-arabic",
       image: {
-        src: "./assets/images/courses/android-kotlin-development.png",
+        src: "./assets/images/courses/android-kotlin-development.webp",
         width: 1200,
         height: 1200
       },
@@ -778,7 +778,7 @@
       id: "course-006",
       slug: "ktor-rest-api-arabic",
       image: {
-        src: "./assets/images/courses/ktor-rest-api.png",
+        src: "./assets/images/courses/ktor-rest-api.webp",
         width: 1200,
         height: 1200
       },
