@@ -6,6 +6,30 @@
   const LOCALE_STORAGE_KEY = "mt-academy-locale";
   const EXTERNAL_PROTOCOLS = new Set(["http:", "https:"]);
   const LINK_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
+  const scrollLockReasons = new Set();
+
+  const lockPageScroll = (reason) => {
+    if (!reason || scrollLockReasons.has(reason)) return;
+    if (!scrollLockReasons.size) {
+      const root = document.documentElement;
+      const scrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+      const rootLeft = Math.max(0, Math.round(root.getBoundingClientRect().left));
+      const leftCompensation = Math.min(scrollbarWidth, rootLeft);
+      const rightCompensation = Math.max(0, scrollbarWidth - leftCompensation);
+      document.body.style.setProperty("--scroll-lock-left", `${leftCompensation}px`);
+      document.body.style.setProperty("--scroll-lock-right", `${rightCompensation}px`);
+      document.body.classList.add("is-scroll-locked");
+    }
+    scrollLockReasons.add(reason);
+  };
+
+  const unlockPageScroll = (reason) => {
+    scrollLockReasons.delete(reason);
+    if (scrollLockReasons.size) return;
+    document.body.classList.remove("is-scroll-locked");
+    document.body.style.removeProperty("--scroll-lock-left");
+    document.body.style.removeProperty("--scroll-lock-right");
+  };
 
   const onReady = (callback) => {
     if (document.readyState === "loading") {
@@ -451,7 +475,11 @@
       option.addEventListener("click", (event) => {
         event.preventDefault();
         const nextLocale = textValue(option.dataset.languageOption).toLowerCase();
-        if (localeCodes.includes(nextLocale)) onSelect(nextLocale);
+        if (!localeCodes.includes(nextLocale)) return;
+        onSelect(nextLocale);
+        if (option.closest(".language-switcher--mobile")) {
+          document.dispatchEvent(new CustomEvent("mt:mobile-language-selected"));
+        }
       });
     });
 
@@ -603,29 +631,78 @@
     updateLabels(siteConfig);
     if (openLabel) toggle.setAttribute("aria-label", openLabel);
     navigation.hidden = true;
+    navigation.inert = true;
+    navigation.setAttribute("aria-hidden", "true");
 
     const focusableSelector = "a[href], button:not([disabled]), [tabindex]:not([tabindex='-1'])";
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let isOpen = false;
+    let closeTimer = 0;
+    let openFrame = 0;
 
-    const setOpen = (nextOpen, restoreFocus = false) => {
-      if (isOpen === nextOpen) return;
+    const clearTimers = () => {
+      if (closeTimer) window.clearTimeout(closeTimer);
+      if (openFrame) window.cancelAnimationFrame(openFrame);
+      closeTimer = 0;
+      openFrame = 0;
+    };
+
+    const focusVisibleControl = (preferToggle = true) => {
+      if (preferToggle && !window.matchMedia("(min-width: 56rem)").matches) {
+        toggle.focus({ preventScroll: true });
+        return;
+      }
+      const desktopTarget = document.querySelector(".desktop-nav .nav-link.is-active, .desktop-nav .nav-link, .brand");
+      if (desktopTarget instanceof HTMLElement) desktopTarget.focus({ preventScroll: true });
+    };
+
+    const finishClose = (desktopMode = false) => {
+      clearTimers();
+      navigation.classList.remove("is-open", "is-closing");
+      navigation.hidden = true;
+      navigation.inert = true;
+      navigation.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("mobile-nav-open", "menu-open");
+      unlockPageScroll("mobile-navigation");
+      if (navigation.contains(document.activeElement)) focusVisibleControl(!desktopMode);
+    };
+
+    const setOpen = (nextOpen, restoreFocus = false, immediate = false) => {
+      if (isOpen === nextOpen && !(immediate && !nextOpen)) return;
+      clearTimers();
       isOpen = nextOpen;
       toggle.setAttribute("aria-expanded", String(nextOpen));
       if (nextOpen && closeLabel) toggle.setAttribute("aria-label", closeLabel);
       if (!nextOpen && openLabel) toggle.setAttribute("aria-label", openLabel);
-      navigation.hidden = !nextOpen;
-      navigation.classList.toggle("is-open", nextOpen);
-      document.body.classList.toggle("mobile-nav-open", nextOpen);
-      document.body.classList.toggle("menu-open", nextOpen);
 
       if (nextOpen) {
-        window.requestAnimationFrame(() => {
+        navigation.hidden = false;
+        navigation.inert = false;
+        navigation.removeAttribute("aria-hidden");
+        navigation.classList.remove("is-closing");
+        lockPageScroll("mobile-navigation");
+        document.body.classList.add("mobile-nav-open", "menu-open");
+        void navigation.offsetHeight;
+        openFrame = window.requestAnimationFrame(() => {
+          openFrame = 0;
+          navigation.classList.add("is-open");
           const firstFocusable = navigation.querySelector(focusableSelector);
           if (firstFocusable instanceof HTMLElement) firstFocusable.focus();
         });
-      } else if (restoreFocus && toggle.isConnected) {
-        toggle.focus();
+        return;
       }
+
+      navigation.inert = true;
+      navigation.setAttribute("aria-hidden", "true");
+      navigation.classList.remove("is-open");
+      navigation.classList.add("is-closing");
+      document.body.classList.remove("mobile-nav-open", "menu-open");
+      if ((restoreFocus || navigation.contains(document.activeElement)) && toggle.isConnected) {
+        focusVisibleControl(true);
+      }
+
+      if (immediate || reducedMotion.matches) finishClose(immediate);
+      else closeTimer = window.setTimeout(() => finishClose(false), 240);
     };
 
     toggle.addEventListener("click", () => setOpen(!isOpen, false));
@@ -686,9 +763,11 @@
       if (!navigation.contains(event.target) && !toggle.contains(event.target)) setOpen(false, false);
     });
 
-    const desktopQuery = window.matchMedia("(min-width: 52rem)");
+    document.addEventListener("mt:mobile-language-selected", () => setOpen(false, true));
+
+    const desktopQuery = window.matchMedia("(min-width: 56rem)");
     const handleViewportChange = (event) => {
-      if (event.matches && isOpen) setOpen(false, false);
+      if (event.matches) setOpen(false, false, true);
     };
 
     if (typeof desktopQuery.addEventListener === "function") {
@@ -697,7 +776,9 @@
       desktopQuery.addListener(handleViewportChange);
     }
 
-    return { update: updateLabels };
+    if (desktopQuery.matches) finishClose(true);
+
+    return { update: updateLabels, close: () => setOpen(false, true) };
   };
 
   const normalizeSearchText = (value) => textValue(value)
@@ -917,9 +998,18 @@
       toggle.setAttribute("aria-expanded", "false");
       toggle.setAttribute("aria-controls", extraItems.map((item) => item.id).join(" "));
       toggle.setAttribute("aria-label", copy("showMoreTags", { count: extraCount, title: courseTitle }));
+      let resizeTimer = 0;
       toggle.addEventListener("click", () => {
         const expanded = toggle.getAttribute("aria-expanded") === "true";
         const nextExpanded = !expanded;
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const startHeight = list.getBoundingClientRect().height;
+        if (resizeTimer) window.clearTimeout(resizeTimer);
+        if (!reducedMotion) {
+          list.classList.remove("is-resizing");
+          list.style.removeProperty("height");
+          list.style.overflow = "hidden";
+        }
         extraItems.forEach((item) => {
           item.hidden = !nextExpanded;
         });
@@ -929,6 +1019,21 @@
           ? copy("hideMoreTags", { title: courseTitle })
           : copy("showMoreTags", { count: extraCount, title: courseTitle }));
         toggle.textContent = nextExpanded ? copy("closeTags") : `+${extraCount}`;
+        if (!reducedMotion) {
+          const endHeight = list.getBoundingClientRect().height;
+          list.style.height = `${startHeight}px`;
+          void list.offsetHeight;
+          list.classList.add("is-resizing");
+          window.requestAnimationFrame(() => {
+            list.style.height = `${endHeight}px`;
+          });
+          resizeTimer = window.setTimeout(() => {
+            list.classList.remove("is-resizing");
+            list.style.removeProperty("height");
+            list.style.removeProperty("overflow");
+            resizeTimer = 0;
+          }, 240);
+        }
       });
       controlItem.append(toggle);
       list.append(controlItem);
@@ -1136,23 +1241,8 @@
     let activeSlug = "";
     let lastTrigger = null;
     let closingFromUrl = false;
-    let previousBodyOverflow = "";
-    let scrollLocked = false;
-
-    const lockPageScroll = () => {
-      if (scrollLocked) return;
-      previousBodyOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      document.body.classList.add("dialog-open");
-      scrollLocked = true;
-    };
-
-    const unlockPageScroll = () => {
-      if (!scrollLocked) return;
-      document.body.style.overflow = previousBodyOverflow;
-      document.body.classList.remove("dialog-open");
-      scrollLocked = false;
-    };
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let closeTimer = 0;
 
     const renderCourse = (course) => {
       const fragment = document.createDocumentFragment();
@@ -1268,6 +1358,8 @@
     };
 
     const showCourse = (course, slug) => {
+      if (closeTimer) window.clearTimeout(closeTimer);
+      closeTimer = 0;
       renderCourse(course);
       activeSlug = slug;
       if (!dialog.open) {
@@ -1277,15 +1369,36 @@
           dialog.setAttribute("open", "");
         }
       }
-      lockPageScroll();
-      window.requestAnimationFrame(() => closeButton.focus());
+      dialog.inert = false;
+      dialog.classList.remove("is-closing");
+      document.body.classList.add("dialog-open");
+      lockPageScroll("course-dialog");
+      void dialog.offsetHeight;
+      window.requestAnimationFrame(() => {
+        dialog.classList.add("is-visible");
+        closeButton.focus();
+      });
     };
 
-    const closeDialog = (fromUrl = false) => {
+    const finishDialogClose = () => {
+      closeTimer = 0;
       if (!dialog.open) return;
-      closingFromUrl = fromUrl;
       if (typeof dialog.close === "function") dialog.close();
-      else dialog.removeAttribute("open");
+      else {
+        dialog.removeAttribute("open");
+        dialog.dispatchEvent(new Event("close"));
+      }
+    };
+
+    const closeDialog = (fromUrl = false, immediate = reducedMotion.matches) => {
+      if (!dialog.open) return;
+      closingFromUrl = closingFromUrl || fromUrl;
+      dialog.inert = true;
+      dialog.classList.remove("is-visible");
+      dialog.classList.add("is-closing");
+      if (closeTimer) window.clearTimeout(closeTimer);
+      if (immediate) finishDialogClose();
+      else closeTimer = window.setTimeout(finishDialogClose, 230);
     };
 
     const clearCourseFromUrl = () => {
@@ -1347,7 +1460,10 @@
       const wasClosingFromUrl = closingFromUrl;
       closingFromUrl = false;
       activeSlug = "";
-      unlockPageScroll();
+      dialog.inert = false;
+      dialog.classList.remove("is-visible", "is-closing");
+      document.body.classList.remove("dialog-open");
+      unlockPageScroll("course-dialog");
       if (lastTrigger && lastTrigger.isConnected) lastTrigger.focus();
       if (!wasClosingFromUrl && readCourseSlugFromHash()) clearCourseFromUrl();
     });
@@ -1377,6 +1493,7 @@
 
   const initCatalog = (courses, siteConfig, copy, openDetails) => {
     const filterContainer = document.querySelector("#filter-buttons");
+    const filterScroller = filterContainer && filterContainer.closest(".filter-scroller");
     const searchInput = document.querySelector("#course-search");
     const clearButton = document.querySelector("#search-clear");
     const resultsCount = document.querySelector("#results-count");
@@ -1396,6 +1513,25 @@
     let activeCategory = "";
     let query = "";
     let filterButtons = [];
+
+    const updateFilterOverflow = () => {
+      if (!filterScroller) return;
+      filterScroller.classList.toggle("has-overflow", filterScroller.scrollWidth > filterScroller.clientWidth + 2);
+    };
+
+    const revealActiveFilter = () => {
+      const activeButton = filterButtons.find((button) => button.dataset.category === activeCategory);
+      if (!activeButton || !filterScroller) return;
+      const scrollerBounds = filterScroller.getBoundingClientRect();
+      const buttonBounds = activeButton.getBoundingClientRect();
+      const horizontalOffset = (buttonBounds.left + buttonBounds.width / 2)
+        - (scrollerBounds.left + scrollerBounds.width / 2);
+      if (Math.abs(horizontalOffset) < 1) return;
+      filterScroller.scrollBy({
+        left: horizontalOffset,
+        behavior: reducedMotion.matches ? "auto" : "smooth",
+      });
+    };
 
     const updateFilterButtons = () => {
       filterButtons.forEach((button) => {
@@ -1465,9 +1601,14 @@
           button.addEventListener("click", () => {
             activeCategory = value;
             render();
+            revealActiveFilter();
           });
           filterButtons.push(button);
           filterContainer.append(button);
+        });
+        window.requestAnimationFrame(() => {
+          updateFilterOverflow();
+          revealActiveFilter();
         });
       }
 
@@ -1483,6 +1624,7 @@
           query = "";
           if (searchInput instanceof HTMLInputElement) searchInput.value = "";
           render();
+          window.requestAnimationFrame(revealActiveFilter);
         });
         item.append(link);
         footerCategories.append(item);
@@ -1520,6 +1662,7 @@
     };
 
     const update = (nextCourses, nextSiteConfig, nextCopy, nextOpenDetails = currentOpenDetails) => {
+      const previousCategoryIndex = categories.indexOf(activeCategory);
       currentCourses = nextCourses;
       currentSiteConfig = nextSiteConfig;
       currentCopy = nextCopy;
@@ -1538,7 +1681,7 @@
           categories.push(category);
         }
       });
-      activeCategory = "";
+      activeCategory = previousCategoryIndex >= 0 ? (categories[previousCategoryIndex] || "") : "";
       query = "";
       if (searchInput instanceof HTMLInputElement) searchInput.value = "";
       applyCatalogCopy();
@@ -1569,6 +1712,8 @@
       emptyReset.type = "button";
       emptyReset.addEventListener("click", () => reset(true));
     }
+
+    window.addEventListener("resize", updateFilterOverflow, { passive: true });
 
     update(courses, siteConfig, copy, openDetails);
     return { update };
@@ -1869,20 +2014,104 @@
     }, { passive: true });
   };
 
+  const initInstructorDetails = () => {
+    const details = document.querySelector(".instructor-details");
+    const summary = details && details.querySelector("summary");
+    const body = details && details.querySelector(".instructor-details__body");
+    if (!(details instanceof HTMLDetailsElement) || !summary || !(body instanceof HTMLElement)) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let isExpanded = details.open;
+    let animationTimer = 0;
+
+    const clearAnimation = () => {
+      if (animationTimer) window.clearTimeout(animationTimer);
+      animationTimer = 0;
+      body.style.removeProperty("height");
+      body.style.removeProperty("opacity");
+      body.style.removeProperty("overflow");
+      details.classList.remove("is-animating", "is-closing");
+    };
+
+    const setExpanded = (nextExpanded) => {
+      if (nextExpanded === isExpanded) return;
+      isExpanded = nextExpanded;
+      summary.setAttribute("aria-expanded", String(nextExpanded));
+      if (animationTimer) window.clearTimeout(animationTimer);
+
+      if (reducedMotion.matches) {
+        clearAnimation();
+        details.open = nextExpanded;
+        body.inert = false;
+        return;
+      }
+
+      details.classList.add("is-animating");
+      if (nextExpanded) {
+        details.open = true;
+        body.inert = false;
+        body.style.height = "0px";
+        body.style.opacity = "0";
+        body.style.overflow = "hidden";
+        void body.offsetHeight;
+        window.requestAnimationFrame(() => {
+          body.style.height = `${body.scrollHeight}px`;
+          body.style.opacity = "1";
+        });
+        animationTimer = window.setTimeout(clearAnimation, 250);
+        return;
+      }
+
+      details.classList.add("is-closing");
+      body.inert = true;
+      body.style.height = `${body.getBoundingClientRect().height}px`;
+      body.style.opacity = "1";
+      body.style.overflow = "hidden";
+      void body.offsetHeight;
+      window.requestAnimationFrame(() => {
+        body.style.height = "0px";
+        body.style.opacity = "0";
+      });
+      animationTimer = window.setTimeout(() => {
+        details.open = false;
+        body.inert = false;
+        clearAnimation();
+      }, 250);
+    };
+
+    summary.setAttribute("aria-expanded", String(isExpanded));
+    summary.addEventListener("click", (event) => {
+      event.preventDefault();
+      setExpanded(!isExpanded);
+    });
+  };
+
   const initReviewsCarousel = (initialConfig) => {
     const track = document.querySelector("[data-reviews-track]");
     const previousButton = document.querySelector("[data-reviews-previous]");
     const nextButton = document.querySelector("[data-reviews-next]");
     const status = document.querySelector("[data-reviews-status]");
     const controls = previousButton && previousButton.closest(".reviews-controls");
+    const lightbox = document.querySelector("#review-lightbox");
+    const lightboxClose = document.querySelector("#review-lightbox-close");
+    const lightboxImage = document.querySelector("#review-lightbox-image");
+    const lightboxError = document.querySelector("#review-lightbox-error");
+    const lightboxTitle = document.querySelector("#review-lightbox-title");
     if (!track || !(previousButton instanceof HTMLButtonElement) || !(nextButton instanceof HTMLButtonElement)) {
       return { update: () => {} };
     }
 
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let config = initialConfig;
     let images = [];
     let pageSize = 1;
     let pageIndex = 0;
+    let animationTimer = 0;
+    let lightboxCloseTimer = 0;
+    let activeLightboxIndex = -1;
+    let lightboxTrigger = null;
+    let touchStart = null;
+    let suppressOpenUntil = 0;
 
     const getPageSize = () => {
       if (window.matchMedia("(min-width: 56rem)").matches) return 3;
@@ -1894,7 +2123,144 @@
       getByPath(config, `reviewsSection.${key}`)
     ) || fallback;
 
-    const render = () => {
+    const isRtl = () => textValue(config.direction || config.dir).toLowerCase() === "rtl";
+    const isArabic = () => textValue(config.locale).toLowerCase().startsWith("ar");
+    const fallbackLabel = (arabic, english) => isArabic() ? arabic : english;
+
+    const fullSourceFor = (imageData) => safeMediaSource(
+      typeof imageData === "string" ? imageData : imageData && imageData.src
+    );
+
+    const thumbnailSourceFor = (imageData) => {
+      const configured = imageData && typeof imageData === "object"
+        ? safeMediaSource(imageData.thumbnail || imageData.thumbnailSrc || imageData.preview)
+        : "";
+      if (configured) return configured;
+      const fullSource = fullSourceFor(imageData);
+      return safeMediaSource(fullSource.replace(
+        /\/reviews\/([^/?#]+)\.png(?=([?#]|$))/i,
+        "/reviews/thumbs/$1.jpg"
+      ));
+    };
+
+    const reviewAlt = (imageIndex) => `${localizedLabel("imageAltPrefix", "Student review image")} ${imageIndex + 1}`;
+
+    const updateLightboxCopy = () => {
+      if (!(lightboxClose instanceof HTMLButtonElement)) return;
+      lightboxClose.setAttribute("aria-label", fallbackLabel("إغلاق صورة التقييم", "Close enlarged review"));
+      if (lightboxError) {
+        lightboxError.textContent = fallbackLabel("تعذر تحميل صورة التقييم.", "The review image could not be loaded.");
+      }
+      if (activeLightboxIndex >= 0 && lightboxTitle) {
+        lightboxTitle.textContent = fallbackLabel(
+          `صورة تقييم مكبرة رقم ${activeLightboxIndex + 1}`,
+          `Enlarged review image ${activeLightboxIndex + 1}`
+        );
+      }
+      if (activeLightboxIndex >= 0 && lightboxImage instanceof HTMLImageElement) {
+        lightboxImage.alt = reviewAlt(activeLightboxIndex);
+      }
+    };
+
+    const canUseLightbox = lightbox instanceof HTMLDialogElement
+      && lightboxClose instanceof HTMLButtonElement
+      && lightboxImage instanceof HTMLImageElement
+      && lightboxError instanceof HTMLElement;
+
+    const finishLightboxClose = () => {
+      lightboxCloseTimer = 0;
+      if (!canUseLightbox || !lightbox.open) return;
+      if (typeof lightbox.close === "function") lightbox.close();
+      else {
+        lightbox.removeAttribute("open");
+        lightbox.dispatchEvent(new Event("close"));
+      }
+    };
+
+    const closeLightbox = (immediate = reducedMotion.matches) => {
+      if (!canUseLightbox || !lightbox.open) return;
+      lightbox.inert = true;
+      lightbox.classList.remove("is-visible");
+      lightbox.classList.add("is-closing");
+      if (lightboxCloseTimer) window.clearTimeout(lightboxCloseTimer);
+      if (immediate) finishLightboxClose();
+      else lightboxCloseTimer = window.setTimeout(finishLightboxClose, 230);
+    };
+
+    const openLightbox = (imageIndex, trigger) => {
+      if (!canUseLightbox || !images[imageIndex]) return;
+      const source = fullSourceFor(images[imageIndex]);
+      if (!source) return;
+      if (lightboxCloseTimer) window.clearTimeout(lightboxCloseTimer);
+      lightboxCloseTimer = 0;
+      activeLightboxIndex = imageIndex;
+      lightboxTrigger = trigger instanceof HTMLElement ? trigger : null;
+      lightboxImage.hidden = false;
+      lightboxError.hidden = true;
+      lightboxImage.alt = reviewAlt(imageIndex);
+      lightboxImage.src = source;
+      updateLightboxCopy();
+      if (!lightbox.open) {
+        try {
+          lightbox.showModal();
+        } catch {
+          lightbox.setAttribute("open", "");
+        }
+      }
+      lightbox.inert = false;
+      lightbox.classList.remove("is-closing");
+      document.body.classList.add("review-lightbox-open");
+      lockPageScroll("review-lightbox");
+      void lightbox.offsetHeight;
+      window.requestAnimationFrame(() => {
+        lightbox.classList.add("is-visible");
+        lightboxClose.focus();
+      });
+    };
+
+    if (canUseLightbox) {
+      lightboxImage.addEventListener("load", () => {
+        lightboxImage.hidden = false;
+        lightboxError.hidden = true;
+      });
+      lightboxImage.addEventListener("error", () => {
+        lightboxImage.hidden = true;
+        lightboxError.hidden = false;
+      });
+      lightboxClose.addEventListener("click", () => closeLightbox());
+      lightbox.addEventListener("cancel", (event) => {
+        event.preventDefault();
+        closeLightbox();
+      });
+      lightbox.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeLightbox();
+          return;
+        }
+        if (event.key === "Tab") {
+          event.preventDefault();
+          lightboxClose.focus();
+        }
+      });
+      lightbox.addEventListener("click", (event) => {
+        if (event.target === lightbox) closeLightbox();
+      });
+      lightbox.addEventListener("close", () => {
+        lightbox.inert = false;
+        lightbox.classList.remove("is-visible", "is-closing");
+        document.body.classList.remove("review-lightbox-open");
+        unlockPageScroll("review-lightbox");
+        lightboxImage.removeAttribute("src");
+        const fallbackTrigger = track.querySelector(`[data-review-index="${activeLightboxIndex}"]`);
+        const restoreTarget = lightboxTrigger && lightboxTrigger.isConnected ? lightboxTrigger : fallbackTrigger;
+        if (restoreTarget instanceof HTMLElement) restoreTarget.focus();
+        activeLightboxIndex = -1;
+        lightboxTrigger = null;
+      });
+    }
+
+    const render = (navigationDirection = 0) => {
       const totalPages = Math.max(1, Math.ceil(images.length / pageSize));
       pageIndex = Math.min(Math.max(0, pageIndex), totalPages - 1);
       const startIndex = pageIndex * pageSize;
@@ -1907,16 +2273,24 @@
       );
       const fragment = document.createDocumentFragment();
       const altPrefix = localizedLabel("imageAltPrefix", "Student review image");
+      const enlargeLabel = fallbackLabel("تكبير", "Enlarge");
+      const loadError = fallbackLabel("تعذر تحميل معاينة التقييم. يمكنك محاولة فتح الصورة المكبرة.", "The review preview could not be loaded. You can still try the enlarged image.");
 
       visibleImages.forEach(({ imageData, imageIndex }) => {
-        const source = safeMediaSource(
-          typeof imageData === "string" ? imageData : imageData && imageData.src
-        );
-        if (!source) return;
+        const fullSource = fullSourceFor(imageData);
+        const thumbnailSource = thumbnailSourceFor(imageData);
+        if (!fullSource || !thumbnailSource) return;
 
         const slide = createElement("figure", "review-slide");
+        const openButton = createElement("button", "review-slide__open");
+        openButton.type = "button";
+        openButton.dataset.reviewIndex = String(imageIndex);
+        openButton.setAttribute("aria-label", fallbackLabel(
+          `تكبير صورة التقييم رقم ${imageIndex + 1}`,
+          `Enlarge review image ${imageIndex + 1}`
+        ));
         const image = createElement("img", "review-slide__image");
-        image.src = source;
+        image.src = thumbnailSource;
         image.alt = `${altPrefix} ${imageIndex + 1}`;
         image.loading = "lazy";
         image.decoding = "async";
@@ -1926,17 +2300,32 @@
           if (Number.isFinite(width) && width > 0) image.width = Math.round(width);
           if (Number.isFinite(height) && height > 0) image.height = Math.round(height);
         }
-        slide.append(image);
+        const error = createElement("p", "review-slide__error", loadError);
+        error.hidden = true;
+        const zoom = createElement("span", "review-slide__zoom");
+        const zoomIcon = createElement("span", "review-slide__zoom-icon", "⛶");
+        zoomIcon.setAttribute("aria-hidden", "true");
+        zoom.append(zoomIcon, createElement("span", "review-slide__zoom-label", enlargeLabel));
+        image.addEventListener("error", () => {
+          image.hidden = true;
+          error.hidden = false;
+          slide.classList.add("has-error");
+        });
+        openButton.addEventListener("click", () => {
+          if (performance.now() < suppressOpenUntil) return;
+          openLightbox(imageIndex, openButton);
+        });
+        openButton.append(image, error, zoom);
+        slide.append(openButton);
         fragment.append(slide);
       });
 
       track.replaceChildren(fragment);
-      track.hidden = visibleImages.length === 0;
+      track.hidden = track.childElementCount === 0;
       if (controls) controls.hidden = images.length <= pageSize;
 
-      const isRtl = textValue(config.direction || config.dir).toLowerCase() === "rtl";
-      previousButton.textContent = isRtl ? "→" : "←";
-      nextButton.textContent = isRtl ? "←" : "→";
+      previousButton.textContent = isRtl() ? "→" : "←";
+      nextButton.textContent = isRtl() ? "←" : "→";
       previousButton.setAttribute("aria-label", localizedLabel("previousLabel", "Previous reviews"));
       nextButton.setAttribute("aria-label", localizedLabel("nextLabel", "Next reviews"));
 
@@ -1944,6 +2333,24 @@
         status.textContent = localizedLabel("pageTemplate", "{current} / {total}")
           .replaceAll("{current}", String(pageIndex + 1))
           .replaceAll("{total}", String(totalPages));
+        status.setAttribute("dir", "ltr");
+        status.setAttribute("aria-label", fallbackLabel(
+          `الصفحة ${pageIndex + 1} من ${totalPages}`,
+          `Page ${pageIndex + 1} of ${totalPages}`
+        ));
+      }
+
+      if (animationTimer) window.clearTimeout(animationTimer);
+      track.classList.remove("is-entering");
+      if (navigationDirection && !reducedMotion.matches) {
+        const physicalDirection = navigationDirection * (isRtl() ? -1 : 1);
+        track.style.setProperty("--review-enter-x", `${physicalDirection * 0.8}rem`);
+        void track.offsetHeight;
+        track.classList.add("is-entering");
+        animationTimer = window.setTimeout(() => {
+          track.classList.remove("is-entering");
+          animationTimer = 0;
+        }, 230);
       }
     };
 
@@ -1957,19 +2364,35 @@
       pageSize = getPageSize();
       pageIndex = Math.floor(firstVisibleIndex / pageSize);
       render();
+      updateLightboxCopy();
     };
 
-    previousButton.addEventListener("click", () => {
+    const navigate = (direction) => {
       const totalPages = Math.max(1, Math.ceil(images.length / pageSize));
-      pageIndex = (pageIndex - 1 + totalPages) % totalPages;
-      render();
-    });
+      pageIndex = (pageIndex + direction + totalPages) % totalPages;
+      render(direction);
+    };
 
-    nextButton.addEventListener("click", () => {
-      const totalPages = Math.max(1, Math.ceil(images.length / pageSize));
-      pageIndex = (pageIndex + 1) % totalPages;
-      render();
-    });
+    previousButton.addEventListener("click", () => navigate(-1));
+    nextButton.addEventListener("click", () => navigate(1));
+
+    track.addEventListener("touchstart", (event) => {
+      const touch = event.changedTouches[0];
+      touchStart = touch ? { x: touch.clientX, y: touch.clientY } : null;
+    }, { passive: true });
+
+    track.addEventListener("touchend", (event) => {
+      if (!touchStart) return;
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      const deltaX = touch.clientX - touchStart.x;
+      const deltaY = touch.clientY - touchStart.y;
+      touchStart = null;
+      if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      suppressOpenUntil = performance.now() + 450;
+      const direction = isRtl() ? (deltaX > 0 ? 1 : -1) : (deltaX < 0 ? 1 : -1);
+      navigate(direction);
+    }, { passive: true });
 
     let resizeScheduled = false;
     window.addEventListener("resize", () => {
@@ -2119,6 +2542,7 @@
         mobileController = initMobileNavigation(siteConfig);
         dialogController = initCourseDialog(courses, siteConfig, copy);
         catalogController = initCatalog(courses, siteConfig, copy, dialogController.open);
+        initInstructorDetails();
         reviewsController = initReviewsCarousel(siteConfig);
       } else {
         mobileController.update(siteConfig);

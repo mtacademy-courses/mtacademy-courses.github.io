@@ -413,6 +413,20 @@
     </div>
   </footer>
 
+  <dialog class="review-lightbox" id="review-lightbox" aria-labelledby="review-lightbox-title">
+    <div class="review-lightbox__surface">
+      <p class="visually-hidden" id="review-lightbox-title">صورة تقييم مكبرة</p>
+      <button class="review-lightbox__close" id="review-lightbox-close" type="button"
+        aria-label="إغلاق صورة التقييم">×</button>
+      <div class="review-lightbox__media">
+        <img class="review-lightbox__image" id="review-lightbox-image" alt="">
+        <p class="review-lightbox__error" id="review-lightbox-error" role="status" hidden>
+          تعذر تحميل صورة التقييم.
+        </p>
+      </div>
+    </div>
+  </dialog>
+
   <dialog class="course-dialog" id="course-dialog">
     <button class="dialog-close" id="dialog-close" type="button" aria-label="إغلاق تفاصيل الكورس">×</button>
     <div id="dialog-content"></div>
