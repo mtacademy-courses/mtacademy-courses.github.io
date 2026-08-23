@@ -7,12 +7,19 @@
   const EXTERNAL_PROTOCOLS = new Set(["http:", "https:"]);
   const LINK_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
   const scrollLockReasons = new Set();
+  let motionController = {
+    observeElements: () => {},
+    refresh: () => {},
+  };
 
   const lockPageScroll = (reason) => {
     if (!reason || scrollLockReasons.has(reason)) return;
     if (!scrollLockReasons.size) {
       const root = document.documentElement;
-      const scrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+      const hasStableGutter = window.CSS
+        && typeof window.CSS.supports === "function"
+        && CSS.supports("scrollbar-gutter", "stable");
+      const scrollbarWidth = hasStableGutter ? 0 : Math.max(0, window.innerWidth - root.clientWidth);
       const rootLeft = Math.max(0, Math.round(root.getBoundingClientRect().left));
       const leftCompensation = Math.min(scrollbarWidth, rootLeft);
       const rightCompensation = Math.max(0, scrollbarWidth - leftCompensation);
@@ -454,8 +461,9 @@
       ? siteConfig.hero.topics.map(textValue).filter(Boolean)
       : [];
     const fragment = document.createDocumentFragment();
-    topics.forEach((topic) => {
+    topics.forEach((topic, index) => {
       const element = createElement("span", "", topic);
+      element.style.setProperty("--hero-topic-index", String(index));
       setAutoDirection(element);
       fragment.append(element);
     });
@@ -463,6 +471,160 @@
     const label = textValue(siteConfig.interface && siteConfig.interface.heroTopicsLabel);
     if (label) container.setAttribute("aria-label", label);
     container.hidden = topics.length === 0;
+  };
+
+  const initHeaderMotion = () => {
+    const header = document.querySelector(".site-header");
+    if (!header) return;
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      header.classList.toggle("is-scrolled", window.scrollY > 16);
+    };
+
+    const scheduleUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    update();
+  };
+
+  const initMotionSystem = () => {
+    const root = document.documentElement;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const configuredStagger = Number.parseFloat(
+      window.getComputedStyle(root).getPropertyValue("--motion-stagger")
+    );
+    const staggerStep = Number.isFinite(configuredStagger) ? configuredStagger : 55;
+    const observed = new WeakSet();
+    let observer = null;
+
+    const reveal = (element) => {
+      if (!(element instanceof HTMLElement)) return;
+      element.classList.add("is-revealed");
+      if (observer) observer.unobserve(element);
+    };
+
+    if (!reducedMotion.matches && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) reveal(entry.target);
+        });
+      }, { rootMargin: "0px 0px 10% 0px", threshold: 0.06 });
+    }
+
+    const observeElements = (elements, options = {}) => {
+      const candidates = [...elements].filter((element) => element instanceof HTMLElement);
+      candidates.forEach((element, index) => {
+        if (observed.has(element) || element.closest("[hidden]")) return;
+        observed.add(element);
+        element.classList.add("motion-reveal");
+        if (options.variant) element.classList.add(`motion-reveal--${options.variant}`);
+        const stagger = options.stagger === false ? 0 : Math.min(index * staggerStep, staggerStep * 4);
+        element.style.setProperty("--motion-delay", `${stagger}ms`);
+
+        if (reducedMotion.matches || !observer) {
+          reveal(element);
+          return;
+        }
+
+        const bounds = element.getBoundingClientRect();
+        if (bounds.bottom <= 0 || bounds.top <= window.innerHeight * 0.94) {
+          window.requestAnimationFrame(() => reveal(element));
+          return;
+        }
+        observer.observe(element);
+      });
+    };
+
+    const refresh = () => {
+      observeElements(document.querySelectorAll(
+        ".courses-section .section-heading, .reviews-section .section-heading, .faq-heading, .payment-copy"
+      ), { stagger: false });
+      observeElements(document.querySelectorAll(".course-card"));
+      observeElements(document.querySelectorAll(".instructor-visual"), { variant: "inline-start", stagger: false });
+      observeElements(document.querySelectorAll(".instructor-content"), { variant: "inline-end", stagger: false });
+      observeElements(document.querySelectorAll(".review-slide"));
+      observeElements(document.querySelectorAll(".payment-method, .payment-card"));
+      observeElements(document.querySelectorAll(".contact-card"), { stagger: false });
+      observeElements(document.querySelectorAll(".footer-grid > *, .footer-bottom"));
+    };
+
+    root.classList.add("motion-ready");
+    const hero = document.querySelector(".hero");
+    if (hero) {
+      hero.classList.add("is-motion-ready");
+      void hero.offsetHeight;
+      window.requestAnimationFrame(() => hero.classList.add("is-revealed"));
+    }
+
+    const updateAmbientState = () => {
+      root.style.setProperty("--ambient-animation-state", document.hidden ? "paused" : "running");
+    };
+    document.addEventListener("visibilitychange", updateAmbientState);
+    updateAmbientState();
+    refresh();
+
+    return { observeElements, refresh };
+  };
+
+  const initInstructorStats = () => {
+    const stats = document.querySelector(".instructor-stats");
+    const values = stats ? [...stats.querySelectorAll(".instructor-stat strong")] : [];
+    if (!stats || !values.length) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let hasAnimated = false;
+
+    const numericValue = (value) => {
+      const normalizedDigits = value
+        .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+        .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
+      const parsed = Number(normalizedDigits.replace(/[^0-9.-]/g, ""));
+      return Number.isFinite(parsed) ? parsed : null;
+    };
+
+    const animate = () => {
+      if (hasAnimated) return;
+      hasAnimated = true;
+      if (reducedMotion.matches) return;
+      const entries = values.map((element) => ({
+        element,
+        finalText: element.textContent.trim(),
+        value: numericValue(element.textContent),
+      })).filter((entry) => entry.value !== null);
+      if (!entries.length) return;
+
+      entries.forEach(({ element, finalText }) => element.setAttribute("aria-label", finalText));
+      const start = performance.now();
+      const duration = 620;
+      const formatter = new Intl.NumberFormat(document.documentElement.lang || undefined, {
+        maximumFractionDigits: 0,
+      });
+
+      const step = (timestamp) => {
+        const progress = Math.min(1, (timestamp - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        entries.forEach(({ element, finalText, value }) => {
+          element.textContent = progress === 1 ? finalText : formatter.format(Math.round(value * eased));
+        });
+        if (progress < 1) window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    };
+
+    if (reducedMotion.matches || !("IntersectionObserver" in window)) {
+      animate();
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      animate();
+    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.3 });
+    observer.observe(stats);
   };
 
   const initLanguageSwitching = (supportedLocales, onSelect) => {
@@ -1138,9 +1300,13 @@
     const enrollmentHref = safeHref(course.enrollmentUrl || course.detailsUrl || course.url);
     if (enrollmentHref) {
       const ctaText = textValue(course.ctaLabel) || copy("enroll");
-      const enrollmentLink = createElement("a", "button course-card__cta", ctaText);
+      const enrollmentLink = createElement("a", "button course-card__cta");
       configureLink(enrollmentLink, enrollmentHref);
       enrollmentLink.setAttribute("aria-label", `${ctaText}: ${title}`);
+      const label = createElement("span", "", ctaText);
+      const arrow = createElement("span", "button__arrow", "↗");
+      arrow.setAttribute("aria-hidden", "true");
+      enrollmentLink.append(label, arrow);
       actions.append(enrollmentLink);
     }
 
@@ -1346,9 +1512,13 @@
 
         if (enrollmentHref) {
           const ctaText = textValue(course.ctaLabel) || copy("enroll");
-          const enrollmentLink = createElement("a", "button dialog-course__cta", ctaText);
+          const enrollmentLink = createElement("a", "button dialog-course__cta");
           configureLink(enrollmentLink, enrollmentHref);
           enrollmentLink.setAttribute("aria-label", `${ctaText}: ${title}`);
+          const label = createElement("span", "", ctaText);
+          const arrow = createElement("span", "button__arrow", "↗");
+          arrow.setAttribute("aria-hidden", "true");
+          enrollmentLink.append(label, arrow);
           actions.append(enrollmentLink);
         }
         fragment.append(actions);
@@ -1513,6 +1683,10 @@
     let activeCategory = "";
     let query = "";
     let filterButtons = [];
+    let renderTimer = 0;
+    let pendingMatches = null;
+    let countAnimationTimer = 0;
+    let emptyAnimationTimer = 0;
 
     const updateFilterOverflow = () => {
       if (!filterScroller) return;
@@ -1550,30 +1724,87 @@
 
     const resultText = (count) => currentCopy("results", { count });
 
-    const render = () => {
-      const normalizedQuery = normalizeSearchText(query);
-      const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
-      const matches = indexedCourses.filter(({ course, searchText }) => {
-        const matchesCategory = !activeCategory || textValue(course.category) === activeCategory;
-        const matchesSearch = !tokens.length || tokens.every((token) => searchText.includes(token));
-        return matchesCategory && matchesSearch;
-      });
+    const animateResultCount = () => {
+      const meta = resultsCount && resultsCount.closest(".catalog-meta");
+      if (!meta || reducedMotion.matches) return;
+      if (countAnimationTimer) window.clearTimeout(countAnimationTimer);
+      meta.classList.remove("is-count-changing");
+      void meta.offsetHeight;
+      meta.classList.add("is-count-changing");
+      countAnimationTimer = window.setTimeout(() => {
+        meta.classList.remove("is-count-changing");
+        countAnimationTimer = 0;
+      }, 240);
+    };
 
-      if (!reducedMotion.matches) grid.classList.add("is-updating");
+    const showEmptyState = (shouldShow) => {
+      if (!emptyState) return;
+      if (emptyAnimationTimer) window.clearTimeout(emptyAnimationTimer);
+      emptyState.classList.remove("is-entering");
+      emptyState.hidden = !shouldShow;
+      if (!shouldShow || reducedMotion.matches) return;
+      void emptyState.offsetHeight;
+      emptyState.classList.add("is-entering");
+      emptyAnimationTimer = window.setTimeout(() => {
+        emptyState.classList.remove("is-entering");
+        emptyAnimationTimer = 0;
+      }, 280);
+    };
+
+    const commitRender = (matches, animateGrid = true) => {
       const fragment = document.createDocumentFragment();
       matches.forEach(({ course, index }) => {
         fragment.append(createCourseCard(course, index, currentSiteConfig, currentCopy, currentOpenDetails));
       });
       grid.replaceChildren(fragment);
-      if (!reducedMotion.matches) {
-        window.requestAnimationFrame(() => grid.classList.remove("is-updating"));
+      grid.classList.remove("is-filtering-out");
+      if (animateGrid && !reducedMotion.matches && matches.length) {
+        grid.classList.remove("is-filtering-in");
+        void grid.offsetHeight;
+        grid.classList.add("is-filtering-in");
+        window.setTimeout(() => grid.classList.remove("is-filtering-in"), 240);
       }
+      motionController.observeElements(grid.querySelectorAll(".course-card"));
 
-      if (resultsCount) resultsCount.textContent = resultText(matches.length);
-      if (emptyState) emptyState.hidden = matches.length !== 0;
+      if (resultsCount) {
+        const nextResultText = resultText(matches.length);
+        if (resultsCount.textContent !== nextResultText) {
+          resultsCount.textContent = nextResultText;
+          animateResultCount();
+        }
+      }
+      showEmptyState(matches.length === 0);
       grid.hidden = matches.length === 0;
       updateFilterButtons();
       updateClearButton();
+    };
+
+    const render = () => {
+      const normalizedQuery = normalizeSearchText(query);
+      const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+      pendingMatches = indexedCourses.filter(({ course, searchText }) => {
+        const matchesCategory = !activeCategory || textValue(course.category) === activeCategory;
+        const matchesSearch = !tokens.length || tokens.every((token) => searchText.includes(token));
+        return matchesCategory && matchesSearch;
+      });
+
+      const canAnimateReplacement = !reducedMotion.matches && grid.childElementCount > 0 && !grid.hidden;
+      if (!canAnimateReplacement) {
+        if (renderTimer) window.clearTimeout(renderTimer);
+        renderTimer = 0;
+        commitRender(pendingMatches, false);
+        pendingMatches = null;
+        return;
+      }
+
+      grid.classList.add("is-filtering-out");
+      if (renderTimer) return;
+      renderTimer = window.setTimeout(() => {
+        renderTimer = 0;
+        const latestMatches = pendingMatches || [];
+        pendingMatches = null;
+        commitRender(latestMatches, true);
+      }, 95);
     };
 
     const reset = (focusSearch = false) => {
@@ -1791,6 +2022,7 @@
       fragment.append(card);
     });
     container.replaceChildren(fragment);
+    motionController.observeElements(container.querySelectorAll(".payment-method, .payment-card"));
   };
 
   const absoluteHttpUrl = (value, base = document.baseURI) => {
@@ -2107,6 +2339,9 @@
     let pageSize = 1;
     let pageIndex = 0;
     let animationTimer = 0;
+    let leaveTimer = 0;
+    let isTransitioning = false;
+    let queuedDirection = 0;
     let lightboxCloseTimer = 0;
     let activeLightboxIndex = -1;
     let lightboxTrigger = null;
@@ -2341,7 +2576,7 @@
       }
 
       if (animationTimer) window.clearTimeout(animationTimer);
-      track.classList.remove("is-entering");
+      track.classList.remove("is-entering", "is-leaving");
       if (navigationDirection && !reducedMotion.matches) {
         const physicalDirection = navigationDirection * (isRtl() ? -1 : 1);
         track.style.setProperty("--review-enter-x", `${physicalDirection * 0.8}rem`);
@@ -2350,11 +2585,30 @@
         animationTimer = window.setTimeout(() => {
           track.classList.remove("is-entering");
           animationTimer = 0;
-        }, 230);
+          isTransitioning = false;
+          track.removeAttribute("aria-busy");
+          if (queuedDirection) {
+            const nextDirection = queuedDirection;
+            queuedDirection = 0;
+            navigate(nextDirection);
+          }
+        }, 250);
       }
     };
 
+    const clearReviewTransition = () => {
+      if (animationTimer) window.clearTimeout(animationTimer);
+      if (leaveTimer) window.clearTimeout(leaveTimer);
+      animationTimer = 0;
+      leaveTimer = 0;
+      isTransitioning = false;
+      queuedDirection = 0;
+      track.classList.remove("is-entering", "is-leaving");
+      track.removeAttribute("aria-busy");
+    };
+
     const update = (nextConfig) => {
+      clearReviewTransition();
       const firstVisibleIndex = pageIndex * pageSize;
       config = nextConfig || config;
       const gallery = config.reviewsGallery && typeof config.reviewsGallery === "object"
@@ -2369,8 +2623,28 @@
 
     const navigate = (direction) => {
       const totalPages = Math.max(1, Math.ceil(images.length / pageSize));
-      pageIndex = (pageIndex + direction + totalPages) % totalPages;
-      render(direction);
+      if (totalPages <= 1) return;
+      if (reducedMotion.matches) {
+        pageIndex = (pageIndex + direction + totalPages) % totalPages;
+        render();
+        return;
+      }
+      if (isTransitioning) {
+        queuedDirection = Math.max(-totalPages, Math.min(totalPages, queuedDirection + direction));
+        return;
+      }
+
+      isTransitioning = true;
+      track.setAttribute("aria-busy", "true");
+      const visualDirection = Math.sign(direction) || 1;
+      const physicalDirection = visualDirection * (isRtl() ? -1 : 1);
+      track.style.setProperty("--review-exit-x", `${physicalDirection * -0.8}rem`);
+      track.classList.add("is-leaving");
+      leaveTimer = window.setTimeout(() => {
+        leaveTimer = 0;
+        pageIndex = (pageIndex + direction + totalPages) % totalPages;
+        render(visualDirection);
+      }, 115);
     };
 
     previousButton.addEventListener("click", () => navigate(-1));
@@ -2402,6 +2676,7 @@
         resizeScheduled = false;
         const nextPageSize = getPageSize();
         if (nextPageSize === pageSize) return;
+        clearReviewTransition();
         const firstVisibleIndex = pageIndex * pageSize;
         pageSize = nextPageSize;
         pageIndex = Math.floor(firstVisibleIndex / pageSize);
@@ -2414,6 +2689,7 @@
   };
 
   const initActiveNavigation = () => {
+    const desktopNav = document.querySelector(".desktop-nav");
     const candidates = document.querySelectorAll(
       "[data-nav-link][href^='#'], header nav a[href^='#'], #mobile-nav a[href^='#']"
     );
@@ -2437,6 +2713,27 @@
 
     if (!links.length || !sectionMap.size) return;
 
+    let pillFrame = 0;
+    const updateDesktopPill = () => {
+      pillFrame = 0;
+      if (!(desktopNav instanceof HTMLElement) || desktopNav.offsetParent === null) return;
+      const activeLink = desktopNav.querySelector(".nav-link.is-active");
+      if (!(activeLink instanceof HTMLElement)) {
+        desktopNav.style.setProperty("--nav-pill-opacity", "0");
+        return;
+      }
+      const navBounds = desktopNav.getBoundingClientRect();
+      const linkBounds = activeLink.getBoundingClientRect();
+      desktopNav.style.setProperty("--nav-pill-left", `${linkBounds.left - navBounds.left}px`);
+      desktopNav.style.setProperty("--nav-pill-width", `${linkBounds.width}px`);
+      desktopNav.style.setProperty("--nav-pill-opacity", "1");
+    };
+
+    const schedulePillUpdate = () => {
+      if (pillFrame) window.cancelAnimationFrame(pillFrame);
+      pillFrame = window.requestAnimationFrame(updateDesktopPill);
+    };
+
     const setActive = (id) => {
       links.forEach(({ link, id: linkId }) => {
         const isActive = linkId === id;
@@ -2444,6 +2741,7 @@
         if (isActive) link.setAttribute("aria-current", "page");
         else link.removeAttribute("aria-current");
       });
+      schedulePillUpdate();
     };
 
     links.forEach(({ link, id }) => link.addEventListener("click", () => setActive(id)));
@@ -2481,6 +2779,11 @@
     }
 
     chooseByScrollPosition();
+    window.addEventListener("resize", schedulePillUpdate, { passive: true });
+    if ("ResizeObserver" in window && desktopNav) {
+      const resizeObserver = new ResizeObserver(schedulePillUpdate);
+      resizeObserver.observe(desktopNav);
+    }
   };
 
   const initTopLinks = () => {
@@ -2553,6 +2856,7 @@
       initFaq(siteConfig);
       renderPaymentMethods(siteConfig);
       renderStructuredData(siteConfig, courses);
+      motionController.refresh();
     };
 
     const selectLocale = (locale) => {
@@ -2573,6 +2877,9 @@
     renderLocale(true);
 
     if (!isErrorPage) {
+      motionController = initMotionSystem();
+      initHeaderMotion();
+      initInstructorStats();
       initActiveNavigation();
       initTopLinks();
     }
