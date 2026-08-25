@@ -27,6 +27,12 @@
         direction: "ltr"
       }
     ],
+    promotion: {
+      enabled: true,
+      discountPercent: 30,
+      endsAt: "2026-08-30T23:59:59+03:00",
+      target: "#courses"
+    },
     logo: {
       src: "./assets/images/brand/mt-academy-logo.jpg",
       alt: "MT Academy",
@@ -177,6 +183,20 @@
         ],
         headerCta: {
           label: "تواصل عبر واتساب"
+        },
+        promotion: {
+          offerLabel: "عرض لفترة محدودة",
+          headline: "خصم 30% على جميع الكورسات المتاحة",
+          supportingText: "اختَر الكورس المناسب وابدأ التعلّم قبل انتهاء العرض.",
+          countdownIntro: "ينتهي العرض خلال",
+          daysLabel: "يوم",
+          hoursLabel: "ساعة",
+          minutesLabel: "دقيقة",
+          secondsLabel: "ثانية",
+          ctaLabel: "استعرض الكورسات واحصل على الخصم",
+          courseBadge: "خصم 30%",
+          linkClarification: "استخدم رابط Udemy الموجود داخل بطاقة الكورس للحصول على العرض.",
+          expirationMessage: "انتهى عرض الخصم."
         },
         hero: {
           eyebrow: "تعلّم البرمجة باللغة العربية",
@@ -336,6 +356,20 @@
         ],
         headerCta: {
           label: "Contact on WhatsApp"
+        },
+        promotion: {
+          offerLabel: "LIMITED-TIME OFFER",
+          headline: "30% off all available courses",
+          supportingText: "Choose the right course and start learning before the offer ends.",
+          countdownIntro: "Offer ends in",
+          daysLabel: "Days",
+          hoursLabel: "Hours",
+          minutesLabel: "Minutes",
+          secondsLabel: "Seconds",
+          ctaLabel: "Explore courses and save 30%",
+          courseBadge: "30% OFF",
+          linkClarification: "Use the Udemy link inside each course card to access the offer.",
+          expirationMessage: "The discount offer has ended."
         },
         hero: {
           eyebrow: "Learn programming in Arabic",

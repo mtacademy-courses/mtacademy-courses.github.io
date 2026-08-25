@@ -125,6 +125,57 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero__glow hero__glow--one" aria-hidden="true"></div>
       <div class="container hero__content">
+        <section class="promotion-panel" data-promotion aria-labelledby="promotion-title" hidden>
+          <div class="promotion-panel__glow" aria-hidden="true"></div>
+          <div class="promotion-panel__offer">
+            <p class="promotion-panel__label" data-config-text="promotion.offerLabel">عرض لفترة محدودة</p>
+            <p class="promotion-panel__discount" aria-hidden="true">
+              <strong data-promotion-discount dir="ltr"></strong>
+            </p>
+          </div>
+
+          <div class="promotion-panel__message">
+            <h2 id="promotion-title" data-config-text="promotion.headline">خصم 30% على جميع الكورسات المتاحة</h2>
+            <p data-config-text="promotion.supportingText">
+              اختَر الكورس المناسب وابدأ التعلّم قبل انتهاء العرض.
+            </p>
+          </div>
+
+          <div class="promotion-panel__countdown">
+            <p id="promotion-countdown-label" data-config-text="promotion.countdownIntro">ينتهي العرض خلال</p>
+            <time class="promotion-countdown" data-promotion-countdown role="timer"
+              aria-labelledby="promotion-countdown-label">
+              <span class="promotion-countdown__unit">
+                <strong data-countdown-value="days"></strong>
+                <span data-config-text="promotion.daysLabel">يوم</span>
+              </span>
+              <span class="promotion-countdown__unit">
+                <strong data-countdown-value="hours"></strong>
+                <span data-config-text="promotion.hoursLabel">ساعة</span>
+              </span>
+              <span class="promotion-countdown__unit">
+                <strong data-countdown-value="minutes"></strong>
+                <span data-config-text="promotion.minutesLabel">دقيقة</span>
+              </span>
+              <span class="promotion-countdown__unit">
+                <strong data-countdown-value="seconds"></strong>
+                <span data-config-text="promotion.secondsLabel">ثانية</span>
+              </span>
+            </time>
+          </div>
+
+          <div class="promotion-panel__action">
+            <a class="button promotion-panel__cta" href="#courses" data-config-href="promotion.target">
+              <span data-config-text="promotion.ctaLabel">استعرض الكورسات واحصل على الخصم</span>
+              <span class="button__arrow" aria-hidden="true">↓</span>
+            </a>
+            <p class="promotion-panel__clarification" data-config-text="promotion.linkClarification">
+              استخدم رابط Udemy الموجود داخل بطاقة الكورس للحصول على العرض.
+            </p>
+          </div>
+        </section>
+        <p class="visually-hidden" data-promotion-status role="status" aria-live="polite" aria-atomic="true"></p>
+
         <p class="eyebrow" data-config-text="hero.eyebrow">تعلّم البرمجة باللغة العربية</p>
         <h1 id="hero-title" data-config-text="hero.title">طوّر مهاراتك البرمجية مع MT Academy</h1>
         <p class="hero__description" data-config-text="hero.description">
@@ -198,20 +249,26 @@
             <p>يعمل البحث والتصفية عند تفعيل JavaScript. يمكنك التسجيل مباشرة من الروابط التالية:</p>
             <ul>
               <li><a
-                  href="https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-AUG-2026">Master
+                  href="https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-AUG-2026"
+                  target="_blank" rel="noopener noreferrer">Master
                   SOLID Principles [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-AUG-2026">Master
+                  href="https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-AUG-2026"
+                  target="_blank" rel="noopener noreferrer">Master
                   Oracle Database SQL [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-AUG-2026">Learn
+                  href="https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-AUG-2026"
+                  target="_blank" rel="noopener noreferrer">Learn
                   HTML – Full Tutorial [Arabic]</a></li>
-              <li><a href="https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-AUG-2026">Kotlin for
+              <li><a href="https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-AUG-2026"
+                  target="_blank" rel="noopener noreferrer">Kotlin for
                   Beginners: From Zero to Hero [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-AUG-2026">Android
+                  href="https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-AUG-2026"
+                  target="_blank" rel="noopener noreferrer">Android
                   Kotlin Development: From Zero to Hero [Arabic]</a></li>
-              <li><a href="https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-AUG-2026">Build a
+              <li><a href="https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-AUG-2026"
+                  target="_blank" rel="noopener noreferrer">Build a
                   REST API with Ktor – CRUD API [Arabic]</a></li>
             </ul>
           </div>

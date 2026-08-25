@@ -181,6 +181,14 @@
         url: textValue(translation.headerCta && translation.headerCta.url)
           || textValue(rawSiteConfig.contact && rawSiteConfig.contact.whatsapp),
       },
+      promotion: {
+        ...(rawSiteConfig.promotion && typeof rawSiteConfig.promotion === "object"
+          ? rawSiteConfig.promotion
+          : {}),
+        ...(translation.promotion && typeof translation.promotion === "object"
+          ? translation.promotion
+          : {}),
+      },
       paymentMethods,
       payment: { ...translatedPayment, methods: paymentMethods },
     };
@@ -471,6 +479,180 @@
     const label = textValue(siteConfig.interface && siteConfig.interface.heroTopicsLabel);
     if (label) container.setAttribute("aria-label", label);
     container.hidden = topics.length === 0;
+  };
+
+  const initPromotion = (initialConfig) => {
+    const root = document.documentElement;
+    const panel = document.querySelector("[data-promotion]");
+    const countdown = document.querySelector("[data-promotion-countdown]");
+    const status = document.querySelector("[data-promotion-status]");
+    const discount = document.querySelector("[data-promotion-discount]");
+    const values = {
+      days: document.querySelector('[data-countdown-value="days"]'),
+      hours: document.querySelector('[data-countdown-value="hours"]'),
+      minutes: document.querySelector('[data-countdown-value="minutes"]'),
+      seconds: document.querySelector('[data-countdown-value="seconds"]'),
+    };
+
+    if (!panel || !countdown || Object.values(values).some((element) => !element)) {
+      root.removeAttribute("data-promotion-active");
+      return { update: () => {} };
+    }
+
+    const MAX_TIMEOUT_DELAY = 2147483647;
+    const SECOND = 1000;
+    const MINUTE = 60 * SECOND;
+    const HOUR = 60 * MINUTE;
+    const DAY = 24 * HOUR;
+    let promotion = {};
+    let endTimestamp = Number.NaN;
+    let intervalId = null;
+    let expirationTimeoutId = null;
+    let isActive = false;
+    let numberFormatter = new Intl.NumberFormat("en", {
+      minimumIntegerDigits: 2,
+      useGrouping: false,
+    });
+
+    const clearIntervalTimer = () => {
+      if (intervalId === null) return;
+      window.clearInterval(intervalId);
+      intervalId = null;
+    };
+
+    const clearExpirationTimer = () => {
+      if (expirationTimeoutId === null) return;
+      window.clearTimeout(expirationTimeoutId);
+      expirationTimeoutId = null;
+    };
+
+    const removePromotionBadges = () => {
+      document.querySelectorAll("[data-promotion-course-badge]").forEach((badge) => {
+        const container = badge.parentElement;
+        badge.remove();
+        if (container
+          && (container.classList.contains("course-card__badges")
+            || container.classList.contains("dialog-course__eyebrow"))
+          && !container.childElementCount) {
+          container.remove();
+        }
+      });
+    };
+
+    const deactivate = (announce = false) => {
+      const shouldAnnounce = announce && isActive;
+      isActive = false;
+      clearIntervalTimer();
+      clearExpirationTimer();
+      panel.hidden = true;
+      root.removeAttribute("data-promotion-active");
+      removePromotionBadges();
+
+      if (status && shouldAnnounce) {
+        status.textContent = textValue(promotion.expirationMessage);
+      }
+    };
+
+    const formatValue = (value) => {
+      try {
+        return numberFormatter.format(value);
+      } catch {
+        return String(value).padStart(2, "0");
+      }
+    };
+
+    const renderRemainingTime = (remainingMilliseconds) => {
+      const totalSeconds = Math.max(1, Math.floor(remainingMilliseconds / SECOND));
+      const remaining = {
+        days: Math.floor(totalSeconds / (DAY / SECOND)),
+        hours: Math.floor((totalSeconds % (DAY / SECOND)) / (HOUR / SECOND)),
+        minutes: Math.floor((totalSeconds % (HOUR / SECOND)) / (MINUTE / SECOND)),
+        seconds: totalSeconds % (MINUTE / SECOND),
+      };
+
+      Object.entries(remaining).forEach(([unit, value]) => {
+        values[unit].textContent = formatValue(value);
+      });
+    };
+
+    const updateCountdown = () => {
+      const remainingMilliseconds = endTimestamp - Date.now();
+      if (!Number.isFinite(remainingMilliseconds) || remainingMilliseconds <= 0) {
+        deactivate(true);
+        return false;
+      }
+
+      renderRemainingTime(remainingMilliseconds);
+      if (!isActive) {
+        root.dataset.promotionActive = "true";
+        panel.hidden = false;
+        isActive = true;
+      }
+      return true;
+    };
+
+    const scheduleExpiration = () => {
+      clearExpirationTimer();
+      const delay = endTimestamp - Date.now();
+      if (!Number.isFinite(delay) || delay <= 0 || delay > MAX_TIMEOUT_DELAY) return;
+      expirationTimeoutId = window.setTimeout(() => {
+        expirationTimeoutId = null;
+        updateCountdown();
+      }, delay);
+    };
+
+    const startInterval = () => {
+      if (intervalId !== null) return;
+      intervalId = window.setInterval(updateCountdown, SECOND);
+    };
+
+    const update = (siteConfig) => {
+      const nextPromotion = siteConfig.promotion && typeof siteConfig.promotion === "object"
+        ? siteConfig.promotion
+        : {};
+      const endsAt = textValue(nextPromotion.endsAt);
+      const nextEndTimestamp = Date.parse(endsAt);
+      const deadlineChanged = nextEndTimestamp !== endTimestamp;
+      const discountPercent = Number(nextPromotion.discountPercent);
+      const locale = textValue(siteConfig.locale || siteConfig.language || "en");
+
+      promotion = nextPromotion;
+      endTimestamp = nextEndTimestamp;
+      try {
+        numberFormatter = new Intl.NumberFormat(locale, {
+          minimumIntegerDigits: 2,
+          useGrouping: false,
+        });
+      } catch {
+        numberFormatter = new Intl.NumberFormat("en", {
+          minimumIntegerDigits: 2,
+          useGrouping: false,
+        });
+      }
+
+      if (countdown instanceof HTMLTimeElement) countdown.dateTime = endsAt;
+      if (discount) discount.textContent = Number.isFinite(discountPercent) ? `${discountPercent}%` : "";
+
+      if (nextPromotion.enabled !== true
+        || !Number.isFinite(nextEndTimestamp)
+        || !Number.isFinite(discountPercent)
+        || discountPercent <= 0) {
+        deactivate(false);
+        return;
+      }
+
+      if (status) status.textContent = "";
+      if (!updateCountdown()) return;
+      startInterval();
+      if (deadlineChanged || expirationTimeoutId === null) scheduleExpiration();
+    };
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && isActive) updateCountdown();
+    });
+
+    update(initialConfig);
+    return { update };
   };
 
   const initHeaderMotion = () => {
@@ -1204,6 +1386,33 @@
     return list;
   };
 
+  const getCourseBadges = (course, siteConfig) => {
+    const badges = [];
+    const normalBadge = textValue(course.badge);
+    if (normalBadge) badges.push({ label: normalBadge, promotional: false });
+
+    const promotion = siteConfig.promotion && typeof siteConfig.promotion === "object"
+      ? siteConfig.promotion
+      : {};
+    const promotionBadge = textValue(promotion.courseBadge);
+    const courseStatus = textValue(course.status).toLowerCase();
+    const promotionIsActive = document.documentElement.dataset.promotionActive === "true";
+    if (promotionIsActive && promotion.enabled === true && courseStatus === "available" && promotionBadge) {
+      badges.push({ label: promotionBadge, promotional: true });
+    }
+
+    return badges;
+  };
+
+  const createCourseBadge = (badge, className) => {
+    const classes = [className];
+    if (badge.promotional) classes.push(`${className}--promotion`);
+    const element = createElement("span", classes.join(" "), badge.label);
+    if (badge.promotional) element.dataset.promotionCourseBadge = "true";
+    setAutoDirection(element);
+    return element;
+  };
+
   const createCourseCard = (course, courseIndex, siteConfig, copy, openDetails) => {
     const article = createElement("article", "course-card");
     const title = textValue(course.title) || copy("course");
@@ -1212,23 +1421,25 @@
 
     const image = getCourseImage(course);
     const imageSource = safeMediaSource(image.src);
-    if (imageSource) {
+    const badges = getCourseBadges(course, siteConfig);
+    if (imageSource || badges.length) {
       const media = createElement("div", "course-card__media");
-      const imageElement = document.createElement("img");
-      imageElement.className = "course-card__image";
-      imageElement.src = imageSource;
-      imageElement.alt = image.alt || copy("courseCover", { title });
-      imageElement.width = image.width;
-      imageElement.height = image.height;
-      imageElement.loading = "lazy";
-      imageElement.decoding = "async";
-      media.append(imageElement);
+      if (imageSource) {
+        const imageElement = document.createElement("img");
+        imageElement.className = "course-card__image";
+        imageElement.src = imageSource;
+        imageElement.alt = image.alt || copy("courseCover", { title });
+        imageElement.width = image.width;
+        imageElement.height = image.height;
+        imageElement.loading = "lazy";
+        imageElement.decoding = "async";
+        media.append(imageElement);
+      }
 
-      const badge = textValue(course.badge);
-      if (badge) {
-        const badgeElement = createElement("span", "course-card__badge", badge);
-        setAutoDirection(badgeElement);
-        media.append(badgeElement);
+      if (badges.length) {
+        const badgeStack = createElement("div", "course-card__badges");
+        badges.forEach((badge) => badgeStack.append(createCourseBadge(badge, "course-card__badge")));
+        media.append(badgeStack);
       }
 
       article.append(media);
@@ -1415,20 +1626,16 @@
       const title = textValue(course.title) || copy("course");
       const header = createElement("header", "dialog-course__header");
       const category = textValue(course.category);
-      const badge = textValue(course.badge);
+      const badges = getCourseBadges(course, siteConfig);
 
-      if (category || badge) {
+      if (category || badges.length) {
         const eyebrow = createElement("div", "dialog-course__eyebrow");
         if (category) {
           const categoryElement = createElement("span", "dialog-course__category", category);
           setAutoDirection(categoryElement);
           eyebrow.append(categoryElement);
         }
-        if (badge) {
-          const badgeElement = createElement("span", "dialog-course__badge", badge);
-          setAutoDirection(badgeElement);
-          eyebrow.append(badgeElement);
-        }
+        badges.forEach((badge) => eyebrow.append(createCourseBadge(badge, "dialog-course__badge")));
         header.append(eyebrow);
       }
 
@@ -2824,6 +3031,7 @@
     let catalogController = { update: () => {} };
     let languageController = { update: () => {} };
     let reviewsController = { update: () => {} };
+    let promotionController = { update: () => {} };
     const isErrorPage = document.body.dataset.page === "404";
 
     const hydrateLocale = (locale) => {
@@ -2842,12 +3050,14 @@
 
       renderHeroTopics(siteConfig);
       if (initialRender) {
+        promotionController = initPromotion(siteConfig);
         mobileController = initMobileNavigation(siteConfig);
         dialogController = initCourseDialog(courses, siteConfig, copy);
         catalogController = initCatalog(courses, siteConfig, copy, dialogController.open);
         initInstructorDetails();
         reviewsController = initReviewsCarousel(siteConfig);
       } else {
+        promotionController.update(siteConfig);
         mobileController.update(siteConfig);
         catalogController.update(courses, siteConfig, copy, dialogController.open);
         dialogController.refresh();
