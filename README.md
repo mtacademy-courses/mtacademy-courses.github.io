@@ -113,6 +113,12 @@ siteConfig.translations.en
 
 Keep `courses-data.js` loaded before `app.js` in `index.html`.
 
+### Promotion configuration
+
+The hero offer, floating offer button, popup, countdowns, and eligible-course badges all use `siteConfig.promotion` as one source of truth. Configure `enabled`, `discountPercent`, `startsAt`, and `endsAt` there; campaign timestamps must include an explicit timezone offset. The promotion is active from `startsAt` (inclusive) until `endsAt` (exclusive), and all promotional UI is removed automatically outside that window.
+
+Coupon and enrollment URLs are maintained separately for each course. Verify new coupon URLs before publishing them—changing the promotion schedule does not make an older coupon link valid for the new campaign.
+
 ## Add or update a course
 
 Edit the `courses` array in [`assets/js/courses-data.js`](assets/js/courses-data.js).

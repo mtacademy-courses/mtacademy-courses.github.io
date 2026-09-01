@@ -128,16 +128,16 @@
         <section class="promotion-panel" data-promotion aria-labelledby="promotion-title" hidden>
           <div class="promotion-panel__glow" aria-hidden="true"></div>
           <div class="promotion-panel__offer">
-            <p class="promotion-panel__label" data-config-text="promotion.offerLabel">عرض لفترة محدودة</p>
+            <p class="promotion-panel__label" data-config-text="promotion.offerLabel">عرض سبتمبر لفترة محدودة</p>
             <p class="promotion-panel__discount" aria-hidden="true">
               <strong data-promotion-discount dir="ltr"></strong>
             </p>
           </div>
 
           <div class="promotion-panel__message">
-            <h2 id="promotion-title" data-config-text="promotion.headline">خصم 30% على جميع الكورسات المتاحة</h2>
+            <h2 id="promotion-title" data-config-text="promotion.headline">عرض على جميع الكورسات المتاحة</h2>
             <p data-config-text="promotion.supportingText">
-              اختَر الكورس المناسب وابدأ التعلّم قبل انتهاء العرض.
+              اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض سبتمبر.
             </p>
           </div>
 
@@ -166,11 +166,14 @@
 
           <div class="promotion-panel__action">
             <a class="button promotion-panel__cta" href="#courses" data-config-href="promotion.target">
-              <span data-config-text="promotion.ctaLabel">استعرض الكورسات واحصل على الخصم</span>
+              <span data-config-text="promotion.ctaLabel">استعرض الكورسات</span>
               <span class="button__arrow" aria-hidden="true">↓</span>
             </a>
+            <p class="promotion-panel__validity" data-config-text="promotion.validityText">
+              عرض سبتمبر متاح لفترة محدودة.
+            </p>
             <p class="promotion-panel__clarification" data-config-text="promotion.linkClarification">
-              استخدم رابط Udemy الموجود داخل بطاقة الكورس للحصول على العرض.
+              اختر الكورس المناسب واستخدم خيار التسجيل المتاح لمعرفة التفاصيل.
             </p>
           </div>
         </section>
@@ -249,25 +252,25 @@
             <p>يعمل البحث والتصفية عند تفعيل JavaScript. يمكنك التسجيل مباشرة من الروابط التالية:</p>
             <ul>
               <li><a
-                  href="https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-AUG-2026"
+                  href="https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-SEP-2026"
                   target="_blank" rel="noopener noreferrer">Master
                   SOLID Principles [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-AUG-2026"
+                  href="https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-SEP-2026"
                   target="_blank" rel="noopener noreferrer">Master
                   Oracle Database SQL [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-AUG-2026"
+                  href="https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-SEP-2026"
                   target="_blank" rel="noopener noreferrer">Learn
                   HTML – Full Tutorial [Arabic]</a></li>
-              <li><a href="https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-AUG-2026"
+              <li><a href="https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-SEP-2026"
                   target="_blank" rel="noopener noreferrer">Kotlin for
                   Beginners: From Zero to Hero [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-AUG-2026"
+                  href="https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-SEP-2026"
                   target="_blank" rel="noopener noreferrer">Android
                   Kotlin Development: From Zero to Hero [Arabic]</a></li>
-              <li><a href="https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-AUG-2026"
+              <li><a href="https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-SEP-2026"
                   target="_blank" rel="noopener noreferrer">Build a
                   REST API with Ktor – CRUD API [Arabic]</a></li>
             </ul>
@@ -475,6 +478,89 @@
           class="back-to-top__icon" aria-hidden="true">↑</span></a>
     </div>
   </footer>
+
+  <button class="promotion-flag" type="button" data-promotion-flag
+    aria-label="فتح تفاصيل عرض سبتمبر" hidden>
+    <span class="promotion-flag__label" data-config-text="promotion.floatingLabel">عرض سبتمبر</span>
+    <time class="promotion-flag__countdown" data-promotion-countdown aria-hidden="true">
+      <span class="promotion-flag__unit">
+        <strong data-countdown-value="days"></strong>
+        <span data-config-text="promotion.daysLabel">يوم</span>
+      </span>
+      <span class="promotion-flag__unit">
+        <strong data-countdown-value="hours"></strong>
+        <span data-config-text="promotion.hoursLabel">ساعة</span>
+      </span>
+      <span class="promotion-flag__unit">
+        <strong data-countdown-value="minutes"></strong>
+        <span data-config-text="promotion.minutesLabel">دقيقة</span>
+      </span>
+      <span class="promotion-flag__unit">
+        <strong data-countdown-value="seconds"></strong>
+        <span data-config-text="promotion.secondsLabel">ثانية</span>
+      </span>
+    </time>
+  </button>
+
+  <dialog class="promotion-dialog" id="promotion-dialog" aria-labelledby="promotion-dialog-title"
+    aria-describedby="promotion-dialog-description promotion-dialog-validity" aria-hidden="true" inert hidden>
+    <div class="promotion-dialog__surface">
+      <button class="promotion-dialog__close" id="promotion-dialog-close" type="button"
+        aria-label="إغلاق عرض سبتمبر">×</button>
+      <div class="language-switcher language-switcher--promotion" data-language-switcher role="group"
+        aria-label="اختيار اللغة">
+        <button class="language-switcher__option is-active" type="button" data-language-option="ar"
+          aria-label="العربية" aria-pressed="true" lang="ar">ع</button>
+        <button class="language-switcher__option" type="button" data-language-option="en" aria-label="English"
+          aria-pressed="false" lang="en">EN</button>
+      </div>
+      <p class="promotion-dialog__label" data-config-text="promotion.offerLabel">عرض سبتمبر لفترة محدودة</p>
+      <p class="promotion-dialog__discount" aria-hidden="true">
+        <strong data-promotion-discount dir="ltr"></strong>
+      </p>
+      <h2 class="promotion-dialog__title" id="promotion-dialog-title" data-config-text="promotion.headline">
+        عرض على جميع كورسات MT Academy المتاحة
+      </h2>
+      <p class="promotion-dialog__description" id="promotion-dialog-description"
+        data-config-text="promotion.popupSupportingText">
+        ابدأ رحلتك التعليمية الآن قبل انتهاء عرض سبتمبر.
+      </p>
+      <div class="promotion-dialog__countdown">
+        <p id="promotion-dialog-countdown-label" data-config-text="promotion.countdownIntro">
+          متبقي على انتهاء العرض
+        </p>
+        <time class="promotion-countdown promotion-countdown--dialog" data-promotion-countdown role="timer"
+          aria-labelledby="promotion-dialog-countdown-label">
+          <span class="promotion-countdown__unit">
+            <strong data-countdown-value="days"></strong>
+            <span data-config-text="promotion.daysLabel">يوم</span>
+          </span>
+          <span class="promotion-countdown__unit">
+            <strong data-countdown-value="hours"></strong>
+            <span data-config-text="promotion.hoursLabel">ساعة</span>
+          </span>
+          <span class="promotion-countdown__unit">
+            <strong data-countdown-value="minutes"></strong>
+            <span data-config-text="promotion.minutesLabel">دقيقة</span>
+          </span>
+          <span class="promotion-countdown__unit">
+            <strong data-countdown-value="seconds"></strong>
+            <span data-config-text="promotion.secondsLabel">ثانية</span>
+          </span>
+        </time>
+      </div>
+      <a class="button promotion-dialog__cta" id="promotion-dialog-cta" href="#courses"
+        data-config-href="promotion.target">
+        <span data-config-text="promotion.ctaLabel">استعرض الكورسات</span>
+        <span class="button__arrow" aria-hidden="true">↓</span>
+      </a>
+      <p class="promotion-dialog__validity" id="promotion-dialog-validity"
+        data-config-text="promotion.validityText">عرض سبتمبر متاح لفترة محدودة.</p>
+      <p class="promotion-dialog__clarification" data-config-text="promotion.linkClarification">
+        اختر الكورس المناسب واستخدم خيار التسجيل المتاح لمعرفة التفاصيل.
+      </p>
+    </div>
+  </dialog>
 
   <dialog class="review-lightbox" id="review-lightbox" aria-labelledby="review-lightbox-title">
     <div class="review-lightbox__surface">

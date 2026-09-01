@@ -28,10 +28,14 @@
       }
     ],
     promotion: {
+      id: "september-2026-30-off",
       enabled: true,
       discountPercent: 30,
-      endsAt: "2026-08-30T23:59:59+03:00",
-      target: "#courses"
+      startsAt: "2026-09-01T00:00:00+03:00",
+      endsAt: "2026-10-01T00:00:00+03:00",
+      timeZone: "Africa/Cairo",
+      target: "#courses",
+      autoOpenDelay: 1500
     },
     logo: {
       src: "./assets/images/brand/mt-academy-logo.jpg",
@@ -185,18 +189,24 @@
           label: "تواصل عبر واتساب"
         },
         promotion: {
-          offerLabel: "عرض لفترة محدودة",
-          headline: "خصم 30% على جميع الكورسات المتاحة",
-          supportingText: "اختَر الكورس المناسب وابدأ التعلّم قبل انتهاء العرض.",
-          countdownIntro: "ينتهي العرض خلال",
+          offerLabel: "عرض سبتمبر لفترة محدودة",
+          floatingLabel: "خصم {discount}% • عرض سبتمبر",
+          floatingOpenLabel: "فتح تفاصيل عرض سبتمبر بخصم {discount}%",
+          headline: "خصم {discount}% على جميع كورسات MT Academy المتاحة",
+          supportingText: "اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض سبتمبر.",
+          popupSupportingText: "ابدأ رحلتك التعليمية الآن واستفد من خصم {discount}% على جميع الكورسات المتاحة قبل انتهاء العرض.",
+          countdownIntro: "متبقي على انتهاء العرض",
           daysLabel: "يوم",
           hoursLabel: "ساعة",
           minutesLabel: "دقيقة",
           secondsLabel: "ثانية",
-          ctaLabel: "استعرض الكورسات واحصل على الخصم",
-          courseBadge: "خصم 30%",
-          linkClarification: "استخدم رابط Udemy الموجود داخل بطاقة الكورس للحصول على العرض.",
-          expirationMessage: "انتهى عرض الخصم."
+          ctaLabel: "احصل على خصم {discount}%",
+          courseBadge: "خصم {discount}%",
+          closeLabel: "إغلاق عرض سبتمبر",
+          validityText: "العرض ساري حتى نهاية يوم {endDate}.",
+          linkClarification: "اختر الكورس المناسب واستخدم خيار التسجيل المتاح للحصول على تفاصيل العرض.",
+          activationMessage: "عرض سبتمبر متاح الآن.",
+          expirationMessage: "انتهى عرض سبتمبر."
         },
         hero: {
           eyebrow: "تعلّم البرمجة باللغة العربية",
@@ -358,18 +368,24 @@
           label: "Contact on WhatsApp"
         },
         promotion: {
-          offerLabel: "LIMITED-TIME OFFER",
-          headline: "30% off all available courses",
-          supportingText: "Choose the right course and start learning before the offer ends.",
+          offerLabel: "SEPTEMBER LIMITED-TIME OFFER",
+          floatingLabel: "{discount}% OFF • September offer",
+          floatingOpenLabel: "Open the {discount}% off September offer",
+          headline: "Get {discount}% off all available MT Academy courses",
+          supportingText: "Choose the right course and start building your skills before the September offer ends.",
+          popupSupportingText: "Start learning today and save {discount}% on all available courses before the offer ends.",
           countdownIntro: "Offer ends in",
           daysLabel: "Days",
           hoursLabel: "Hours",
           minutesLabel: "Minutes",
           secondsLabel: "Seconds",
-          ctaLabel: "Explore courses and save 30%",
-          courseBadge: "30% OFF",
-          linkClarification: "Use the Udemy link inside each course card to access the offer.",
-          expirationMessage: "The discount offer has ended."
+          ctaLabel: "Get {discount}% off",
+          courseBadge: "{discount}% OFF",
+          closeLabel: "Close September offer",
+          validityText: "Offer valid through {endDate}.",
+          linkClarification: "Choose a course and use its enrollment option to access the offer details.",
+          activationMessage: "The September offer is now available.",
+          expirationMessage: "The September offer has ended."
         },
         hero: {
           eyebrow: "Learn programming in Arabic",
@@ -533,7 +549,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-AUG-2026",
+      enrollmentUrl: "https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-SEP-2026",
       status: "available",
       translations: {
         ar: {
@@ -592,7 +608,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-AUG-2026",
+      enrollmentUrl: "https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-SEP-2026",
       status: "available",
       translations: {
         ar: {
@@ -649,7 +665,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-AUG-2026",
+      enrollmentUrl: "https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-SEP-2026",
       status: "available",
       translations: {
         ar: {
@@ -706,7 +722,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-AUG-2026",
+      enrollmentUrl: "https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-SEP-2026",
       status: "available",
       translations: {
         ar: {
@@ -767,7 +783,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-AUG-2026",
+      enrollmentUrl: "https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-SEP-2026",
       status: "available",
       translations: {
         ar: {
@@ -824,7 +840,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-AUG-2026",
+      enrollmentUrl: "https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-SEP-2026",
       status: "available",
       translations: {
         ar: {

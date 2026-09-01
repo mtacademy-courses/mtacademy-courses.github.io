@@ -153,6 +153,36 @@
     });
   };
 
+  const resolvePromotionCopy = (promotionCopy, promotionConfig, locale) => {
+    const copy = promotionCopy && typeof promotionCopy === "object" ? promotionCopy : {};
+    const discountPercent = Number(promotionConfig && promotionConfig.discountPercent);
+    const endTimestamp = Date.parse(textValue(promotionConfig && promotionConfig.endsAt));
+    const timeZone = textValue(promotionConfig && promotionConfig.timeZone) || "UTC";
+    let discount = Number.isFinite(discountPercent) ? String(discountPercent) : "";
+    let endDate = "";
+
+    try {
+      if (Number.isFinite(discountPercent)) {
+        discount = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(discountPercent);
+      }
+      if (Number.isFinite(endTimestamp)) {
+        endDate = new Intl.DateTimeFormat(locale, {
+          dateStyle: "long",
+          timeZone,
+        }).format(new Date(endTimestamp - 1));
+      }
+    } catch {
+      if (Number.isFinite(endTimestamp)) endDate = new Date(endTimestamp - 1).toISOString().slice(0, 10);
+    }
+
+    return Object.fromEntries(Object.entries(copy).map(([key, value]) => [
+      key,
+      typeof value === "string"
+        ? value.replaceAll("{discount}", discount).replaceAll("{endDate}", endDate)
+        : value,
+    ]));
+  };
+
   const resolveSiteConfig = (rawSiteConfig, locale) => {
     const fallbackLocale = textValue(rawSiteConfig.defaultLocale || rawSiteConfig.locale || "ar").toLowerCase();
     const translation = localizedObject(rawSiteConfig.translations, locale, fallbackLocale);
@@ -166,6 +196,10 @@
     const translatedPayment = translation.payment && typeof translation.payment === "object"
       ? translation.payment
       : (rawSiteConfig.payment && typeof rawSiteConfig.payment === "object" ? rawSiteConfig.payment : {});
+    const rawPromotion = rawSiteConfig.promotion && typeof rawSiteConfig.promotion === "object"
+      ? rawSiteConfig.promotion
+      : {};
+    const promotionCopy = resolvePromotionCopy(translation.promotion, rawPromotion, locale);
 
     return {
       ...rawSiteConfig,
@@ -182,12 +216,8 @@
           || textValue(rawSiteConfig.contact && rawSiteConfig.contact.whatsapp),
       },
       promotion: {
-        ...(rawSiteConfig.promotion && typeof rawSiteConfig.promotion === "object"
-          ? rawSiteConfig.promotion
-          : {}),
-        ...(translation.promotion && typeof translation.promotion === "object"
-          ? translation.promotion
-          : {}),
+        ...rawPromotion,
+        ...promotionCopy,
       },
       paymentMethods,
       payment: { ...translatedPayment, methods: paymentMethods },
@@ -481,21 +511,97 @@
     container.hidden = topics.length === 0;
   };
 
+  const parsePromotionTimestamp = (value) => {
+    const timestamp = textValue(value);
+    if (!timestamp || !/(?:z|[+-]\d{2}:\d{2})$/i.test(timestamp)) return Number.NaN;
+    return Date.parse(timestamp);
+  };
+
+  const getPromotionState = (promotion, now = Date.now()) => {
+    const config = promotion && typeof promotion === "object" ? promotion : {};
+    const nowTimestamp = Number(now);
+    const startTimestamp = parsePromotionTimestamp(config.startsAt);
+    const endTimestamp = parsePromotionTimestamp(config.endsAt);
+    const discountPercent = Number(config.discountPercent);
+    const baseState = {
+      state: "invalid",
+      startTimestamp,
+      endTimestamp,
+      nowTimestamp,
+      remainingMilliseconds: 0,
+      millisecondsUntilStart: 0,
+      millisecondsUntilEnd: 0,
+      discountPercent,
+    };
+
+    if (config.enabled !== true) return { ...baseState, state: "disabled" };
+    if (!Number.isFinite(nowTimestamp)
+      || !Number.isFinite(startTimestamp)
+      || !Number.isFinite(endTimestamp)
+      || endTimestamp <= startTimestamp
+      || !Number.isFinite(discountPercent)
+      || discountPercent <= 0) {
+      return baseState;
+    }
+
+    if (nowTimestamp < startTimestamp) {
+      const millisecondsUntilStart = startTimestamp - nowTimestamp;
+      return {
+        ...baseState,
+        state: "upcoming",
+        remainingMilliseconds: millisecondsUntilStart,
+        millisecondsUntilStart,
+        millisecondsUntilEnd: endTimestamp - nowTimestamp,
+      };
+    }
+
+    if (nowTimestamp >= endTimestamp) return { ...baseState, state: "expired" };
+
+    const millisecondsUntilEnd = endTimestamp - nowTimestamp;
+    return {
+      ...baseState,
+      state: "active",
+      remainingMilliseconds: millisecondsUntilEnd,
+      millisecondsUntilEnd,
+    };
+  };
+
+  try {
+    Object.defineProperty(window, "MTAcademyPromotion", {
+      configurable: true,
+      value: Object.freeze({ getState: getPromotionState }),
+      writable: false,
+    });
+  } catch {
+    // The campaign remains functional if a host page reserves this test hook.
+  }
+
   const initPromotion = (initialConfig) => {
     const root = document.documentElement;
     const panel = document.querySelector("[data-promotion]");
-    const countdown = document.querySelector("[data-promotion-countdown]");
+    const flag = document.querySelector("[data-promotion-flag]");
+    const dialog = document.querySelector("#promotion-dialog");
+    const dialogClose = document.querySelector("#promotion-dialog-close");
+    const dialogCta = document.querySelector("#promotion-dialog-cta");
     const status = document.querySelector("[data-promotion-status]");
-    const discount = document.querySelector("[data-promotion-discount]");
-    const values = {
-      days: document.querySelector('[data-countdown-value="days"]'),
-      hours: document.querySelector('[data-countdown-value="hours"]'),
-      minutes: document.querySelector('[data-countdown-value="minutes"]'),
-      seconds: document.querySelector('[data-countdown-value="seconds"]'),
-    };
+    const countdowns = [...document.querySelectorAll("[data-promotion-countdown]")];
+    const discounts = [...document.querySelectorAll("[data-promotion-discount]")];
+    const values = Object.fromEntries(["days", "hours", "minutes", "seconds"].map((unit) => [
+      unit,
+      [...document.querySelectorAll(`[data-countdown-value="${unit}"]`)],
+    ]));
 
-    if (!panel || !countdown || Object.values(values).some((element) => !element)) {
+    if (!panel
+      || !(flag instanceof HTMLButtonElement)
+      || !(dialog instanceof HTMLDialogElement)
+      || !(dialogClose instanceof HTMLButtonElement)
+      || !(dialogCta instanceof HTMLAnchorElement)
+      || !countdowns.length
+      || Object.values(values).some((elements) => !elements.length)) {
       root.removeAttribute("data-promotion-active");
+      if (panel) panel.hidden = true;
+      if (flag instanceof HTMLElement) flag.hidden = true;
+      if (dialog instanceof HTMLElement) dialog.hidden = true;
       return { update: () => {} };
     }
 
@@ -504,11 +610,20 @@
     const MINUTE = 60 * SECOND;
     const HOUR = 60 * MINUTE;
     const DAY = 24 * HOUR;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const dialogs = [...document.querySelectorAll("dialog")];
+    const memorySeenCampaigns = new Set();
     let promotion = {};
-    let endTimestamp = Number.NaN;
+    let promotionState = getPromotionState(promotion);
     let intervalId = null;
-    let expirationTimeoutId = null;
+    let boundaryTimeoutId = null;
+    let autoOpenTimeoutId = null;
+    let closeTimeoutId = null;
+    let openFrameId = null;
     let isActive = false;
+    let autoOpenAttemptedId = "";
+    let focusReturnTarget = null;
+    let restoreFocusAfterClose = true;
     let numberFormatter = new Intl.NumberFormat("en", {
       minimumIntegerDigits: 2,
       useGrouping: false,
@@ -520,10 +635,23 @@
       intervalId = null;
     };
 
-    const clearExpirationTimer = () => {
-      if (expirationTimeoutId === null) return;
-      window.clearTimeout(expirationTimeoutId);
-      expirationTimeoutId = null;
+    const clearBoundaryTimer = () => {
+      if (boundaryTimeoutId === null) return;
+      window.clearTimeout(boundaryTimeoutId);
+      boundaryTimeoutId = null;
+    };
+
+    const clearAutoOpenTimer = () => {
+      if (autoOpenTimeoutId === null) return;
+      window.clearTimeout(autoOpenTimeoutId);
+      autoOpenTimeoutId = null;
+    };
+
+    const clearDialogTimers = () => {
+      if (closeTimeoutId !== null) window.clearTimeout(closeTimeoutId);
+      if (openFrameId !== null) window.cancelAnimationFrame(openFrameId);
+      closeTimeoutId = null;
+      openFrameId = null;
     };
 
     const removePromotionBadges = () => {
@@ -539,20 +667,6 @@
       });
     };
 
-    const deactivate = (announce = false) => {
-      const shouldAnnounce = announce && isActive;
-      isActive = false;
-      clearIntervalTimer();
-      clearExpirationTimer();
-      panel.hidden = true;
-      root.removeAttribute("data-promotion-active");
-      removePromotionBadges();
-
-      if (status && shouldAnnounce) {
-        status.textContent = textValue(promotion.expirationMessage);
-      }
-    };
-
     const formatValue = (value) => {
       try {
         return numberFormatter.format(value);
@@ -562,7 +676,7 @@
     };
 
     const renderRemainingTime = (remainingMilliseconds) => {
-      const totalSeconds = Math.max(1, Math.floor(remainingMilliseconds / SECOND));
+      const totalSeconds = Math.max(1, Math.ceil(remainingMilliseconds / SECOND));
       const remaining = {
         days: Math.floor(totalSeconds / (DAY / SECOND)),
         hours: Math.floor((totalSeconds % (DAY / SECOND)) / (HOUR / SECOND)),
@@ -571,34 +685,145 @@
       };
 
       Object.entries(remaining).forEach(([unit, value]) => {
-        values[unit].textContent = formatValue(value);
+        values[unit].forEach((element) => {
+          element.textContent = formatValue(value);
+        });
       });
     };
 
-    const updateCountdown = () => {
-      const remainingMilliseconds = endTimestamp - Date.now();
-      if (!Number.isFinite(remainingMilliseconds) || remainingMilliseconds <= 0) {
-        deactivate(true);
+    const clearCountdowns = () => {
+      Object.values(values).flat().forEach((element) => {
+        element.textContent = "";
+      });
+      countdowns.forEach((countdown) => countdown.removeAttribute("datetime"));
+    };
+
+    const sessionKey = () => {
+      const id = textValue(promotion.id);
+      return id ? `mt-academy-promotion-${id}-seen` : "";
+    };
+
+    const wasSeenThisSession = () => {
+      const key = sessionKey();
+      if (!key) return true;
+      if (memorySeenCampaigns.has(key)) return true;
+      try {
+        return window.sessionStorage.getItem(key) === "true";
+      } catch {
         return false;
       }
+    };
 
-      renderRemainingTime(remainingMilliseconds);
-      if (!isActive) {
-        root.dataset.promotionActive = "true";
-        panel.hidden = false;
-        isActive = true;
+    const markSeenThisSession = () => {
+      const key = sessionKey();
+      if (!key) return;
+      memorySeenCampaigns.add(key);
+      clearAutoOpenTimer();
+      try {
+        window.sessionStorage.setItem(key, "true");
+      } catch {
+        // The in-memory marker still prevents another automatic opening on this page.
       }
+    };
+
+    const anotherDialogIsOpen = () => dialogs.some((candidate) => candidate !== dialog && candidate.open);
+    const mobileNavigationIsOpen = () => document.body.classList.contains("mobile-nav-open")
+      || document.querySelector("#mobile-menu-toggle")?.getAttribute("aria-expanded") === "true";
+    const focusableSelector = "a[href], button:not([disabled]), [tabindex]:not([tabindex='-1'])";
+
+    const finishDialogClose = () => {
+      closeTimeoutId = null;
+      if (dialog.open) dialog.close();
+    };
+
+    const closePopup = (immediate = reducedMotion.matches, restoreFocus = true) => {
+      if (!dialog.open) return;
+      restoreFocusAfterClose = restoreFocus;
+      dialog.inert = true;
+      dialog.classList.remove("is-visible");
+      dialog.classList.add("is-closing");
+      if (closeTimeoutId !== null) window.clearTimeout(closeTimeoutId);
+      closeTimeoutId = null;
+      if (immediate) finishDialogClose();
+      else closeTimeoutId = window.setTimeout(finishDialogClose, 230);
+    };
+
+    const openPopup = (trigger = null, automatic = false) => {
+      const current = getPromotionState(promotion);
+      if (current.state !== "active" || anotherDialogIsOpen() || mobileNavigationIsOpen()) return false;
+      clearDialogTimers();
+      focusReturnTarget = trigger instanceof HTMLElement
+        ? trigger
+        : (document.activeElement instanceof HTMLElement && document.activeElement !== document.body
+          ? document.activeElement
+          : null);
+      restoreFocusAfterClose = true;
+      dialog.hidden = false;
+      dialog.inert = false;
+      dialog.removeAttribute("aria-hidden");
+      try {
+        dialog.showModal();
+      } catch {
+        return false;
+      }
+      markSeenThisSession();
+      document.body.classList.add("promotion-dialog-open");
+      lockPageScroll("promotion-dialog");
+      void dialog.offsetHeight;
+      openFrameId = window.requestAnimationFrame(() => {
+        openFrameId = null;
+        if (!dialog.open || !isActive) return;
+        dialog.classList.add("is-visible");
+        if (!automatic || document.activeElement === document.body) dialogClose.focus({ preventScroll: true });
+      });
       return true;
     };
 
-    const scheduleExpiration = () => {
-      clearExpirationTimer();
-      const delay = endTimestamp - Date.now();
-      if (!Number.isFinite(delay) || delay <= 0 || delay > MAX_TIMEOUT_DELAY) return;
-      expirationTimeoutId = window.setTimeout(() => {
-        expirationTimeoutId = null;
-        updateCountdown();
+    const scheduleAutomaticOpen = () => {
+      const id = textValue(promotion.id);
+      const delay = Number(promotion.autoOpenDelay);
+      if (!id
+        || autoOpenTimeoutId !== null
+        || autoOpenAttemptedId === id
+        || wasSeenThisSession()
+        || !Number.isFinite(delay)
+        || delay < 0) return;
+
+      autoOpenTimeoutId = window.setTimeout(() => {
+        autoOpenTimeoutId = null;
+        if (document.hidden) return;
+        autoOpenAttemptedId = id;
+        if (promotionState.state === "active") openPopup(null, true);
       }, delay);
+    };
+
+    const publishStateChange = (previousState) => {
+      if (previousState === promotionState.state) return;
+      document.dispatchEvent(new CustomEvent("mt:promotion-statechange", {
+        detail: { previousState, state: promotionState.state },
+      }));
+    };
+
+    const scheduleBoundary = () => {
+      clearBoundaryTimer();
+      const delay = promotionState.state === "upcoming"
+        ? promotionState.millisecondsUntilStart
+        : promotionState.millisecondsUntilEnd;
+      if (!Number.isFinite(delay) || delay <= 0) return;
+      boundaryTimeoutId = window.setTimeout(() => {
+        boundaryTimeoutId = null;
+        reconcilePromotionState();
+      }, Math.min(delay, MAX_TIMEOUT_DELAY));
+    };
+
+    const updateCountdown = () => {
+      const current = getPromotionState(promotion);
+      if (current.state !== "active") {
+        reconcilePromotionState();
+        return;
+      }
+      promotionState = current;
+      renderRemainingTime(current.remainingMilliseconds);
     };
 
     const startInterval = () => {
@@ -606,18 +831,72 @@
       intervalId = window.setInterval(updateCountdown, SECOND);
     };
 
+    const showActivePromotion = () => {
+      isActive = true;
+      root.dataset.promotionActive = "true";
+      panel.hidden = false;
+      flag.hidden = false;
+      dialog.hidden = false;
+      if (!dialog.open) dialog.inert = false;
+      dialog.removeAttribute("aria-hidden");
+      countdowns.forEach((countdown) => {
+        countdown.setAttribute("datetime", textValue(promotion.endsAt));
+      });
+      renderRemainingTime(promotionState.remainingMilliseconds);
+      startInterval();
+      scheduleBoundary();
+      scheduleAutomaticOpen();
+    };
+
+    const hidePromotion = (announceExpiration = false) => {
+      const wasActive = isActive;
+      isActive = false;
+      clearIntervalTimer();
+      clearBoundaryTimer();
+      clearAutoOpenTimer();
+      if (dialog.open) closePopup(true, false);
+      clearDialogTimers();
+      panel.hidden = true;
+      flag.hidden = true;
+      dialog.hidden = true;
+      dialog.inert = true;
+      dialog.setAttribute("aria-hidden", "true");
+      root.removeAttribute("data-promotion-active");
+      removePromotionBadges();
+      clearCountdowns();
+
+      if (status && announceExpiration && wasActive) {
+        status.textContent = textValue(promotion.expirationMessage);
+      }
+    };
+
+    function reconcilePromotionState() {
+      const previousState = promotionState.state;
+      promotionState = getPromotionState(promotion);
+
+      if (promotionState.state === "active") {
+        if (status && previousState !== "upcoming") status.textContent = "";
+        showActivePromotion();
+        if (status && previousState === "upcoming") {
+          status.textContent = textValue(promotion.activationMessage);
+        }
+      } else {
+        hidePromotion(promotionState.state === "expired");
+        if (promotionState.state === "upcoming") scheduleBoundary();
+      }
+
+      publishStateChange(previousState);
+    }
+
     const update = (siteConfig) => {
       const nextPromotion = siteConfig.promotion && typeof siteConfig.promotion === "object"
         ? siteConfig.promotion
         : {};
-      const endsAt = textValue(nextPromotion.endsAt);
-      const nextEndTimestamp = Date.parse(endsAt);
-      const deadlineChanged = nextEndTimestamp !== endTimestamp;
-      const discountPercent = Number(nextPromotion.discountPercent);
-      const locale = textValue(siteConfig.locale || siteConfig.language || "en");
-
+      const previousId = textValue(promotion.id);
       promotion = nextPromotion;
-      endTimestamp = nextEndTimestamp;
+      const locale = textValue(siteConfig.locale || siteConfig.language || "en");
+      const discountPercent = Number(promotion.discountPercent);
+
       try {
         numberFormatter = new Intl.NumberFormat(locale, {
           minimumIntegerDigits: 2,
@@ -630,29 +909,88 @@
         });
       }
 
-      if (countdown instanceof HTMLTimeElement) countdown.dateTime = endsAt;
-      if (discount) discount.textContent = Number.isFinite(discountPercent) ? `${discountPercent}%` : "";
+      discounts.forEach((element) => {
+        element.textContent = Number.isFinite(discountPercent) ? `${discountPercent}%` : "";
+      });
+      dialogClose.setAttribute("aria-label", textValue(promotion.closeLabel));
+      flag.setAttribute("aria-label", textValue(promotion.floatingOpenLabel));
 
-      if (nextPromotion.enabled !== true
-        || !Number.isFinite(nextEndTimestamp)
-        || !Number.isFinite(discountPercent)
-        || discountPercent <= 0) {
-        deactivate(false);
-        return;
+      if (previousId && previousId !== textValue(promotion.id)) {
+        autoOpenAttemptedId = "";
+        clearAutoOpenTimer();
+        if (dialog.open) closePopup(true, false);
       }
 
-      if (status) status.textContent = "";
-      if (!updateCountdown()) return;
-      startInterval();
-      if (deadlineChanged || expirationTimeoutId === null) scheduleExpiration();
+      reconcilePromotionState();
     };
 
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && isActive) updateCountdown();
+    flag.addEventListener("click", () => openPopup(flag, false));
+    dialogClose.addEventListener("click", () => closePopup());
+    dialogCta.addEventListener("click", () => closePopup(true, false));
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closePopup();
+    });
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const focusable = [...dialog.querySelectorAll(focusableSelector)]
+        .filter((element) => element instanceof HTMLElement && !element.hidden && !element.inert);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (!focusable.includes(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+    dialog.addEventListener("click", (event) => {
+      if (event.target !== dialog) return;
+      const bounds = dialog.getBoundingClientRect();
+      const inside = event.clientX >= bounds.left
+        && event.clientX <= bounds.right
+        && event.clientY >= bounds.top
+        && event.clientY <= bounds.bottom;
+      if (!inside) closePopup();
+    });
+    dialog.addEventListener("close", () => {
+      clearDialogTimers();
+      dialog.classList.remove("is-visible", "is-closing");
+      document.body.classList.remove("promotion-dialog-open");
+      unlockPageScroll("promotion-dialog");
+      dialog.hidden = !isActive;
+      dialog.inert = !isActive;
+      if (isActive) dialog.removeAttribute("aria-hidden");
+      else dialog.setAttribute("aria-hidden", "true");
+      if (restoreFocusAfterClose && focusReturnTarget && focusReturnTarget.isConnected && !focusReturnTarget.hidden) {
+        focusReturnTarget.focus({ preventScroll: true });
+      }
+      focusReturnTarget = null;
+      restoreFocusAfterClose = true;
     });
 
+    const reconcileWhenAvailable = () => {
+      if (!document.hidden) reconcilePromotionState();
+    };
+    const closeForCourseNavigation = () => {
+      if (!dialog.open) return;
+      const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      if (params.has(COURSE_HASH_KEY)) closePopup(true, false);
+    };
+
+    document.addEventListener("visibilitychange", reconcileWhenAvailable);
+    window.addEventListener("pageshow", reconcileWhenAvailable);
+    window.addEventListener("focus", reconcileWhenAvailable);
+    window.addEventListener("hashchange", closeForCourseNavigation);
+    window.addEventListener("popstate", closeForCourseNavigation);
+
     update(initialConfig);
-    return { update };
+    return { update, getState: () => ({ ...promotionState }) };
   };
 
   const initHeaderMotion = () => {
@@ -3033,6 +3371,12 @@
     let reviewsController = { update: () => {} };
     let promotionController = { update: () => {} };
     const isErrorPage = document.body.dataset.page === "404";
+
+    document.addEventListener("mt:promotion-statechange", (event) => {
+      if (!event.detail || event.detail.state !== "active") return;
+      catalogController.update(courses, siteConfig, copy, dialogController.open);
+      dialogController.refresh();
+    });
 
     const hydrateLocale = (locale) => {
       replaceObjectContents(siteConfig, resolveSiteConfig(rawSiteConfig, locale));
