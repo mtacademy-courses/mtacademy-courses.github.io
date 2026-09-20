@@ -127,7 +127,7 @@ When adding a course:
 
 1. Copy an existing course object.
 2. Assign a unique `id` and URL-safe `slug`.
-3. Add the course image to `assets/images/courses/`.
+3. Add the course image to `assets/images/courses/` as a transparent WebP cutout.
 4. Update the image path, alternative text, width, and height.
 5. Provide both Arabic and English translations for every visible field.
 6. Use complete `https://` URLs for enrollment links.
@@ -139,10 +139,12 @@ Do not publish prices, discounts, student counts, certificates, or similar claim
 
 ## Image guidelines
 
-- Course artwork: `1200 × 1200` WebP, optimized for the web and using the filename configured in the course object
+- Course artwork: `1200 × 1200` WebP with alpha transparency, optimized for the web and using the filename configured in the course object
 - Main logo: `assets/images/brand/mt-academy-logo.jpg` at `1000 × 1000`
 - Social preview: `assets/images/brand/social-preview.png` at `1200 × 630`
 - Payment artwork: `720 × 420` WebP
+
+Course artwork should retain the complete product-box composition while keeping the external studio background transparent. Preserve clean anti-aliased edges and enough transparent space around the product so `object-fit: contain` can display it without cropping, stretching, or exposing a conflicting rectangular background.
 
 Preserve exact filename casing because GitHub Pages paths are case-sensitive. When replacing an image, update its configured dimensions and localized alternative text when necessary.
 
