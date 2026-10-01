@@ -28,11 +28,11 @@
       }
     ],
     promotion: {
-      id: "september-2026-30-off",
+      id: "october-2026-30-off",
       enabled: true,
       discountPercent: 30,
-      startsAt: "2026-09-01T00:00:00+03:00",
-      endsAt: "2026-10-01T00:00:00+03:00",
+      startsAt: "2026-10-01T00:00:00+03:00",
+      endsAt: "2026-11-01T00:00:00+02:00",
       timeZone: "Africa/Cairo",
       target: "#courses",
       autoOpenDelay: 1500
@@ -189,11 +189,11 @@
           label: "تواصل عبر واتساب"
         },
         promotion: {
-          offerLabel: "عرض سبتمبر لفترة محدودة",
-          floatingLabel: "خصم {discount}% • عرض سبتمبر",
-          floatingOpenLabel: "فتح تفاصيل عرض سبتمبر بخصم {discount}%",
+          offerLabel: "عرض أكتوبر لفترة محدودة",
+          floatingLabel: "خصم {discount}% • عرض أكتوبر",
+          floatingOpenLabel: "فتح تفاصيل عرض أكتوبر بخصم {discount}%",
           headline: "خصم {discount}% على جميع كورسات MT Academy المتاحة",
-          supportingText: "اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض سبتمبر.",
+          supportingText: "اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض أكتوبر.",
           popupSupportingText: "ابدأ رحلتك التعليمية الآن واستفد من خصم {discount}% على جميع الكورسات المتاحة قبل انتهاء العرض.",
           countdownIntro: "متبقي على انتهاء العرض",
           daysLabel: "يوم",
@@ -202,11 +202,11 @@
           secondsLabel: "ثانية",
           ctaLabel: "احصل على خصم {discount}%",
           courseBadge: "خصم {discount}%",
-          closeLabel: "إغلاق عرض سبتمبر",
+          closeLabel: "إغلاق عرض أكتوبر",
           validityText: "العرض ساري حتى نهاية يوم {endDate}.",
           linkClarification: "اختر الكورس المناسب واستخدم خيار التسجيل المتاح للحصول على تفاصيل العرض.",
-          activationMessage: "عرض سبتمبر متاح الآن.",
-          expirationMessage: "انتهى عرض سبتمبر."
+          activationMessage: "عرض أكتوبر متاح الآن.",
+          expirationMessage: "انتهى عرض أكتوبر."
         },
         hero: {
           eyebrow: "تعلّم البرمجة باللغة العربية",
@@ -368,11 +368,11 @@
           label: "Contact on WhatsApp"
         },
         promotion: {
-          offerLabel: "SEPTEMBER LIMITED-TIME OFFER",
-          floatingLabel: "{discount}% OFF • September offer",
-          floatingOpenLabel: "Open the {discount}% off September offer",
+          offerLabel: "OCTOBER LIMITED-TIME OFFER",
+          floatingLabel: "{discount}% OFF • October offer",
+          floatingOpenLabel: "Open the {discount}% off October offer",
           headline: "Get {discount}% off all available MT Academy courses",
-          supportingText: "Choose the right course and start building your skills before the September offer ends.",
+          supportingText: "Choose the right course and start building your skills before the October offer ends.",
           popupSupportingText: "Start learning today and save {discount}% on all available courses before the offer ends.",
           countdownIntro: "Offer ends in",
           daysLabel: "Days",
@@ -381,11 +381,11 @@
           secondsLabel: "Seconds",
           ctaLabel: "Get {discount}% off",
           courseBadge: "{discount}% OFF",
-          closeLabel: "Close September offer",
+          closeLabel: "Close October offer",
           validityText: "Offer valid through {endDate}.",
           linkClarification: "Choose a course and use its enrollment option to access the offer details.",
-          activationMessage: "The September offer is now available.",
-          expirationMessage: "The September offer has ended."
+          activationMessage: "The October offer is now available.",
+          expirationMessage: "The October offer has ended."
         },
         hero: {
           eyebrow: "Learn programming in Arabic",
