@@ -549,7 +549,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-SEP-2026",
+      enrollmentUrl: "https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-OCT-2026",
       status: "available",
       translations: {
         ar: {
@@ -608,7 +608,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-SEP-2026",
+      enrollmentUrl: "https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-OCT-2026",
       status: "available",
       translations: {
         ar: {
@@ -665,7 +665,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-SEP-2026",
+      enrollmentUrl: "https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-OCT-2026",
       status: "available",
       translations: {
         ar: {
@@ -722,7 +722,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-SEP-2026",
+      enrollmentUrl: "https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-OCT-2026",
       status: "available",
       translations: {
         ar: {
@@ -783,7 +783,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-SEP-2026",
+      enrollmentUrl: "https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-OCT-2026",
       status: "available",
       translations: {
         ar: {
@@ -840,7 +840,7 @@
       },
       price: null,
       featured: false,
-      enrollmentUrl: "https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-SEP-2026",
+      enrollmentUrl: "https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-OCT-2026",
       status: "available",
       translations: {
         ar: {
