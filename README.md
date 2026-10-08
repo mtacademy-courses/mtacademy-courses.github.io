@@ -213,6 +213,16 @@ Course artwork should retain the complete product-box composition while keeping 
 
 Preserve exact filename casing because GitHub Pages paths are case-sensitive. When replacing an image, update its configured dimensions and localized alternative text when necessary.
 
+## Check production asset paths
+
+Before publishing, run:
+
+```bash
+node scripts/check-asset-paths.cjs
+```
+
+This dependency-free check compares configured and static asset paths against exact filenames in the Git index. It catches case-only mismatches that can work on macOS but return 404 on GitHub Pages, and detects assets that have not been added to Git. Stage new assets before running it.
+
 ## Quality checklist
 
 Before publishing changes, verify:

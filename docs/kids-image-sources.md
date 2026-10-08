@@ -1,6 +1,6 @@
 # Kids Bootcamp image sources
 
-All session images are provided by MT Academy. They represent actual sessions, not testimonials. Originals in `assets/images/Kids/` and the user's source directory remain unchanged. The website uses optimized derivatives under `assets/images/kids/`.
+All session images are provided by MT Academy. They represent actual sessions, not testimonials. Originals in `assets/images/kids/` and the user's source directory remain unchanged. The website uses optimized derivatives under `assets/images/kids/`.
 
 | Original | Web filename (under `sessions/`) | Content and use |
 | --- | --- | --- |
