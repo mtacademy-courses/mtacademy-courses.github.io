@@ -6,20 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f6f2">
   <meta name="color-scheme" content="light">
-  <title>كورسات البرمجة بالعربي | MT Academy</title>
+  <title>مسارات تعلّم البرمجة | MT Academy</title>
   <meta name="description"
-    content="اكتشف كورسات MT Academy باللغة العربية في هندسة البرمجيات، وقواعد البيانات، وتطوير الويب، وKotlin، وAndroid، وبناء REST APIs.">
+    content="اكتشف كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.">
   <link rel="canonical" href="https://mtacademy-courses.github.io/">
   <link rel="alternate" hreflang="ar" href="https://mtacademy-courses.github.io/">
-  <link rel="alternate" hreflang="en" href="https://mtacademy-courses.github.io/">
+  <link rel="alternate" hreflang="en" href="https://mtacademy-courses.github.io/?lang=en">
   <link rel="alternate" hreflang="x-default" href="https://mtacademy-courses.github.io/">
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ar_EG">
   <meta property="og:site_name" content="MT Academy">
-  <meta property="og:title" content="كورسات البرمجة بالعربي | MT Academy">
+  <meta property="og:title" content="مسارات تعلّم البرمجة | MT Academy">
   <meta property="og:description"
-    content="اكتشف كورسات MT Academy باللغة العربية في هندسة البرمجيات، وقواعد البيانات، وتطوير الويب، وKotlin، وAndroid، وبناء REST APIs.">
+    content="اكتشف كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.">
   <meta property="og:url" content="https://mtacademy-courses.github.io/">
   <meta property="og:image" content="https://mtacademy-courses.github.io/assets/images/brand/social-preview.png">
   <meta property="og:image:width" content="1200">
@@ -27,9 +27,9 @@
   <meta property="og:image:alt" content="MT Academy — كورسات برمجة باللغة العربية">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="كورسات البرمجة بالعربي | MT Academy">
+  <meta name="twitter:title" content="مسارات تعلّم البرمجة | MT Academy">
   <meta name="twitter:description"
-    content="اكتشف كورسات MT Academy باللغة العربية في هندسة البرمجيات، وقواعد البيانات، وتطوير الويب، وKotlin، وAndroid، وبناء REST APIs.">
+    content="اكتشف كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.">
   <meta name="twitter:image" content="https://mtacademy-courses.github.io/assets/images/brand/social-preview.png">
   <meta name="twitter:image:alt" content="MT Academy — كورسات برمجة باللغة العربية">
 
@@ -37,7 +37,12 @@
   <link rel="stylesheet" href="./assets/css/styles.css">
 
   <script id="structured-data" type="application/ld+json">{}</script>
+  <script defer src="./assets/js/site-core.js"></script>
+  <script defer src="./assets/js/site-data.js"></script>
   <script defer src="./assets/js/courses-data.js"></script>
+  <script defer src="./assets/js/kids-data.js"></script>
+  <script defer src="./assets/js/backend-diploma-data.js"></script>
+  <script defer src="./assets/js/learning-paths-data.js"></script>
   <script defer src="./assets/js/app.js"></script>
 </head>
 
@@ -67,6 +72,8 @@
           href="#payment">طرق الدفع</a>
         <a class="nav-link" data-nav-link data-config-text="navigation.5.label" data-config-href="navigation.5.href"
           href="#contact">تواصل معنا</a>
+        <a class="nav-link" data-config-text="navigation.6.label" data-config-href="navigation.6.href" href="/kids-coding-bootcamp/">برمجة الأطفال</a>
+        <a class="nav-link" data-config-text="navigation.7.label" data-config-href="navigation.7.href" href="/backend-development-diploma/">دبلومة Backend</a>
       </nav>
 
       <div class="language-switcher language-switcher--desktop" data-language-switcher role="group"
@@ -105,6 +112,8 @@
           data-config-href="navigation.4.href" href="#payment">طرق الدفع</a>
         <a class="mobile-nav__link" data-nav-link data-config-text="navigation.5.label"
           data-config-href="navigation.5.href" href="#contact">تواصل معنا</a>
+        <a class="mobile-nav__link" data-config-text="navigation.6.label" data-config-href="navigation.6.href" href="/kids-coding-bootcamp/">برمجة الأطفال</a>
+        <a class="mobile-nav__link" data-config-text="navigation.7.label" data-config-href="navigation.7.href" href="/backend-development-diploma/">دبلومة Backend</a>
         <div class="language-switcher language-switcher--mobile" data-language-switcher role="group"
           aria-label="اختيار اللغة">
           <button class="language-switcher__option is-active" type="button" data-language-option="ar"
@@ -135,7 +144,7 @@
           </div>
 
           <div class="promotion-panel__message">
-            <h2 id="promotion-title" data-config-text="promotion.headline">عرض على جميع الكورسات المتاحة</h2>
+            <h2 id="promotion-title" data-config-text="promotion.headline">عرض على كورسات Udemy المتاحة</h2>
             <p data-config-text="promotion.supportingText">
               اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض أكتوبر.
             </p>
@@ -182,8 +191,7 @@
         <p class="eyebrow" data-config-text="hero.eyebrow">تعلّم البرمجة باللغة العربية</p>
         <h1 id="hero-title" data-config-text="hero.title">طوّر مهاراتك البرمجية مع MT Academy</h1>
         <p class="hero__description" data-config-text="hero.description">
-          تصفّح كورسات البرمجة المتاحة باللغة العربية، من أساسيات الويب وقواعد البيانات إلى Kotlin وتطوير Android وبناء
-          REST APIs.
+          اختَر مسارك مع MT Academy: كورسات برمجة على Udemy لتطوير مهاراتك، أو محاضرات برمجة أونلاين لايف للأطفال والمراهقين من 6 إلى 18 سنة.
         </p>
         <div class="hero__actions">
           <a class="button" href="#courses" data-config-href="hero.cta.href">
@@ -206,11 +214,71 @@
       </div>
     </section>
 
+    <section class="learning-paths" id="learning-paths" aria-labelledby="learning-paths-title">
+      <div class="container">
+        <div class="learning-paths__heading">
+          <p class="eyebrow" data-path-text="eyebrow">اختَر طريقك</p>
+          <h2 id="learning-paths-title" data-path-text="title">ثلاث مسارات للتعلّم. أكاديمية واحدة.</h2>
+        </div>
+        <div class="learning-paths__grid">
+          <article class="learning-path learning-path--udemy">
+            <div class="learning-path__copy">
+              <span class="learning-path__tag" data-path-text="udemyTag">تطوير مهاراتك</span>
+              <h3 data-path-text="udemyTitle">كورسات Udemy</h3>
+              <p data-path-text="udemyDescription">كورسات برمجة باللغة العربية في هندسة البرمجيات وقواعد البيانات وتطوير الويب والموبايل.</p>
+              <a class="button button--secondary" href="#courses" data-path-href="udemy" data-path-text="udemyCta">تصفّح كورسات Udemy</a>
+            </div>
+            <div class="learning-path__visual learning-path__visual--udemy">
+              <div class="learning-path__course-stack" role="img" aria-label="أغلفة كورسات MT Academy على Udemy: SOLID وKotlin وHTML" data-path-aria="udemyImageAlt">
+                <svg class="learning-path__course-cover learning-path__course-cover--solid" viewBox="185 25 850 1130" aria-hidden="true" focusable="false">
+                  <image href="/assets/images/courses/master-solid-principles.webp" width="1200" height="1200" />
+                </svg>
+                <svg class="learning-path__course-cover learning-path__course-cover--kotlin" viewBox="178 20 842 1135" aria-hidden="true" focusable="false">
+                  <image href="/assets/images/courses/kotlin-for-beginners.webp" width="1200" height="1200" />
+                </svg>
+                <svg class="learning-path__course-cover learning-path__course-cover--html" viewBox="160 10 890 1180" aria-hidden="true" focusable="false">
+                  <image href="/assets/images/courses/learn-html-full-tutorial.webp" width="1200" height="1200" />
+                </svg>
+              </div>
+            </div>
+          </article>
+          <article class="learning-path learning-path--kids">
+            <div class="learning-path__copy">
+              <span class="learning-path__tag" data-path-text="kidsTag">للأطفال والمراهقين · من 6 إلى 18 سنة</span>
+              <h3 data-path-text="kidsTitle">Kids Coding Bootcamp</h3>
+              <p data-path-text="kidsDescription">محاضرات برمجة أونلاين لايف، تفاعل مباشر، وتطبيق عملي 80% من الألعاب إلى Python.</p>
+              <span class="learning-path__offer" data-kids-offer hidden></span>
+              <a class="button" href="/kids-coding-bootcamp/" data-path-href="kids" data-path-text="kidsCta">اكتشف برمجة الأطفال</a>
+            </div>
+            <div class="learning-path__visual">
+              <div class="learning-path__box-stage">
+                <img src="/assets/images/kids/brand/kids-coding-bootcamp-box.webp" width="1254" height="1254"
+                  alt="غلاف Box الخاص ببرنامج Kids Coding Bootcamp من MT Academy" data-path-image="kids" loading="lazy" decoding="async">
+              </div>
+            </div>
+          </article>
+          <article class="learning-path learning-path--backend" data-path-status="backend-diploma" data-offering-status="coming-soon">
+            <div class="learning-path__copy">
+              <span class="coming-soon-badge" data-path-text="backend.status">قريبًا إن شاء الله</span>
+              <span class="learning-path__tag" data-path-text="backend.tag">المسار القادم · للمبتدئين من الصفر</span>
+              <h3 data-path-text="backend.title">دبلومة تطوير Backend</h3>
+              <p class="learning-path__technologies" dir="ltr">Java &amp; Spring Boot</p>
+              <p data-path-text="backend.description">مسار للمبتدئين من الصفر لتعلّم تطوير Backend باستخدام Java وSpring Boot. هنعلن قريبًا عن تفاصيل الدبلومة.</p>
+              <a class="button" href="/backend-development-diploma/" data-path-href="backend-diploma" data-path-text="backend.cta">اعرف عن الدبلومة القادمة</a>
+            </div>
+            <div class="learning-path__visual learning-path__visual--backend">
+              <img class="backend-illustration" src="/assets/images/backend/backend-announcement.svg" width="1200" height="800" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="courses-section section" id="courses" aria-labelledby="courses-title">
       <div class="container">
         <div class="section-heading section-heading--centered">
           <p class="eyebrow" data-config-text="catalog.eyebrow">الكورسات المتاحة</p>
-          <h2 id="courses-title" data-config-text="catalog.title">اختر الكورس المناسب لك</h2>
+          <h2 id="courses-title" data-config-text="catalog.title">كورسات البرمجة على Udemy</h2>
           <p data-config-text="catalog.description">
             ابحث بالعنوان أو المجال أو الموضوع، ثم انتقل إلى صفحة الكورس على Udemy.
           </p>
@@ -252,25 +320,25 @@
             <p>يعمل البحث والتصفية عند تفعيل JavaScript. يمكنك التسجيل مباشرة من الروابط التالية:</p>
             <ul>
               <li><a
-                  href="https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-SEP-2026"
+                  href="https://www.udemy.com/course/master-solid-principles-arabic/?couponCode=MT-SOLID-OCT-2026"
                   target="_blank" rel="noopener noreferrer">Master
                   SOLID Principles [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-SEP-2026"
+                  href="https://www.udemy.com/course/master-oracle-database-sql-arabic/?couponCode=MT-ORACLE-OCT-2026"
                   target="_blank" rel="noopener noreferrer">Master
                   Oracle Database SQL [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-SEP-2026"
+                  href="https://www.udemy.com/course/learn-html-full-tutorial-arabic/?couponCode=MT-HTML-OCT-2026"
                   target="_blank" rel="noopener noreferrer">Learn
                   HTML – Full Tutorial [Arabic]</a></li>
-              <li><a href="https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-SEP-2026"
+              <li><a href="https://www.udemy.com/course/kotlin-course-arabic/?couponCode=MT-KOTLIN-OCT-2026"
                   target="_blank" rel="noopener noreferrer">Kotlin for
                   Beginners: From Zero to Hero [Arabic]</a></li>
               <li><a
-                  href="https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-SEP-2026"
+                  href="https://www.udemy.com/course/android-kotlin-development-from-zero-to-hero-2022-arabic/?couponCode=MT-ANDROID-OCT-2026"
                   target="_blank" rel="noopener noreferrer">Android
                   Kotlin Development: From Zero to Hero [Arabic]</a></li>
-              <li><a href="https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-SEP-2026"
+              <li><a href="https://www.udemy.com/course/ktor-restapi-arabic-2024/?couponCode=MT-KTOR-OCT-2026"
                   target="_blank" rel="noopener noreferrer">Build a
                   REST API with Ktor – CRUD API [Arabic]</a></li>
             </ul>
@@ -442,12 +510,14 @@
       <nav class="footer-column" aria-labelledby="footer-nav-title">
         <h2 id="footer-nav-title" data-config-text="footer.navigationTitle">روابط سريعة</h2>
         <ul>
-          <li><a data-config-text="navigation.0.label" href="#top">الرئيسية</a></li>
-          <li><a data-config-text="navigation.1.label" href="#courses">الكورسات</a></li>
-          <li><a data-config-text="navigation.2.label" href="#instructor">المدرّس</a></li>
-          <li><a data-config-text="navigation.3.label" href="#reviews">التقييمات</a></li>
-          <li><a data-config-text="navigation.4.label" href="#payment">طرق الدفع</a></li>
-          <li><a data-config-text="navigation.5.label" href="#contact">تواصل معنا</a></li>
+          <li><a data-config-text="navigation.0.label" data-config-href="navigation.0.href" href="#top">الرئيسية</a></li>
+          <li><a data-config-text="navigation.1.label" data-config-href="navigation.1.href" href="#courses">الكورسات</a></li>
+          <li><a data-config-text="navigation.2.label" data-config-href="navigation.2.href" href="#instructor">المدرّس</a></li>
+          <li><a data-config-text="navigation.3.label" data-config-href="navigation.3.href" href="#reviews">التقييمات</a></li>
+          <li><a data-config-text="navigation.4.label" data-config-href="navigation.4.href" href="#payment">طرق الدفع</a></li>
+          <li><a data-config-text="navigation.5.label" data-config-href="navigation.5.href" href="#contact">تواصل معنا</a></li>
+          <li><a data-config-text="navigation.6.label" data-config-href="navigation.6.href" href="/kids-coding-bootcamp/">برمجة الأطفال</a></li>
+          <li><a data-config-text="navigation.7.label" data-config-href="navigation.7.href" href="/backend-development-diploma/">دبلومة Backend</a></li>
         </ul>
       </nav>
 
@@ -519,7 +589,7 @@
         <strong data-promotion-discount dir="ltr"></strong>
       </p>
       <h2 class="promotion-dialog__title" id="promotion-dialog-title" data-config-text="promotion.headline">
-        عرض على جميع كورسات MT Academy المتاحة
+        عرض على كورسات MT Academy المتاحة على Udemy
       </h2>
       <p class="promotion-dialog__description" id="promotion-dialog-description"
         data-config-text="promotion.popupSupportingText">

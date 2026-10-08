@@ -1,0 +1,31 @@
+/* A finished announcement page, using the academy's shared identity. */
+body[data-page="backend"] { background: var(--background); }
+.diploma-main { padding-block: 8.5rem 4rem; }
+.diploma-hero { display: grid; align-items: center; gap: 2.5rem; }
+.diploma-hero__copy { min-width: 0; }
+.diploma-eyebrow { color: var(--green); font-size: .8rem; font-weight: 750; margin-block: 1.4rem .75rem; }
+.diploma-hero h1 { margin-block: 0 1.5rem; font-size: clamp(2.15rem, 4.5vw, 4rem); color: var(--green); line-height: 1.2; letter-spacing: -.04em; }
+.diploma-hero h1 span { display: block; }
+.diploma-hero__technologies { font-size: .66em; line-height: 1.3; margin-block-start: .65rem; letter-spacing: -.015em; text-align: start; }
+.diploma-audience { display: inline-block; padding: .55rem .85rem; border: 1px solid var(--border); border-radius: .6rem; color: var(--green); background: white; font-size: .9rem; font-weight: 800; }
+.diploma-description { color: var(--text-muted); max-width: 36rem; line-height: 1.8; margin-block: 1.25rem; }
+.diploma-announcement { padding-block: .75rem; padding-inline-start: 1rem; border-inline-start: 3px solid var(--gold); font-weight: 800; color: var(--green); }
+.diploma-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: 1.75rem; }
+.diploma-hero__visual { padding: .75rem; margin: 0; border: 1px solid var(--gold); border-radius: 1.5rem; background: white; box-shadow: 0 1.5rem 3rem #1a3a2e12; }
+.diploma-related { margin-block-start: 4rem; padding-block-start: 2.5rem; border-block-start: 1px solid var(--border); }
+.diploma-related h2 { color: var(--green); font-size: 1.4rem; margin-block-end: 1.5rem; }
+.diploma-related__grid { display: grid; gap: 1rem; }
+.diploma-related__card { display: grid; gap: .5rem; padding: 1.5rem; background: white; border: 1px solid var(--border); border-radius: 1rem; }
+.diploma-related__card h3 { color: var(--green); margin: 0; font-size: 1.15rem; }
+.diploma-related__card p { margin: 0; color: var(--text-muted); font-size: .9rem; }
+.diploma-related__card a { margin-block-start: .35rem; font-weight: 800; color: var(--green); text-decoration: underline; text-underline-offset: .25rem; }
+.diploma-footer { display: grid; gap: 1.5rem; padding-block: 2rem; }
+.diploma-footer p { color: #ccc6bf; margin: 0; font-size: .8rem; }
+.diploma-footer nav { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; font-size: .85rem; }
+.diploma-footer [aria-current="page"] { color: var(--gold-light); }
+.desktop-nav [data-current-page] { color: var(--green); box-shadow: inset 0 -2px 0 var(--gold); }
+@media (min-width: 42rem) { .diploma-related__grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 64rem) { .diploma-hero { grid-template-columns: 1.08fr .92fr; gap: 3.5rem; } }
+@media (max-width: 29.99rem) { .diploma-main { padding-block-start: 7rem; } .diploma-actions { flex-direction: column; } .diploma-actions .button { width: 100%; } }
+@media (prefers-reduced-motion: no-preference) { .diploma-hero__copy, .diploma-hero__visual { animation: diploma-enter .45s both; } .diploma-hero__visual { animation-delay: .1s; } @keyframes diploma-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } } }
+html[dir="rtl"] .diploma-hero__technologies { text-align: right; }

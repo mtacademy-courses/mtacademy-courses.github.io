@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#ffffff" stroke-opacity=".05"/></pattern>
+    <linearGradient id="surface" x2="1" y2="1"><stop stop-color="#244d3d"/><stop offset="1" stop-color="#102d24"/></linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="36" fill="url(#surface)"/>
+  <rect width="1200" height="800" rx="36" fill="url(#grid)"/>
+  <circle cx="1080" cy="70" r="180" fill="#e8c96a" opacity=".05"/>
+  <circle cx="90" cy="760" r="200" fill="#e8c96a" opacity=".04"/>
+  <rect x="105" y="100" width="990" height="600" rx="28" fill="#f8f6f2"/>
+  <path d="M105 170H1095" stroke="#e8e4de" stroke-width="2"/>
+  <circle cx="142" cy="135" r="8" fill="#c9a84c"/><circle cx="170" cy="135" r="8" fill="#b2bcae"/><circle cx="198" cy="135" r="8" fill="#d5d8cf"/>
+  <text x="1038" y="144" text-anchor="end" font-family="Arial,sans-serif" font-size="22" fill="#1a3a2e" letter-spacing="3">MT ACADEMY</text>
+  <text x="600" y="310" text-anchor="middle" font-family="monospace" font-size="106" font-weight="bold" fill="#c9a84c">&lt;/&gt;</text>
+  <rect x="272" y="373" width="220" height="110" rx="22" fill="#1a3a2e"/>
+  <text x="382" y="444" text-anchor="middle" font-family="Arial,sans-serif" font-size="47" font-weight="bold" fill="#ffffff">Java</text>
+  <path d="M520 428H575M561 412L577 428L561 444" fill="none" stroke="#c9a84c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="605" y="373" width="340" height="110" rx="22" fill="#e8c96a"/>
+  <text x="775" y="444" text-anchor="middle" font-family="Arial,sans-serif" font-size="47" font-weight="bold" fill="#1a3a2e">Spring Boot</text>
+  <text x="600" y="560" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#1a3a2e" letter-spacing="3">BACKEND DEVELOPMENT</text>
+  <path d="M465 613H735" stroke="#c9a84c" stroke-width="4" stroke-linecap="round"/>
+</svg>

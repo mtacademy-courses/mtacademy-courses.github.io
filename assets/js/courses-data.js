@@ -1,7 +1,7 @@
 /**
- * MT Academy content source of truth.
+ * MT Academy Udemy content source of truth.
  *
- * Shared facts and URLs live once at the top level. All Arabic and English UI
+ * Shared academy facts come from site-data.js. All Arabic and English Udemy UI
  * copy lives in `siteConfig.translations`; course copy lives in each course's
  * `translations` object. The renderer reads the single, deeply frozen global
  * `window.MTAcademyData`.
@@ -10,23 +10,7 @@
   "use strict";
 
   const siteConfig = {
-    brandName: "MT Academy",
-    siteUrl: "https://mtacademy-courses.github.io/",
-    defaultLocale: "ar",
-    locales: [
-      {
-        code: "ar",
-        label: "العربية",
-        shortLabel: "ع",
-        direction: "rtl"
-      },
-      {
-        code: "en",
-        label: "English",
-        shortLabel: "EN",
-        direction: "ltr"
-      }
-    ],
+    ...window.MTAcademySite,
     promotion: {
       id: "october-2026-30-off",
       enabled: true,
@@ -37,43 +21,12 @@
       target: "#courses",
       autoOpenDelay: 1500
     },
-    logo: {
-      src: "./assets/images/brand/mt-academy-logo.jpg",
-      alt: "MT Academy",
-      width: 1000,
-      height: 1000
-    },
-    colors: {
-      background: "#f8f6f2",
-      surface: "#ffffff",
-      primary: "#c9a84c",
-      accent: "#0a0a0a",
-      text: "#0a0a0a"
-    },
     seo: {
       canonicalUrl: "https://mtacademy-courses.github.io/",
       socialImage: "./assets/images/brand/social-preview.png"
     },
-    contact: {
-      whatsapp: "https://wa.me/201032105166",
-      email: "",
-      phone: "",
-      enrollmentUrl: "https://www.udemy.com/user/mohamed-tamer-15/"
-    },
-    socialLinks: [
-      {
-        id: "udemy",
-        platform: "Udemy",
-        url: "https://www.udemy.com/user/mohamed-tamer-15/"
-      }
-    ],
     instructorProfile: {
-      image: {
-        src: "./assets/images/Me.png",
-        width: 948,
-        height: 1659,
-        alt: "Mohamed Tamer"
-      },
+      ...window.MTAcademySite.instructorProfile,
       totalLearners: "21,682",
       totalReviews: "731"
     },
@@ -173,17 +126,19 @@
     translations: {
       ar: {
         seo: {
-          title: "كورسات البرمجة بالعربي | MT Academy",
-          description: "اكتشف كورسات MT Academy باللغة العربية في هندسة البرمجيات، وقواعد البيانات، وتطوير الويب، وKotlin، وAndroid، وبناء REST APIs.",
+          title: "مسارات تعلّم البرمجة | MT Academy",
+          description: "اكتشف كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.",
           socialImageAlt: "MT Academy — كورسات برمجة باللغة العربية"
         },
         navigation: [
           { label: "الرئيسية", href: "#top" },
-          { label: "الكورسات", href: "#courses" },
+          { label: "Udemy", href: "#courses" },
           { label: "المدرّس", href: "#instructor" },
           { label: "التقييمات", href: "#reviews" },
           { label: "طرق الدفع", href: "#payment" },
-          { label: "تواصل معنا", href: "#contact" }
+          { label: "تواصل معنا", href: "#contact" },
+          { label: "برمجة الأطفال", href: "/kids-coding-bootcamp/" },
+          { label: "دبلومة Backend", href: "/backend-development-diploma/" }
         ],
         headerCta: {
           label: "تواصل عبر واتساب"
@@ -192,9 +147,9 @@
           offerLabel: "عرض أكتوبر لفترة محدودة",
           floatingLabel: "خصم {discount}% • عرض أكتوبر",
           floatingOpenLabel: "فتح تفاصيل عرض أكتوبر بخصم {discount}%",
-          headline: "خصم {discount}% على جميع كورسات MT Academy المتاحة",
+          headline: "خصم {discount}% على كورسات MT Academy المتاحة على Udemy",
           supportingText: "اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض أكتوبر.",
-          popupSupportingText: "ابدأ رحلتك التعليمية الآن واستفد من خصم {discount}% على جميع الكورسات المتاحة قبل انتهاء العرض.",
+          popupSupportingText: "ابدأ رحلتك التعليمية الآن واستفد من خصم {discount}% على كورسات Udemy المتاحة قبل انتهاء العرض.",
           countdownIntro: "متبقي على انتهاء العرض",
           daysLabel: "يوم",
           hoursLabel: "ساعة",
@@ -211,7 +166,7 @@
         hero: {
           eyebrow: "تعلّم البرمجة باللغة العربية",
           title: "طوّر مهاراتك البرمجية مع MT Academy",
-          description: "تصفّح كورسات البرمجة المتاحة باللغة العربية، من أساسيات الويب وقواعد البيانات إلى Kotlin وتطوير Android وبناء REST APIs.",
+          description: "اختَر مسارك مع MT Academy: كورسات برمجة على Udemy لتطوير مهاراتك، أو محاضرات برمجة أونلاين لايف للأطفال والمراهقين من 6 إلى 18 سنة.",
           topics: ["هندسة البرمجيات", "قواعد البيانات", "تطوير الويب", "Kotlin", "Android", "REST APIs"],
           cta: {
             label: "استعرض الكورسات",
@@ -263,7 +218,7 @@
         },
         catalog: {
           eyebrow: "الكورسات المتاحة",
-          title: "اختر الكورس المناسب لك",
+          title: "كورسات البرمجة على Udemy",
           description: "ابحث بالعنوان أو المجال أو الموضوع، ثم انتقل إلى صفحة الكورس على Udemy.",
           allCoursesLabel: "كل الكورسات",
           searchLabel: "ابحث في الكورسات",
@@ -316,7 +271,7 @@
           items: []
         },
         footer: {
-          statement: "كورسات برمجة باللغة العربية من MT Academy.",
+          statement: "كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy.",
           navigationTitle: "روابط سريعة",
           categoriesTitle: "مجالات الكورسات",
           contactTitle: "تواصل معنا",
@@ -325,21 +280,13 @@
           copyright: "© 2026 MT Academy."
         },
         interface: {
-          skipToContentLabel: "انتقل إلى المحتوى الرئيسي",
-          openMenuLabel: "فتح قائمة التنقل",
-          closeMenuLabel: "إغلاق قائمة التنقل",
-          externalLinkLabel: "يفتح في نافذة جديدة",
-          languageSwitcherLabel: "تغيير اللغة",
-          primaryNavigationLabel: "التنقل الرئيسي",
-          mobileNavigationLabel: "التنقل على الهاتف",
+          ...window.MTAcademySite.translations.ar.interface,
           catalogControlsLabel: "أدوات البحث وتصفية الكورسات",
           categoryFilterLabel: "تصفية الكورسات حسب المجال",
           paymentMethodsLabel: "طرق الدفع المتاحة",
           courseRatingLabelTemplate: "تقييم {value} من {max} بناءً على {count} تقييم",
           reviewCountTemplate: "{count} تقييم",
           starRatingLabel: "التقييم بالنجوم",
-          brandHomeLabel: "MT Academy - الصفحة الرئيسية",
-          backToTopLabel: "العودة إلى أعلى الصفحة",
           heroTopicsLabel: "مجالات التعلّم"
         },
         errorPage: {
@@ -352,17 +299,19 @@
       },
       en: {
         seo: {
-          title: "Arabic Programming Courses | MT Academy",
-          description: "Explore MT Academy courses taught in Arabic across software engineering, databases, web development, Kotlin, Android, and REST API development.",
+          title: "Programming Learning Paths | MT Academy",
+          description: "Discover Udemy courses and live online kids coding from MT Academy, plus an upcoming Java and Spring Boot backend diploma for complete beginners.",
           socialImageAlt: "MT Academy — programming courses taught in Arabic"
         },
         navigation: [
           { label: "Home", href: "#top" },
-          { label: "Courses", href: "#courses" },
+          { label: "Udemy", href: "#courses" },
           { label: "Instructor", href: "#instructor" },
           { label: "Reviews", href: "#reviews" },
           { label: "Payment", href: "#payment" },
-          { label: "Contact", href: "#contact" }
+          { label: "Contact", href: "#contact" },
+          { label: "Kids coding", href: "/kids-coding-bootcamp/" },
+          { label: "Backend diploma", href: "/backend-development-diploma/" }
         ],
         headerCta: {
           label: "Contact on WhatsApp"
@@ -371,9 +320,9 @@
           offerLabel: "OCTOBER LIMITED-TIME OFFER",
           floatingLabel: "{discount}% OFF • October offer",
           floatingOpenLabel: "Open the {discount}% off October offer",
-          headline: "Get {discount}% off all available MT Academy courses",
+          headline: "Get {discount}% off available MT Academy courses on Udemy",
           supportingText: "Choose the right course and start building your skills before the October offer ends.",
-          popupSupportingText: "Start learning today and save {discount}% on all available courses before the offer ends.",
+          popupSupportingText: "Start learning today and save {discount}% on available Udemy courses before the offer ends.",
           countdownIntro: "Offer ends in",
           daysLabel: "Days",
           hoursLabel: "Hours",
@@ -390,7 +339,7 @@
         hero: {
           eyebrow: "Learn programming in Arabic",
           title: "Build your programming skills with MT Academy",
-          description: "Explore programming courses taught in Arabic, from web and database fundamentals to Kotlin, Android development, and REST APIs.",
+          description: "Choose your path with MT Academy: programming courses on Udemy, or live online coding for children and teenagers aged 6–18.",
           topics: ["Software Engineering", "Databases", "Web Development", "Kotlin", "Android", "REST APIs"],
           cta: {
             label: "Explore courses",
@@ -442,7 +391,7 @@
         },
         catalog: {
           eyebrow: "Available courses",
-          title: "Choose the right course for you",
+          title: "Programming courses on Udemy",
           description: "Search by title, field, or topic, then continue to the course page on Udemy.",
           allCoursesLabel: "All courses",
           searchLabel: "Search courses",
@@ -495,7 +444,7 @@
           items: []
         },
         footer: {
-          statement: "Programming courses taught in Arabic by MT Academy.",
+          statement: "Udemy courses and live online kids coding from MT Academy.",
           navigationTitle: "Quick links",
           categoriesTitle: "Course fields",
           contactTitle: "Contact us",
@@ -504,21 +453,13 @@
           copyright: "© 2026 MT Academy."
         },
         interface: {
-          skipToContentLabel: "Skip to main content",
-          openMenuLabel: "Open navigation menu",
-          closeMenuLabel: "Close navigation menu",
-          externalLinkLabel: "Opens in a new window",
-          languageSwitcherLabel: "Change language",
-          primaryNavigationLabel: "Primary navigation",
-          mobileNavigationLabel: "Mobile navigation",
+          ...window.MTAcademySite.translations.en.interface,
           catalogControlsLabel: "Course search and filter controls",
           categoryFilterLabel: "Filter courses by field",
           paymentMethodsLabel: "Available payment methods",
           courseRatingLabelTemplate: "{value} out of {max} from {count} ratings",
           reviewCountTemplate: "{count} ratings",
           starRatingLabel: "Star rating",
-          brandHomeLabel: "MT Academy home",
-          backToTopLabel: "Back to top",
           heroTopicsLabel: "Course topics"
         },
         errorPage: {
@@ -883,17 +824,7 @@
     }
   ];
 
-  function deepFreeze(value) {
-    if (!value || typeof value !== "object" || Object.isFrozen(value)) {
-      return value;
-    }
-
-    Object.getOwnPropertyNames(value).forEach((property) => {
-      deepFreeze(value[property]);
-    });
-
-    return Object.freeze(value);
-  }
+  const { deepFreeze } = window.MTAcademyCore;
 
   Object.defineProperty(window, "MTAcademyData", {
     value: deepFreeze({ siteConfig, courses }),
