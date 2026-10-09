@@ -9,6 +9,8 @@
 (function exposeMTAcademyData() {
   "use strict";
 
+  const statistics = window.MTAcademySite.instructorProfile.statistics;
+  const number = value => value.toLocaleString('en-US');
   const siteConfig = {
     ...window.MTAcademySite,
     promotion: {
@@ -27,8 +29,8 @@
     },
     instructorProfile: {
       ...window.MTAcademySite.instructorProfile,
-      totalLearners: "21,682",
-      totalReviews: "731"
+      totalLearners: `${number(statistics.udemyLearnersOver)}+`,
+      totalReviews: `${number(statistics.udemyReviewsOver)}+`
     },
     reviewsGallery: {
       images: Array.from({ length: 31 }, (_, index) => ({
@@ -121,6 +123,52 @@
             imageAlt: "Illustration for paying with PayPal"
           }
         }
+      },
+      {
+        "id": "western-union",
+        "image": {
+          "src": "/assets/images/payment/western-union.svg",
+          "width": 720,
+          "height": 420
+        },
+        "contactRequired": true,
+        "translations": {
+          "ar": {
+            "name": "ويسترن يونيون",
+            "description": "لترتيبات الدفع مع الأكاديمية، تواصل معنا لمعرفة بيانات المستلم قبل التحويل.",
+            "imageAlt": "رسم توضيحي للتحويل الدولي",
+            "contactLabel": "استفسر عن بيانات التحويل"
+          },
+          "en": {
+            "name": "Western Union",
+            "description": "For academy payment arrangements, contact us for recipient details before transferring.",
+            "imageAlt": "International transfer illustration",
+            "contactLabel": "Ask for transfer details"
+          }
+        }
+      },
+      {
+        "id": "bank-transfer",
+        "image": {
+          "src": "/assets/images/payment/bank-transfer.svg",
+          "width": 720,
+          "height": 420
+        },
+        "contactRequired": true,
+        "translations": {
+          "ar": {
+            "name": "تحويل بنكي",
+            "description": "تواصل معنا للحصول على بيانات التحويل البنكي الخاصة بترتيبات الدفع مع الأكاديمية.",
+            "imageAlt": "رسم توضيحي للتحويل البنكي",
+            "contactLabel": "استفسر عن بيانات التحويل"
+          },
+          "en": {
+            "name": "Bank transfer",
+            "description": "Contact us for bank transfer details for academy payment arrangements.",
+            "imageAlt": "Bank transfer illustration",
+            "contactLabel": "Ask for transfer details"
+          }
+        }
       }
     ],
     translations: {
@@ -130,16 +178,6 @@
           description: "اكتشف كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.",
           socialImageAlt: "MT Academy — كورسات برمجة باللغة العربية"
         },
-        navigation: [
-          { label: "الرئيسية", href: "#top" },
-          { label: "Udemy", href: "#courses" },
-          { label: "المدرّس", href: "#instructor" },
-          { label: "التقييمات", href: "#reviews" },
-          { label: "طرق الدفع", href: "#payment" },
-          { label: "تواصل معنا", href: "#contact" },
-          { label: "برمجة الأطفال", href: "/kids-coding-bootcamp/" },
-          { label: "دبلومة Backend", href: "/backend-development-diploma/" }
-        ],
         headerCta: {
           label: "تواصل عبر واتساب"
         },
@@ -166,11 +204,11 @@
         hero: {
           eyebrow: "تعلّم البرمجة باللغة العربية",
           title: "طوّر مهاراتك البرمجية مع MT Academy",
-          description: "اختَر مسارك مع MT Academy: كورسات برمجة على Udemy لتطوير مهاراتك، أو محاضرات برمجة أونلاين لايف للأطفال والمراهقين من 6 إلى 18 سنة.",
+          description: "اختَر مسارك مع MT Academy: كورسات برمجة على Udemy، أو برمجة للأطفال والمراهقين أونلاين لايف من 6 إلى 18 سنة. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.",
           topics: ["هندسة البرمجيات", "قواعد البيانات", "تطوير الويب", "Kotlin", "Android", "REST APIs"],
           cta: {
-            label: "استعرض الكورسات",
-            href: "#courses"
+            label: "اكتشف مسارات التعلّم",
+            href: "#learning-paths"
           },
           secondaryCta: {
             label: "صفحة المدرّس على Udemy",
@@ -181,17 +219,17 @@
           eyebrow: "المدرّس",
           name: "محمد تامر",
           headline: "مهندس برمجيات | سابقًا في السويدي إليكتريك | المؤسس والرئيس التنفيذي | مدرّس على Udemy | موجّه مهني | دبلومة دراسات عليا في علوم الحاسب | ITIL® v4 | كاتب مقالات تقنية",
-          learnersLabel: "إجمالي المتعلمين",
-          reviewsLabel: "التقييمات",
+          learnersLabel: "متعلّم على Udemy",
+          reviewsLabel: "تقييم على Udemy",
           summary: [
-            "أنا محمد تامر، مهندس برمجيات ومدرّس تقني وصانع محتوى وموجّه وكاتب تقني، أمتلك أكثر من 7 سنوات من الخبرة في تطوير البرمجيات.",
+            `أنا محمد تامر، مهندس برمجيات ومدرّس تقني وصانع محتوى وموجّه وكاتب تقني، أمتلك أكثر من ${statistics.professionalYearsOver} سنوات من الخبرة في تطوير البرمجيات.`,
             "أنا المؤسس والرئيس التنفيذي لشركة MT Software Solutions، حيث أعمل على برمجيات المؤسسات والحلول الرقمية، كما أسست MT Academy لمساعدة المطورين على بناء مهارات عملية واتخاذ قرارات مهنية أفضل."
           ],
           moreLabel: "اقرأ النبذة الكاملة",
           biography: [
             "بدأت رحلتي في هندسة البرمجيات بالتعلّم الذاتي المكثف من دون موجّه رسمي. هذه التجربة شكّلت أسلوبي في الهندسة اليوم: فهم الأساسيات بعمق، وحل المشكلات بطريقة منهجية، وبناء حلول عملية وقابلة للتوسع والصيانة.",
             "عملت لمدة عامين في تطوير تطبيقات Android Native باستخدام Java وKotlin، ثم قضيت ثلاث سنوات مهندس برمجيات في السويدي إليكتريك، وشاركت في تكامل الأنظمة المعقدة، وتطوير الأنظمة الخلفية، وحلول RFID، وقواعد بيانات المؤسسات، وتطبيقات Oracle APEX.",
-            "أعمل أيضًا مدرّسًا على Udemy منذ أكثر من ثلاث سنوات، ودرّست لأكثر من 21,000 طالب حول العالم. وخلال العامين الماضيين عملت مباشرة مع أكثر من 133 متدرّبًا من أكثر من 14 دولة في جلسات توجيه فردية، وساعدتهم على تطوير مهاراتهم والاستعداد للفرص واتخاذ قرارات مهنية أوضح، وحصل هذا العمل على أكثر من 133 تقييمًا.",
+            `درّست لأكثر من ${number(statistics.udemyLearnersOver)} متعلّم على Udemy، ومعانا أكثر من ${number(statistics.udemyReviewsOver)} تقييمًا على الكورسات. وفي المنتورشيب، اشتغلت مع أكثر من ${statistics.mentorshipTraineesOver} متدرّبًا من أكثر من ${statistics.mentorshipCountriesOver} دولة، وساعدتهم يطوّروا مهاراتهم ويرتّبوا خطواتهم المهنية.`,
             "أدرس حاليًا دبلومة دراسات عليا في علوم الحاسب بجامعة القاهرة، مع التركيز على هندسة الحاسب ومعمارية البرمجيات وتصميم الأنظمة.",
             "أساهم كذلك في مشاريع مفتوحة المصدر، وأكتب مقالات تقنية عن المبادئ الهندسية والمعمارية وتطوير البرمجيات في الواقع العملي. وقد تم تقدير نشاطي على GitHub ضمن تصنيفات المطورين الإقليمية، ومنها المركز 64 بين المطورين المؤثرين في أفريقيا والمركز 88 في مصر وفقًا للمساهمات العامة.",
             "يدفعني التعلّم المستمر والهندسة العملية ومشاركة المعرفة التي تساعد الناس على بناء مسارات مهنية أقوى وبرمجيات أفضل."
@@ -222,6 +260,8 @@
           description: "ابحث بالعنوان أو المجال أو الموضوع، ثم انتقل إلى صفحة الكورس على Udemy.",
           allCoursesLabel: "كل الكورسات",
           searchLabel: "ابحث في الكورسات",
+          filterLabel: "اختر المجال",
+          filterHint: "اسحب لرؤية كل المجالات ←",
           searchPlaceholder: "ابحث عن كورس أو موضوع…",
           clearSearchLabel: "مسح البحث",
           resultCountTemplate: "{count} كورس",
@@ -261,7 +301,7 @@
         payment: {
           eyebrow: "خيارات مرنة",
           title: "طرق الدفع المتاحة",
-          description: "اختر طريقة الدفع المناسبة. للمدفوعات خارج Udemy، تواصل معنا عبر واتساب.",
+          description: "الشراء المباشر على Udemy يتم من خلال منصته. لترتيبات الدفع مع الأكاديمية عبر فودافون كاش أو إنستا باي أو باي بال أو ويسترن يونيون أو تحويل بنكي، استفسر عن البيانات عبر واتساب.",
           contactLabel: "تواصل عبر واتساب"
         },
         faq: {
@@ -271,7 +311,7 @@
           items: []
         },
         footer: {
-          statement: "كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy.",
+          statement: "كورسات Udemy وبرمجة الأطفال أونلاين، وقريبًا دبلومة Backend من MT Academy.",
           navigationTitle: "روابط سريعة",
           categoriesTitle: "مجالات الكورسات",
           contactTitle: "تواصل معنا",
@@ -294,6 +334,8 @@
           title: "الصفحة غير موجودة",
           description: "تعذّر العثور على الصفحة التي تبحث عنها.",
           homeLabel: "العودة إلى الصفحة الرئيسية",
+          pathsLabel: "استكشف مسارات التعلّم",
+          pathsHref: "/#learning-paths",
           languageSwitcherLabel: "تغيير اللغة"
         }
       },
@@ -303,16 +345,6 @@
           description: "Discover Udemy courses and live online kids coding from MT Academy, plus an upcoming Java and Spring Boot backend diploma for complete beginners.",
           socialImageAlt: "MT Academy — programming courses taught in Arabic"
         },
-        navigation: [
-          { label: "Home", href: "#top" },
-          { label: "Udemy", href: "#courses" },
-          { label: "Instructor", href: "#instructor" },
-          { label: "Reviews", href: "#reviews" },
-          { label: "Payment", href: "#payment" },
-          { label: "Contact", href: "#contact" },
-          { label: "Kids coding", href: "/kids-coding-bootcamp/" },
-          { label: "Backend diploma", href: "/backend-development-diploma/" }
-        ],
         headerCta: {
           label: "Contact on WhatsApp"
         },
@@ -339,11 +371,11 @@
         hero: {
           eyebrow: "Learn programming in Arabic",
           title: "Build your programming skills with MT Academy",
-          description: "Choose your path with MT Academy: programming courses on Udemy, or live online coding for children and teenagers aged 6–18.",
+          description: "Choose your path with MT Academy: Udemy programming courses, live online coding for ages 6–18, or the upcoming Java and Spring Boot Backend diploma for complete beginners.",
           topics: ["Software Engineering", "Databases", "Web Development", "Kotlin", "Android", "REST APIs"],
           cta: {
-            label: "Explore courses",
-            href: "#courses"
+            label: "Explore learning paths",
+            href: "#learning-paths"
           },
           secondaryCta: {
             label: "Instructor page on Udemy",
@@ -354,17 +386,17 @@
           eyebrow: "Instructor",
           name: "Mohamed Tamer",
           headline: "Software Engineer | Ex- Elsewedy Electric | Founder & CEO | Udemy Instructor | Mentor | Computer Science Postgraduate Diploma | ITIL® v4 | Technical Articles Writer",
-          learnersLabel: "Total learners",
-          reviewsLabel: "Reviews",
+          learnersLabel: "Learners on Udemy",
+          reviewsLabel: "Reviews on Udemy",
           summary: [
-            "I’m Mohamed Tamer, a Software Engineer, technical educator, content creator, mentor, and technical writer with 7+ years of experience in software development.",
+            `I’m Mohamed Tamer, a Software Engineer, technical educator, content creator, mentor, and technical writer with more than ${statistics.professionalYearsOver} years of experience in software development.`,
             "I’m the Founder & CEO of MT Software Solutions, where I work on enterprise software and digital solutions, and the Founder & Mentor at MT Academy, where I help developers build practical skills and make better career decisions."
           ],
           moreLabel: "Read the full bio",
           biography: [
             "My journey into software engineering began with intensive self-study and no formal mentor. That experience shaped how I approach engineering today: learning the fundamentals deeply, solving problems systematically, and building solutions that are practical, scalable, and maintainable.",
             "I spent two years in Android Native development using Java and Kotlin, followed by three years as a Software Engineer at Elsewedy Electric. There, I worked on complex system integrations, backend development, RFID solutions, enterprise databases, and low-code applications using Oracle APEX.",
-            "For more than three years, I have also been a Udemy instructor, teaching over 21,000 students worldwide. Over the past two years, I have worked directly with 133+ mentees from 14+ countries through 1:1 mentorship, helping them develop their technical skills, prepare for opportunities, and make clearer career decisions. This work has received 133+ reviews.",
+            `I have taught more than ${number(statistics.udemyLearnersOver)} learners on Udemy, with more than ${number(statistics.udemyReviewsOver)} reviews of the courses. Through mentorship, I have worked with more than ${statistics.mentorshipTraineesOver} trainees across more than ${statistics.mentorshipCountriesOver} countries, helping them develop their skills and organize their career steps.`,
             "I’m currently pursuing a postgraduate diploma in Computer Science at Cairo University, focusing on Computer Engineering, Software Architecture, and System Design.",
             "I also contribute to open-source projects and write technical articles about engineering principles, architecture, and real-world software development. My GitHub work has been recognized in regional developer rankings, including #64 among influential developers in Africa and #88 in Egypt by public contributions.",
             "I’m driven by continuous learning, practical engineering, and sharing knowledge that helps people build stronger careers and better software."
@@ -395,6 +427,8 @@
           description: "Search by title, field, or topic, then continue to the course page on Udemy.",
           allCoursesLabel: "All courses",
           searchLabel: "Search courses",
+          filterLabel: "Choose a field",
+          filterHint: "Swipe to see all fields →",
           searchPlaceholder: "Search for a course or topic…",
           clearSearchLabel: "Clear search",
           resultCountTemplate: "{count} courses",
@@ -434,7 +468,7 @@
         payment: {
           eyebrow: "Flexible options",
           title: "Available payment methods",
-          description: "Choose a suitable payment method. For payments outside Udemy, contact us on WhatsApp.",
+          description: "Direct Udemy purchases use its checkout. For academy payment arrangements via Vodafone Cash, InstaPay, PayPal, Western Union or bank transfer, ask for details on WhatsApp.",
           contactLabel: "Contact on WhatsApp"
         },
         faq: {
@@ -444,7 +478,7 @@
           items: []
         },
         footer: {
-          statement: "Udemy courses and live online kids coding from MT Academy.",
+          statement: "Udemy courses and live online kids coding, with a Backend diploma coming soon from MT Academy.",
           navigationTitle: "Quick links",
           categoriesTitle: "Course fields",
           contactTitle: "Contact us",
@@ -467,6 +501,8 @@
           title: "Page not found",
           description: "We could not find the page you are looking for.",
           homeLabel: "Return to the home page",
+          pathsLabel: "Explore learning paths",
+          pathsHref: "/?lang=en#learning-paths",
           languageSwitcherLabel: "Change language"
         }
       }

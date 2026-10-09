@@ -1,9 +1,9 @@
 /* Kids page only; shared identity and primitives live in styles.css. */
 body[data-page="kids"] { background: var(--background); }
-.kids-hero { position: relative; padding-block: 9rem 3rem; overflow: hidden; background: radial-gradient(ellipse at 5% 20%, #e8c96a33, transparent 48%); }
-.kids-hero__grid { display: grid; gap: 3rem; align-items: center; }
+.kids-hero { position: relative; padding-block: 8.5rem 2.5rem; overflow: hidden; background: radial-gradient(ellipse at 5% 20%, #e8c96a33, transparent 48%); }
+.kids-hero__grid { display: grid; gap: 2.5rem; align-items: center; }
 .kids-program-name { margin-block: 1rem; font-size: .85rem; letter-spacing: .13em; font-weight: 800; color: var(--green); text-align: start; }
-.kids-hero h1 { margin-block: 0 1.75rem; color: var(--green); font-size: clamp(3rem, 6.4vw, 5.5rem); line-height: 1.12; letter-spacing: -.045em; white-space: pre-line; }
+.kids-hero h1 { margin-block: 0 1.75rem; color: var(--green); font-size: var(--heading-hero); line-height: 1.12; letter-spacing: -.045em; white-space: pre-line; }
 .kids-hero__description { max-width: 37rem; font-size: 1.08rem; line-height: 1.9; color: var(--text-muted); }
 .kids-hero__actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-block: 1.75rem 1rem; }
 .kids-hero__note { color: var(--text-muted); font-size: .8rem; }
@@ -19,8 +19,8 @@ body[data-page="kids"] { background: var(--background); }
 .kids-fact { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; padding: 1.25rem .5rem; background: white; text-align: center; }
 .kids-fact strong { font-size: clamp(1.4rem, 2.4vw, 1.9rem); color: var(--green); font-weight: 850; }
 .kids-fact span { color: var(--text-muted); font-size: .78rem; }
-.kids-section-heading { max-width: 43rem; margin-block-end: 3rem; }
-.kids-section-heading h2, .kids-instructor h2 { white-space: pre-line; font-size: clamp(2rem, 4vw, 3.25rem); color: var(--green); line-height: 1.3; letter-spacing: -.03em; margin-block: 1rem; }
+.kids-section-heading { max-width: 43rem; margin-block-end: 2rem; }
+.kids-section-heading h2, .kids-instructor h2 { white-space: pre-line; font-size: var(--heading-section); color: var(--green); line-height: 1.3; letter-spacing: -.03em; margin-block: 1rem; }
 .kids-section-heading > p:last-child { color: var(--text-muted); max-width: 38rem; }
 .kids-benefits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .kids-benefit { padding: 1.5rem; background: white; border: 1px solid var(--border); border-radius: 1rem; }
@@ -28,12 +28,12 @@ body[data-page="kids"] { background: var(--background); }
 .kids-benefit h3 { font-size: 1rem; margin-block-end: .5rem; color: var(--green); }
 .kids-benefit p { font-size: .88rem; color: var(--text-muted); margin: 0; }
 .kids-levels-section { background: white; border-block: 1px solid var(--border); }
-.kids-roadmap { display: flex; flex-wrap: wrap; gap: .6rem; margin-block-end: 3rem; }
-.kids-roadmap a { display: inline-flex; align-items: center; gap: .5rem; padding: .7rem .85rem; border: 1px solid var(--border); border-radius: var(--radius-pill); color: var(--green); font-size: .75rem; font-weight: 800; background: var(--background); }
+.kids-roadmap { display: flex; flex-wrap: wrap; gap: .6rem; margin-block-end: 2rem; }
+.kids-roadmap a { display: inline-flex; align-items: center; gap: .5rem; padding: .7rem .85rem; border: 1px solid var(--border); border-radius: var(--radius-pill); color: var(--green); font-size: .85rem; font-weight: 750; min-height: 2.75rem; background: var(--background); }
 .kids-roadmap a:hover { border-color: var(--gold); }
-.kids-roadmap span { color: #82702e; font-size: .65rem; }
+.kids-roadmap span { color: #82702e; font-size: .8rem; }
 .kids-levels { display: grid; gap: 2rem; }
-.kids-level { display: grid; overflow: hidden; border: 1px solid var(--border); border-radius: 1.5rem; background: var(--background); scroll-margin-block-start: 7rem; }
+.kids-level { display: grid; overflow: hidden; border: 1px solid var(--border); border-radius: 1.5rem; background: var(--background); scroll-margin-block-start: 0; }
 .kids-level__content { padding: clamp(1.25rem, 3vw, 2.5rem); }
 .kids-level__eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; color: var(--green); font-size: .75rem; font-weight: 800; }
 .kids-level__eyebrow p { margin: 0; }
@@ -48,11 +48,11 @@ body[data-page="kids"] { background: var(--background); }
 .kids-level__example { padding: .8rem 1rem; margin-block: 1.25rem; background: white; border-inline-start: 3px solid var(--gold); border-radius: .4rem; }
 .kids-level__example span { display: block; font-size: .7rem; font-weight: 800; color: var(--green); }
 .kids-level__example p { font-size: .85rem; margin: .25rem 0 0; color: var(--text-muted); }
-.kids-level__schedule { margin: 0; font-size: .73rem; color: var(--text-muted); }
+.kids-level__schedule { margin: 0; font-size: .85rem; color: var(--text-muted); }
 .kids-level__media { display: flex; flex-direction: column; justify-content: center; gap: 1rem; padding: 1.25rem; margin: 0; min-width: 0; background: #e8e4de73; }
 .kids-level__image { width: 100%; height: auto; border-radius: .75rem; object-fit: contain; border: 1px solid #24242416; background: white; }
-.kids-level figcaption { text-align: center; font-size: .73rem; font-weight: 700; color: var(--green); }
-.kids-source { display: block; font-size: .64rem; font-weight: 400; margin-block-start: .4rem; color: var(--text-muted); }
+.kids-level figcaption { text-align: center; font-size: .85rem; font-weight: 700; color: var(--green); }
+.kids-source { display: block; font-size: .8rem; font-weight: 400; margin-block-start: .4rem; color: var(--text-muted); }
 .kids-source a { text-decoration: underline; text-underline-offset: 3px; }
 .kids-how { display: grid; gap: 1rem; }
 .kids-how article { position: relative; padding: 2rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
@@ -65,7 +65,7 @@ body[data-page="kids"] { background: var(--background); }
 .kids-gallery { display: grid; gap: 1.5rem; }
 .kids-session { margin: 0; min-width: 0; }
 .kids-session__open { position: relative; display: block; padding: .4rem; border: 1px solid #ffffff25; background: #0a0a0a; border-radius: 1rem; overflow: hidden; }
-.kids-session img { display: block; width: 100%; height: auto; border-radius: .65rem; object-fit: contain; transition: filter .2s; }
+.kids-session img { display: block; width: 100%; height: auto; border-radius: .65rem; object-fit: contain; transition: filter var(--transition-fast); }
 .kids-session__open:hover img { filter: brightness(1.1); }
 .kids-session__zoom { position: absolute; inset-inline-end: 1rem; inset-block-end: 1rem; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--gold-light); color: var(--green); font-weight: 800; }
 .kids-session figcaption { padding: .8rem .25rem 0; color: #f8f6f2; font-size: .8rem; }
@@ -76,15 +76,9 @@ body[data-page="kids"] { background: var(--background); }
 .kids-instructor p:not(.eyebrow):not(.kids-instructor__name) { max-width: 35rem; color: var(--text-muted); margin-block-end: 1.5rem; }
 .kids-faq-section { background: white; border-block: 1px solid var(--border); }
 .kids-faq-layout { display: grid; gap: 2rem; }
-.kids-faq { border-block-end: 1px solid var(--border); }
-.kids-faq summary { position: relative; padding: 1.25rem; padding-inline-end: 3rem; cursor: pointer; font-weight: 750; color: var(--green); list-style: none; }
-.kids-faq summary::-webkit-details-marker { display: none; }
-.kids-faq summary::after { content: '+'; position: absolute; inset-inline-end: 1rem; font-size: 1.4rem; line-height: 1; }
-.kids-faq[open] summary::after { content: '−'; }
-.kids-faq p { margin: 0; padding: 0 1.25rem 1.5rem; color: var(--text-muted); font-size: .9rem; }
 .kids-final { position: relative; overflow: hidden; padding: clamp(2rem, 6vw, 5rem); background: var(--green); border-radius: 1.5rem; border: 1px solid var(--gold); color: white; }
 .kids-final .eyebrow { color: var(--gold-light); background: #ffffff08; }
-.kids-final h2 { white-space: pre-line; color: white; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.25; margin-block: 1.5rem; }
+.kids-final h2 { white-space: pre-line; color: white; font-size: var(--heading-section); line-height: 1.25; margin-block: 1.5rem; }
 .kids-final p { max-width: 33rem; color: #e8e4de; }
 .kids-final .button { display: flex; width: fit-content; background: var(--gold-light); color: var(--green); border-color: var(--gold-light); margin-block-start: 1.5rem; }
 .kids-final .button:hover { background: white; }
@@ -126,7 +120,7 @@ body[data-page="kids"] { background: var(--background); }
 }
 @media (max-width: 29.99rem) {
   .kids-hero { padding-block-start: 7.5rem; }
-  .kids-hero h1 { font-size: clamp(2.7rem, 11.5vw, 3.6rem); }
+  .kids-hero h1 { font-size: clamp(2.25rem, 9vw, 3rem); }
   .kids-hero__description { font-size: 1rem; }
   .kids-hero__actions { flex-direction: column; }
   .kids-hero__actions .button { width: 100%; }
@@ -138,11 +132,6 @@ body[data-page="kids"] { background: var(--background); }
   .kids-lightbox__controls button { padding-inline: .7rem; }
   .kids-lightbox__controls { flex-wrap: wrap; justify-content: center; }
   .kids-lightbox__controls [data-gallery-position] { order: 3; flex-basis: 100%; text-align: center; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .kids-hero__copy { animation: kids-appear .6s both; }
-  .kids-hero__media { animation: kids-appear .6s .1s both; }
-  @keyframes kids-appear { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 }
 /* Page marker stays distinct from the moving section marker. */
 .kids-footer [aria-current="page"] { color: var(--gold-light); }

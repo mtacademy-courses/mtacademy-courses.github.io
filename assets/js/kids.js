@@ -116,7 +116,7 @@
       const courseId = `${config.seo.canonicalUrl}#course`;
       document.getElementById("structured-data").textContent = JSON.stringify({
         "@context": "https://schema.org", "@graph": [
-          { "@type": "Organization", "@id": organizationId, name: shared.brandName, url: shared.siteUrl, logo: new URL(shared.logo.src, shared.siteUrl).href, sameAs: shared.socialLinks.map(link => link.url) },
+          core.buildOrganizationSchema(shared),
           { "@type": "WebPage", "@id": `${pageUrl}#webpage`, url: pageUrl, name: config.seo.title, description: config.seo.description, inLanguage: locale, about: { "@id": courseId } },
           { "@type": "Course", "@id": courseId, name: data.name, description: config.seo.description, url: config.seo.canonicalUrl, provider: { "@id": organizationId }, educationalLevel: "Beginner", teaches: data.levels.map(level => level.tool) }
         ]
@@ -139,6 +139,7 @@
       else mobile.update(config);
       if (dialog.open) updateGalleryCopy();
       renderSchema();
+      if (window.__mtAcademyMotion) window.__mtAcademyMotion.refresh();
     };
     const selectLocale = (next) => {
       if (next === locale) return;
@@ -149,11 +150,10 @@
     core.saveLocale(locale);
     language = core.initLanguageSwitching(shared.locales, selectLocale);
     render(true);
+    core.initPathNavigation();
     core.initActiveNavigation();
     core.initTopLinks();
-    const header = document.querySelector(".site-header");
-    const updateHeader = () => header.classList.toggle("is-scrolled", window.scrollY > 10);
-    window.addEventListener("scroll", updateHeader, { passive: true });
-    updateHeader();
+    core.initHeaderMotion();
+    core.initMotionSystem();
   });
 })();

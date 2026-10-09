@@ -20,7 +20,8 @@
   const translations = {
     ar: {
       seo: { title: 'برمجة الأطفال أونلاين | Kids Coding Bootcamp | MT Academy', description: 'برمجة للأطفال والمراهقين من 6 إلى 18 سنة: محاضرات أونلاين لايف، تطبيق عملي 80%، وخمسة مستويات من Code.org وScratch إلى التطبيقات والويب وPython.', socialImageAlt: 'Kids Coding Bootcamp من MT Academy — تعلّم عملي أونلاين' },
-      navigation: [{ label: 'الرئيسية', href: '/' }, { label: 'برمجة الأطفال', href: '/kids-coding-bootcamp/' }, { label: 'كورسات Udemy', href: '/#courses' }, { label: 'المستويات', href: '#levels' }, { label: 'المحاضرات', href: '#sessions' }, { label: 'أسئلة شائعة', href: '#faq' }, { label: 'دبلومة Backend', href: '/backend-development-diploma/' }],
+      localNavigationLabel: "روابط داخل صفحة الأطفال",
+      localNavigation: [{"label": "المستويات", "href": "#levels"}, {"label": "المحاضرات", "href": "#sessions"}, {"label": "أسئلة شائعة", "href": "#faq"}],
       interface: { ...window.MTAcademySite.translations.ar.interface },
       hero: { eyebrow: 'برمجة للأطفال والمراهقين · من 6 إلى 18 سنة', title: 'أفكار صغيرة.\nإبداعات كبيرة.', description: 'خلّي طفلك يبدأ رحلته في البرمجة بطريقة ممتعة وعملية. في MT Academy، بنتعلّم أونلاين لايف وبنطبّق بإيدينا، من أول لعبة تفاعلية لحد بناء تطبيق وموقع وكتابة كود.', cta: 'استفسر عن التسجيل', secondaryCta: 'اكتشف المستويات', note: 'للمبتدئين تمامًا · تفاعل مباشر مع المدرّس', mediaCaption: 'لحظة تعلّم حقيقية من محاضراتنا', imageAlt: 'واجهة Scratch أثناء محاضرة أونلاين مع طفل ومدرّس MT Academy' },
       roadmapLabel: 'المستويات الخمسة', footerNavigationLabel: 'روابط سريعة', assetChangeLabel: 'تم تغيير الحجم والصيغة',
@@ -63,11 +64,12 @@
       ],
       final: { eyebrow: 'بداية جديدة لفكرة كبيرة', title: 'خلّي الفضول\nيبقى مهارة.', description: 'ابعت لنا سن طفلك، ونتكلم عن المستوى المناسب وتفاصيل التسجيل.', cta: 'تواصل لمعرفة المستوى المناسب', note: 'الزر يفتح واتساب للاستفسار عن التسجيل.' },
       inquiryMessage: 'مرحبًا، أريد الاستفسار عن Kids Coding Bootcamp لطفلي ومعرفة المستوى المناسب وتفاصيل التسجيل.',
-      footer: { statement: 'كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy.', home: 'الرئيسية', udemy: 'كورسات Udemy', kids: 'برمجة الأطفال', backend: 'دبلومة Backend', top: 'العودة للأعلى', copyright: 'MT Academy. جميع الحقوق محفوظة.' },
+      footer: { statement: 'كورسات Udemy وبرمجة الأطفال أونلاين، وقريبًا دبلومة Backend من MT Academy.', home: 'الرئيسية', udemy: 'كورسات Udemy', kids: 'برمجة الأطفال', backend: 'دبلومة Backend', top: 'العودة للأعلى', copyright: 'MT Academy. جميع الحقوق محفوظة.' },
     },
     en: {
       seo: { title: 'Kids Coding Bootcamp | Live Online Coding | MT Academy', description: 'Live online coding for children and teenagers aged 6–18. 80% practical learning across five levels, from Code.org and Scratch to apps, websites, and Python.', socialImageAlt: 'MT Academy Kids Coding Bootcamp — practical live online learning' },
-      navigation: [{ label: 'Home', href: '/' }, { label: 'Kids coding', href: '/kids-coding-bootcamp/' }, { label: 'Udemy courses', href: '/#courses' }, { label: 'Levels', href: '#levels' }, { label: 'Our sessions', href: '#sessions' }, { label: 'FAQs', href: '#faq' }, { label: 'Backend diploma', href: '/backend-development-diploma/' }],
+      localNavigationLabel: "Links within the Kids page",
+      localNavigation: [{"label": "Levels", "href": "#levels"}, {"label": "Our sessions", "href": "#sessions"}, {"label": "FAQs", "href": "#faq"}],
       interface: { ...window.MTAcademySite.translations.en.interface },
       hero: { eyebrow: 'Coding for kids & teens · Ages 6–18', title: 'Small ideas.\nBig creations.', description: 'Let your child discover coding through fun, practical learning. At MT Academy, we meet live online and learn by doing — from an interactive game to an app, a website, and their first lines of code.', cta: 'Ask about enrollment', secondaryCta: 'Explore the levels', note: 'Complete beginners welcome · Live instructor interaction', mediaCaption: 'A real learning moment from our sessions', imageAlt: 'A child and MT Academy instructor working in the Scratch editor during a live online session' },
       roadmapLabel: 'The five learning levels', footerNavigationLabel: 'Quick links', assetChangeLabel: 'Resized and converted',
@@ -110,7 +112,7 @@
       ],
       final: { eyebrow: 'A new beginning for a big idea', title: 'Turn curiosity\ninto a skill.', description: 'Tell us your child’s age, and let’s talk about a suitable level and enrollment details.', cta: 'Ask about the right level', note: 'This button opens WhatsApp for an enrollment inquiry.' },
       inquiryMessage: 'Hello, I would like to ask about the Kids Coding Bootcamp for my child, the appropriate level, and enrollment details.',
-      footer: { statement: 'Udemy courses and live online kids coding from MT Academy.', home: 'Home', udemy: 'Udemy courses', kids: 'Kids coding', backend: 'Backend diploma', top: 'Back to top', copyright: 'MT Academy. All rights reserved.' },
+      footer: { statement: 'Udemy courses and live online kids coding, with a Backend diploma coming soon from MT Academy.', home: 'Home', udemy: 'Udemy courses', kids: 'Kids coding', backend: 'Backend diploma', top: 'Back to top', copyright: 'MT Academy. All rights reserved.' },
     }
   };
   window.MTAcademyKids = window.MTAcademyCore.deepFreeze({

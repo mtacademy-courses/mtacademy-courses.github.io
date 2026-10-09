@@ -1,4 +1,4 @@
-/** Announcement-only controller: no enrollment, offer, or notification subscription. */
+/** Program preview controller: no enrollment, offer, or notification subscription. */
 (() => {
   "use strict";
   const core = window.MTAcademyCore;
@@ -19,7 +19,7 @@
     const render = (initial = false) => {
       const copy = core.localizedObject(diploma.translations, locale, site.defaultLocale);
       const config = {
-        ...site, ...copy, locale, direction: locale === 'ar' ? 'rtl' : 'ltr',
+        ...site, ...copy, evidenceLinks: diploma.evidenceLinks, visual: diploma.visual, locale, direction: locale === 'ar' ? 'rtl' : 'ltr',
         statusLabel: copy.statusLabels[diploma.status],
         interface: site.translations[locale].interface,
         seo: { ...copy.seo, canonicalUrl: new URL(diploma.path, site.siteUrl).href, socialImage: diploma.socialImage },
@@ -34,20 +34,20 @@
       contact.searchParams.set('text', copy.inquiryMessage);
       document.querySelectorAll('[data-diploma-inquiry]').forEach(link => core.configureLink(link, contact.href));
       const pageUrl = config.seo.canonicalUrl + (locale === 'en' ? '?lang=en' : '');
+      if (window.__mtAcademyMotion) window.__mtAcademyMotion.refresh();
       document.getElementById('structured-data').textContent = JSON.stringify({
         '@context': 'https://schema.org', '@graph': [
-          { '@type': 'Organization', '@id': `${site.siteUrl}#organization`, name: site.brandName, url: site.siteUrl, logo: new URL(site.logo.src, site.siteUrl).href, sameAs: site.socialLinks.map(link => link.url) },
+          core.buildOrganizationSchema(site),
           { '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: copy.seo.title, description: copy.seo.description, inLanguage: locale, publisher: { '@id': `${site.siteUrl}#organization` } }
         ]
       });
     };
     core.saveLocale(locale);
     render(true);
+    core.initPathNavigation();
     core.initActiveNavigation();
     core.initTopLinks();
-    const header = document.querySelector('.site-header');
-    const updateHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 10);
-    window.addEventListener('scroll', updateHeader, { passive: true });
-    updateHeader();
+    core.initHeaderMotion();
+    core.initMotionSystem();
   });
 })();

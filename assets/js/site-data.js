@@ -1,6 +1,7 @@
-/** Shared academy identity and contact facts. No offering-specific promotions or statistics. */
+/** Shared academy identity and contact facts. Instructor evidence is distinct from program enrollment; no offering promotions. */
 (() => {
   "use strict";
+  const linkedInUrl = 'https://www.linkedin.com/in/mohamedtamer0/';
   window.MTAcademySite = window.MTAcademyCore.deepFreeze({
   "brandName": "MT Academy",
   "siteUrl": "https://mtacademy-courses.github.io/",
@@ -46,6 +47,15 @@
     }
   ],
   "instructorProfile": {
+    "linkedinUrl": linkedInUrl,
+    "statistics": {
+      "qualification": "more-than",
+      "professionalYearsOver": 8,
+      "udemyLearnersOver": 21697,
+      "udemyReviewsOver": 743,
+      "mentorshipTraineesOver": 145,
+      "mentorshipCountriesOver": 14
+    },
     "name": "Mohamed Tamer",
     "image": {
       "src": "/assets/images/Me.png",
@@ -56,7 +66,11 @@
   },
   "translations": {
     "ar": {
+      "primaryNavigation": [{"label": "الرئيسية", "href": "/#top"}, {"label": "مسارات التعلّم", "href": "/#learning-paths"}, {"label": "المدرّس", "href": "/#instructor"}, {"label": "تقييمات Udemy", "href": "/#reviews"}, {"label": "طرق الدفع", "href": "/#payment"}, {"label": "تواصل معنا", "href": "/#contact"}],
+      "learningNavigation": [{"label": "كورسات Udemy", "href": "/#courses"}, {"label": "برمجة الأطفال", "href": "/kids-coding-bootcamp/"}, {"label": "دبلومة Backend", "href": "/backend-development-diploma/"}],
+      "learningOverviewLabel": "اكتشف كل المسارات",
       "interface": {
+        "instructorLinkedInLabel": "حساب محمد تامر على LinkedIn",
         "skipToContentLabel": "انتقل إلى المحتوى الرئيسي",
         "openMenuLabel": "فتح قائمة التنقل",
         "closeMenuLabel": "إغلاق قائمة التنقل",
@@ -69,7 +83,11 @@
       }
     },
     "en": {
+      "primaryNavigation": [{"label": "Home", "href": "/#top"}, {"label": "Learning paths", "href": "/#learning-paths"}, {"label": "Instructor", "href": "/#instructor"}, {"label": "Udemy reviews", "href": "/#reviews"}, {"label": "Payment", "href": "/#payment"}, {"label": "Contact", "href": "/#contact"}],
+      "learningNavigation": [{"label": "Udemy courses", "href": "/#courses"}, {"label": "Kids coding", "href": "/kids-coding-bootcamp/"}, {"label": "Backend diploma", "href": "/backend-development-diploma/"}],
+      "learningOverviewLabel": "Explore all learning paths",
       "interface": {
+        "instructorLinkedInLabel": "Mohamed Tamer on LinkedIn",
         "skipToContentLabel": "Skip to main content",
         "openMenuLabel": "Open navigation menu",
         "closeMenuLabel": "Close navigation menu",

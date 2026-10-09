@@ -6,7 +6,7 @@
     offerings: [
       { id: 'udemy', href: '#courses' },
       { id: 'kids', href: '/kids-coding-bootcamp/', image: {"src":"/assets/images/kids/brand/kids-coding-bootcamp-box.webp","width":1254,"height":1254} },
-      { id: backend.id, href: backend.path }
+      { id: backend.id, href: backend.path, image: backend.visual, imageAltKey: 'backend.visualAlt' }
     ],
     translations: {
   "ar": {

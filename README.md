@@ -21,7 +21,7 @@ The website is Arabic-first, includes a complete English interface, and is built
 - Detailed course dialogs with shareable URL hashes and browser history support
 - Instructor profile, learner reviews, payment methods, and contact options
 - Shared homepage learning-path discovery, with separate data for Udemy, Kids, and the upcoming Backend diploma
-- A complete bilingual coming-soon announcement page, without invented launch or enrollment details
+- A bilingual Backend program preview with a confirmed study plan, projects, mentorship, code review, and qualified coming-soon announcements
 - Dedicated kids page with five levels, genuine session imagery, and parent FAQs
 - Accessible keyboard navigation, labels, dialogs, and live result announcements
 - SEO metadata, Open Graph preview, sitemap, robots file, and structured data
@@ -54,6 +54,8 @@ Course details, ratings, enrollment links, categories, learning outcomes, and lo
 | Languages | Arabic and English |
 
 ## Run locally
+
+For shared UI/UX ownership and the latest visual/responsive validation, see [UI/UX quality](docs/uiux-quality.md) and [platform maintenance](docs/platform-maintenance.md).
 
 Clone the repository and start any static HTTP server:
 
@@ -97,6 +99,8 @@ Opening `index.html` directly is not recommended because URL hashes, navigation 
 │       ├── kids/social/             # Kids Open Graph image
 │       ├── backend/                 # Code-native illustration and social preview
 │       └── Me.png
+├── scripts/shared-markup.cjs        # Shared static navigation/footer markup
+├── scripts/refresh-homepage.cjs      # Homepage content/stats/payments/navigation authoring
 ├── scripts/refresh-kids-page.cjs     # Optional authoring helper for static Arabic HTML
 ├── scripts/refresh-backend-page.cjs  # Optional announcement authoring helper
 ├── docs/kids-image-sources.md        # Asset mapping and attribution
@@ -109,9 +113,9 @@ Opening `index.html` directly is not recommended because URL hashes, navigation 
 
 ## Customize the website
 
-Shared academy identity, locales, the instructor image, and contact destinations live in [`assets/js/site-data.js`](assets/js/site-data.js), exposed as deeply frozen `window.MTAcademySite`.
+Shared academy identity, locales, the instructor image, personal LinkedIn profile, and contact destinations live in [`assets/js/site-data.js`](assets/js/site-data.js), exposed as deeply frozen `window.MTAcademySite`.
 
-Udemy content remains in [`assets/js/courses-data.js`](assets/js/courses-data.js), exposed through the existing deeply frozen `window.MTAcademyData` contract (`siteConfig`, `courses`). Its translations include the Udemy navigation, hero, catalog, payments, reviews, and campaign copy.
+Udemy content remains in [`assets/js/courses-data.js`](assets/js/courses-data.js), exposed through the existing deeply frozen `window.MTAcademyData` contract (`siteConfig`, `courses`). Its translations include the hero, catalog, payments, reviews, and campaign copy. Global navigation and instructor evidence come from shared site data.
 
 Kids content lives separately in [`assets/js/kids-data.js`](assets/js/kids-data.js), exposed as deeply frozen `window.MTAcademyKids`. The five levels are not Udemy products. Edit `translations.ar` and `translations.en` together for copy, FAQs, captions, alt text, learning focus, example ideas, and inquiry messages.
 
@@ -127,31 +131,54 @@ All page controllers share locale storage (`mt-academy-locale`), safe links, met
 
 ### Shared homepage learning paths
 
-[`assets/js/learning-paths-data.js`](assets/js/learning-paths-data.js) exposes deeply frozen `window.MTAcademyPaths`: the three offering IDs/destinations, Kids preview image metadata, section heading, existing card summaries, and localized accessible image labels. This homepage content no longer belongs to `kids-data.js`.
+[`assets/js/learning-paths-data.js`](assets/js/learning-paths-data.js) exposes deeply frozen `window.MTAcademyPaths`: the three offering IDs/destinations, Kids and Backend preview image metadata, section heading, existing card summaries, and localized accessible image labels. This homepage content no longer belongs to `kids-data.js`.
 
-`renderLearningPaths(locale)` in `site-core.js` updates generic `data-path-*` bindings. Backend title, summary, CTA, and status are resolved from the diploma's separate data source. `renderKidsOffering(locale)` now manages only the independent Kids discount; the Udemy campaign remains in the catalog controller.
+`renderLearningPaths(locale)` in `site-core.js` updates generic `data-path-*` bindings. Backend title, summary, facts, CTA, status, visual and localized alt text are resolved from the diploma's separate data source. `renderKidsOffering(locale)` now manages only the independent Kids discount; the Udemy campaign remains in the catalog controller.
 
-The two current cards retain their large box/cover images and occupy the first desktop row. The upcoming diploma spans the full row below; mobile stacks all three in semantic order (Udemy, Kids, Backend). The eight-destination header changes to a mobile menu below `70rem` (1120px). The shared JavaScript cutoff matches the CSS. Content layout breakpoints remain independent.
+The two current cards retain their large box/cover images and occupy the first desktop row. The upcoming diploma spans the full row below; mobile stacks all three in semantic order (Udemy, Kids, Backend). The six-item primary header groups the three paths under an accessible native Learning paths disclosure, in Udemy → Kids → Backend order. Mobile shows the same hierarchy expanded, below `70rem` (1120px). Kids-specific shortcuts remain inside the Kids page. The shared JavaScript cutoff matches the CSS. Content layout breakpoints remain independent.
 
 ### Upcoming Backend diploma
 
-The static announcement lives at [`backend-development-diploma/index.html`](backend-development-diploma/index.html), served at `/backend-development-diploma/`. It announces the **Backend Development Diploma with Java & Spring Boot**, for complete beginners starting from zero, with details to be announced soon.
+The static announcement lives at [`backend-development-diploma/index.html`](backend-development-diploma/index.html), served at `/backend-development-diploma/`. It presents the **Backend Development Diploma with Java & Spring Boot** for complete beginners: 9 months, a 36-week study plan, 2 sessions weekly, 72 sessions of up to 5 instructional hours each, 360 planned instructional hours, and 9 monthly practical projects. Assignments and independent project work are additional to instructional hours. The announced study duration and week plan do not define exact calendar dates or breaks.
 
-Edit [`assets/js/backend-diploma-data.js`](assets/js/backend-diploma-data.js) for both languages, metadata, optional inquiry messages, and confirmed program facts. Its single `status: 'coming-soon'` value supplies the homepage and announcement-page badge via localized `statusLabels`. There is no enrollment, price, promotion, deadline, or subscription backend.
+Edit [`assets/js/backend-diploma-data.js`](assets/js/backend-diploma-data.js) for both languages, metadata, optional inquiry messages, and confirmed program facts. Its `plan` object owns the numeric study facts, capacity (15–20), tentative start year (2027), and registration/curriculum/price announcement states. The `experience` alias reads shared instructor statistics: over 8 professional years, over 21,697 Udemy learners, over 743 Udemy reviews, and over 145 mentorship trainees across over 14 countries. These figures are explicitly attributed to prior teaching/mentorship, not to this new diploma. Both language variants derive numeric copy from these sources, preserving the lower-bound meaning. Its single `status: 'coming-soon'` value supplies the homepage and announcement-page badge via localized `statusLabels`. There is no enrollment, price, promotion, deadline, or subscription backend.
 
-After editing announcement copy, navigation, or shared contact facts, synchronize the saved Arabic HTML:
+After editing preview copy, navigation, or shared contact facts, synchronize the saved Arabic page and the Backend homepage card:
 
 ```bash
 node scripts/refresh-backend-page.cjs
 ```
 
-This helper uses Node's standard library. GitHub Pages serves the saved HTML without a build. The Kids navigation/footer links are maintained by its own data and authoring helper; run `node scripts/refresh-kids-page.cjs` after changing those.
+This helper uses Node's standard library and synchronizes the diploma page, its homepage card/visual, and the homepage instructor LinkedIn link. GitHub Pages serves the saved HTML without a build. Essential Arabic content and native FAQ disclosures work without JavaScript; the existing controller supplies English and saved language preference. The Kids navigation/footer links are maintained by its own data and authoring helper; run `node scripts/refresh-kids-page.cjs` after changing those.
 
-The SVG illustration is original HTML/SVG-compatible artwork, showing only Java, Spring Boot, Backend Development, and code brackets. The social preview source is `assets/images/backend/backend-social-preview.svg`; its PNG is 1200 × 630. Both are covered by the repository's Apache-2.0 license. No external logos or photographs were imported.
+The homepage card and diploma hero use the supplied product box, optimized losslessly as `assets/images/backend/backend-development-diploma-box.webp`. Its transparency and complete artwork are preserved; descriptor-driven CSS excludes only outer transparent margins. The existing social preview source is `assets/images/backend/backend-social-preview.svg`; its unchanged PNG is 1200 × 630. See [`docs/backend-image-sources.md`](docs/backend-image-sources.md) for provenance, viewport bounds and verification.
 
-To use future approved program artwork, replace `backend-diploma-data.js`'s `visual` path/dimensions, update the matching homepage illustration and announcement template, and regenerate the saved page. Supply accurate alt text when an image communicates new information; the current illustration is decorative because its labels repeat adjacent program text. Update social metadata if replacing its preview.
+To use future approved program artwork, update `backend-diploma-data.js`'s `visual` path, actual dimensions and viewport bounds, update `visualAlt` in both languages, then regenerate the page/homepage. The learning-path registry reuses that descriptor for runtime rendering. Update social metadata only if replacing the separately sized social preview. The Backend portrait uses the original shared photo with a closer head-and-upper-body CSS frame; other paths retain their portrait styles.
 
-Opening enrollment requires confirmed dates, delivery details, curriculum, fees, contact/enrollment destinations, and a deliberate implementation update. Changing a badge alone is insufficient; the current data/controller intentionally implement an announcement page.
+Registration is not open; detailed curriculum, price, and the registration opening are coming soon. The beginning of 2027 is tentative, with no exact start date. The page describes assignments, live coding, code review, mentorship by Mohamed Tamer, and responsible AI usage without inventing a syllabus or delivery format. Existing Udemy profile/review links are labeled by their actual source; WhatsApp is inquiry-only. Opening enrollment requires confirmed dates, delivery details, curriculum, fees, contact/enrollment destinations, and a deliberate implementation update. Changing a badge alone is insufficient; the current data/controller intentionally implement an announcement page.
+
+### Instructor LinkedIn profile
+
+The user-confirmed personal LinkedIn URL is maintained once as `MTAcademySite.instructorProfile.linkedinUrl` in `site-data.js`. Its Arabic/English label is `interface.instructorLinkedInLabel`. The homepage Udemy instructor section and dedicated Kids/Backend instructor sections use the same safe-link bindings. It is not added to the academy Organization's `sameAs` links because it identifies the instructor personally. Run both page authoring helpers after changing the URL or labels to update all static Arabic fallbacks. The Backend helper also synchronizes the homepage instructor link.
+
+### Shared facts, navigation, motion and payment maintenance
+
+The source of truth for instructor lower bounds is `instructorProfile.statistics` in `site-data.js`: 21,697+ Udemy learners, 743+ Udemy reviews, 145+ mentorship trainees, 14+ countries and 8+ professional years. Course-level ratings and program enrollment figures remain separate.
+
+The same file owns the localized global navigation hierarchy. `scripts/shared-markup.cjs` generates static navigation; `site-core.js` handles current states, native disclosure behavior, locale-aware destinations, mobile focus/scroll lock and header measurements. All page controllers also reuse its shared reveal/header motion controllers and CSS timing tokens. Essential content is visible by default, including without JavaScript.
+
+The payment section includes Western Union and bank transfer as academy arrangement options with inquiry links; no unconfirmed bank/recipient details are published, and these methods are not described as Udemy checkout methods.
+
+After editing shared facts, navigation or payments, synchronize saved Arabic content:
+
+```bash
+node scripts/refresh-homepage.cjs
+node scripts/refresh-kids-page.cjs
+node scripts/refresh-backend-page.cjs
+node scripts/check-asset-paths.cjs
+```
+
+See [`docs/platform-maintenance.md`](docs/platform-maintenance.md) for data ownership, navigation order, motion behavior and remaining transfer details.
 
 ### Promotion configuration
 
@@ -271,3 +298,6 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 ---
 
 Built for practical programming education, with an upcoming Java and Spring Boot backend path.
+
+
+Latest correctness review: [Project audit](docs/project-audit.md). Shared locale/history and saved SEO ownership are documented in [Platform maintenance](docs/platform-maintenance.md).

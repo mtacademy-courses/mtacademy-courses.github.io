@@ -2,6 +2,7 @@
 (() => {
   "use strict";
   const LOCALE_STORAGE_KEY = "mt-academy-locale";
+  const LOCALE_HISTORY_KEY = "__mtAcademyLocale";
   const EXTERNAL_PROTOCOLS = new Set(["http:", "https:"]);
   const LINK_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
   const scrollLockReasons = new Set();
@@ -182,8 +183,21 @@
   };
 
 
+  // Carry the visible locale across public routes even when storage is unavailable.
+  const localizedSiteHref = (href) => {
+    if (href.startsWith("#")) return href;
+    const url = new URL(href, document.baseURI);
+    const routes = ["/", "/index.html", "/kids-coding-bootcamp/", "/backend-development-diploma/", "/404.html"];
+    if (url.origin !== window.location.origin || !routes.includes(url.pathname)) return href;
+    const locale = document.documentElement.lang;
+    if (locale !== "en" && !url.searchParams.has("lang")) return href;
+    url.searchParams.set("lang", locale === "en" ? "en" : "ar");
+    return `${url.pathname}${url.search}${url.hash}`;
+  };
+
   const configureLink = (link, href) => {
-    const validatedHref = safeHref(href);
+    const safeLink = safeHref(href);
+    const validatedHref = safeLink ? localizedSiteHref(safeLink) : "";
     if (!validatedHref) return false;
 
     link.setAttribute("href", validatedHref);
@@ -199,7 +213,100 @@
   };
 
 
+  const sharedNavigationConfig = (locale) => {
+    const site = window.MTAcademySite;
+    if (!site) return {};
+    const copy = localizedObject(site.translations, locale, site.defaultLocale);
+    const onHome = ['/', '/index.html'].includes(window.location.pathname);
+    const destination = (item) => {
+      let href = item.href;
+      if (onHome && href.startsWith('/#')) href = href.slice(1);
+      else if (locale === 'en') {
+        const url = new URL(href, window.location.href);
+        url.searchParams.set('lang', 'en');
+        href = `${url.pathname}${url.search}${url.hash}`;
+      }
+      return { ...item, href };
+    };
+    return { primaryNavigation: copy.primaryNavigation.map(destination), learningNavigation: copy.learningNavigation.map(destination), learningOverviewLabel: copy.learningOverviewLabel };
+  };
+
+  const updateNavigationState = () => {
+    document.querySelectorAll('[data-learning-path]').forEach(link => {
+      const url = new URL(link.href, window.location.href);
+      const current = url.pathname === window.location.pathname && !url.hash;
+      if (current) { link.setAttribute('aria-current', 'page'); link.classList.add('is-active'); }
+      else if (link.getAttribute('aria-current') === 'page') { link.removeAttribute('aria-current'); link.classList.remove('is-active'); }
+    });
+    document.querySelectorAll('.nav-paths').forEach(group => {
+      const routeActive = Boolean(group.querySelector('[aria-current="page"]'));
+      group.querySelector('summary').classList.toggle('is-active', routeActive || Boolean(group.querySelector('[aria-current="location"]')));
+    });
+  };
+
+  const initPathNavigation = () => {
+    const groups = [...document.querySelectorAll('.nav-paths')];
+    let focusedGroup = null;
+    const close = (group, focus = false) => {
+      group.open = false;
+      if (focus) group.querySelector('summary').focus({ preventScroll: true });
+    };
+    groups.forEach(group => {
+      group.addEventListener('focusin', () => { focusedGroup = group; });
+      group.addEventListener('click', event => { if (event.target.closest('a[href]')) close(group); });
+      group.addEventListener('focusout', () => {
+        window.setTimeout(() => { if (!group.contains(document.activeElement)) close(group); }, 0);
+      });
+    });
+    document.addEventListener('focusin', event => {
+      if (event.target !== document.body && !groups.some(group => group.contains(event.target))) focusedGroup = null;
+    });
+    document.addEventListener('pointerdown', event => groups.forEach(group => { if (!group.contains(event.target)) close(group); }));
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      const open = groups.find(group => group.open);
+      if (open) { event.preventDefault(); close(open, true); }
+    });
+    window.matchMedia('(min-width: 70rem)').addEventListener('change', event => groups.forEach(group => {
+      const hadFocus = group.contains(document.activeElement) || (focusedGroup === group && document.activeElement === document.body);
+      close(group);
+      if (hadFocus) {
+        const target = event.matches ? group.querySelector('summary') : document.getElementById('mobile-menu-toggle');
+        target?.focus({ preventScroll: true });
+      }
+    }));
+    updateNavigationState();
+  };
+
+  // Preserve the source text while isolating familiar technical names in Arabic prose.
+  // Authoring helpers use the same parts to keep saved HTML and runtime rendering aligned.
+  const technicalTextParts = (value) => {
+    const source = String(value);
+    if (!/[\u0600-\u06ff]/.test(source)) return [{ text: source, technical: false }];
+    const terms = /\b(?:MT Academy|Spring Boot|Code Review|Live Coding|MIT App Inventor|Code\.org|Scratch 3|REST APIs|JavaScript|Backend|Python|Udemy|Java|HTML|CSS|AI)\b/g;
+    const parts = [];
+    let position = 0;
+    for (const match of source.matchAll(terms)) {
+      if (match.index > position) parts.push({ text: source.slice(position, match.index), technical: false });
+      parts.push({ text: match[0], technical: true });
+      position = match.index + match[0].length;
+    }
+    if (position < source.length) parts.push({ text: source.slice(position), technical: false });
+    return parts;
+  };
+
+  const setLocalizedText = (element, value) => {
+    element.replaceChildren(...technicalTextParts(value).map(part => {
+      if (!part.technical) return document.createTextNode(part.text);
+      const term = createElement('bdi', 'technical-name', part.text);
+      term.dir = 'ltr';
+      term.lang = 'en';
+      return term;
+    }));
+  };
+
   const applySiteConfiguration = (siteConfig) => {
+    siteConfig = { ...siteConfig, ...sharedNavigationConfig(siteConfig.locale) };
     const root = document.documentElement;
     const locale = textValue(siteConfig.locale || siteConfig.language);
     const direction = textValue(siteConfig.direction || siteConfig.dir).toLowerCase();
@@ -240,7 +347,7 @@
         return;
       }
 
-      element.textContent = value;
+      setLocalizedText(element, value);
       element.hidden = false;
       setAutoDirection(element);
     });
@@ -271,6 +378,8 @@
     document.querySelectorAll("[data-current-year], #current-year").forEach((element) => {
       element.textContent = String(new Date().getFullYear());
     });
+
+    updateNavigationState();
 
     const seo = siteConfig.seo && typeof siteConfig.seo === "object" ? siteConfig.seo : {};
     const errorPage = siteConfig.errorPage && typeof siteConfig.errorPage === "object"
@@ -311,7 +420,11 @@
 
     document.querySelectorAll("[data-home-link]").forEach((link) => {
       if (!(link instanceof HTMLAnchorElement)) return;
-      link.href = "/";
+      configureLink(link, "/");
+    });
+    document.querySelectorAll("a[href]").forEach((link) => {
+      const href = safeHref(link.getAttribute("href"));
+      if (href) link.setAttribute("href", localizedSiteHref(href));
     });
   };
 
@@ -395,6 +508,14 @@
       });
     });
 
+    window.addEventListener("popstate", (event) => {
+      const requested = new URL(window.location.href).searchParams.get("lang");
+      const saved = event.state && event.state[LOCALE_HISTORY_KEY];
+      const fallback = textValue(window.MTAcademySite && window.MTAcademySite.defaultLocale) || "ar";
+      const locale = localeCodes.includes(requested) ? requested : (localeCodes.includes(saved) ? saved : fallback);
+      if (localeCodes.includes(locale)) onSelect(locale);
+    });
+
     const update = (locale, siteConfig) => {
       currentLocale = locale;
       options.forEach((option) => {
@@ -467,7 +588,7 @@
       navigation.setAttribute("aria-hidden", "true");
       document.body.classList.remove("mobile-nav-open", "menu-open");
       unlockPageScroll("mobile-navigation");
-      if (navigation.contains(document.activeElement)) focusVisibleControl(!desktopMode);
+      if (navigation.contains(document.activeElement) || (desktopMode && document.activeElement === toggle)) focusVisibleControl(!desktopMode);
     };
 
     const setOpen = (nextOpen, restoreFocus = false, immediate = false) => {
@@ -505,7 +626,7 @@
       }
 
       if (immediate || reducedMotion.matches) finishClose(immediate);
-      else closeTimer = window.setTimeout(() => finishClose(false), 240);
+      else closeTimer = window.setTimeout(() => finishClose(false), motionDuration());
     };
 
     toggle.addEventListener("click", () => setOpen(!isOpen, false));
@@ -530,7 +651,7 @@
             focusTarget.setAttribute("tabindex", "-1");
             focusTarget.focus({ preventScroll: true });
             focusTarget.addEventListener("blur", () => focusTarget.removeAttribute("tabindex"), { once: true });
-          }, 350);
+          }, motionDuration() + 30);
         }
       }
     });
@@ -570,7 +691,12 @@
 
     const desktopQuery = window.matchMedia("(min-width: 70rem)");
     const handleViewportChange = (event) => {
-      if (event.matches) setOpen(false, false, true);
+      if (event.matches) {
+        // The media query can hide and blur the mobile controls before this callback.
+        const restoreDesktopFocus = isOpen || navigation.contains(document.activeElement) || document.activeElement === toggle;
+        setOpen(false, false, true);
+        if (restoreDesktopFocus) focusVisibleControl(false);
+      }
     };
 
     if (typeof desktopQuery.addEventListener === "function") {
@@ -597,11 +723,107 @@
   };
 
 
-  const initActiveNavigation = () => {
-    const desktopNav = document.querySelector(".desktop-nav");
-    const candidates = document.querySelectorAll(
-      "[data-nav-link][href^='#'], header nav a[href^='#'], #mobile-nav a[href^='#']"
+  const motionDuration = (name = 'component', fallback = 240) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 0;
+    const value = window.getComputedStyle(document.documentElement).getPropertyValue(`--motion-duration-${name}`).trim();
+    const number = Number.parseFloat(value);
+    return Number.isFinite(number) ? number * (value.endsWith('ms') ? 1 : 1000) : fallback;
+  };
+
+  const initHeaderMotion = () => {
+    const header = document.querySelector(".site-header");
+    if (!header) return;
+    const hero = document.querySelector('.hero');
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      header.classList.toggle("is-scrolled", window.scrollY > 16);
+      document.documentElement.style.setProperty('--header-height', `${header.getBoundingClientRect().height}px`);
+      document.body.classList.toggle('hero-in-view', Boolean(hero && hero.getBoundingClientRect().bottom > header.getBoundingClientRect().bottom));
+    };
+
+    const scheduleUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(scheduleUpdate).observe(header);
+    update();
+  };
+
+  const initMotionSystem = () => {
+    if (window.__mtAcademyMotion) return window.__mtAcademyMotion;
+    const root = document.documentElement;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const configuredStagger = Number.parseFloat(
+      window.getComputedStyle(root).getPropertyValue("--motion-stagger")
     );
+    const staggerStep = Number.isFinite(configuredStagger) ? configuredStagger : 55;
+    const observed = new WeakSet();
+    let observer = null;
+
+    const reveal = (element) => {
+      if (!(element instanceof HTMLElement)) return;
+      element.classList.add("is-revealed");
+      if (observer) observer.unobserve(element);
+    };
+
+    if (!reducedMotion.matches && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) reveal(entry.target);
+        });
+      }, { rootMargin: "0px 0px 10% 0px", threshold: 0.06 });
+    }
+
+    const observeElements = (elements, options = {}) => {
+      const candidates = [...elements].filter((element) => element instanceof HTMLElement);
+      candidates.forEach((element, index) => {
+        if (observed.has(element) || element.closest("[hidden]")) return;
+        observed.add(element);
+        element.classList.add("motion-reveal");
+        if (options.variant) element.classList.add(`motion-reveal--${options.variant}`);
+        const stagger = options.stagger === false ? 0 : Math.min(index * staggerStep, staggerStep * 3);
+        element.style.setProperty("--motion-delay", `${stagger}ms`);
+
+        if (reducedMotion.matches || !observer) {
+          reveal(element);
+          return;
+        }
+
+        const bounds = element.getBoundingClientRect();
+        if (bounds.bottom <= 0 || bounds.top <= window.innerHeight * 0.94) {
+          window.requestAnimationFrame(() => reveal(element));
+          return;
+        }
+        observer.observe(element);
+      });
+    };
+
+    const refresh = () => {
+      observeElements(document.querySelectorAll(
+        '.hero__content, .learning-paths__heading, .learning-path, .section-heading, .instructor-visual, .instructor-content, .payment-copy, .contact-card, .footer-grid > *, .footer-bottom, .kids-hero__copy, .kids-hero__media, .kids-section-heading, .kids-benefit, .kids-level, .kids-how article, .kids-session, .kids-instructor, .kids-final, .kids-footer, .diploma-hero__copy, .diploma-hero__visual, .diploma-section-heading, .diploma-metrics, .diploma-practice-card, .diploma-mentor, .diploma-cohort, .diploma-announcements article, .diploma-faq, .diploma-closing, .diploma-related__card, .diploma-footer'
+      ), { stagger: false });
+      observeElements(document.querySelectorAll('.course-card, .payment-method, .review-slide'));
+    };
+
+    root.classList.add("motion-ready");
+    reducedMotion.addEventListener('change', () => {
+      if (!reducedMotion.matches) return;
+      document.querySelectorAll('.motion-reveal').forEach(reveal);
+      if (observer) observer.disconnect();
+    });
+    refresh();
+
+    window.__mtAcademyMotion = { observeElements, refresh };
+    return window.__mtAcademyMotion;
+  };
+
+  const initActiveNavigation = () => {
+    const candidates = document.querySelectorAll("[data-local-nav] a[href^='#'], header [data-nav-link][href^='#']");
     const links = [];
     const sectionMap = new Map();
 
@@ -622,27 +844,6 @@
 
     if (!links.length || !sectionMap.size) return;
 
-    let pillFrame = 0;
-    const updateDesktopPill = () => {
-      pillFrame = 0;
-      if (!(desktopNav instanceof HTMLElement) || desktopNav.offsetParent === null) return;
-      const activeLink = desktopNav.querySelector(".nav-link.is-active");
-      if (!(activeLink instanceof HTMLElement)) {
-        desktopNav.style.setProperty("--nav-pill-opacity", "0");
-        return;
-      }
-      const navBounds = desktopNav.getBoundingClientRect();
-      const linkBounds = activeLink.getBoundingClientRect();
-      desktopNav.style.setProperty("--nav-pill-left", `${linkBounds.left - navBounds.left}px`);
-      desktopNav.style.setProperty("--nav-pill-width", `${linkBounds.width}px`);
-      desktopNav.style.setProperty("--nav-pill-opacity", "1");
-    };
-
-    const schedulePillUpdate = () => {
-      if (pillFrame) window.cancelAnimationFrame(pillFrame);
-      pillFrame = window.requestAnimationFrame(updateDesktopPill);
-    };
-
     const setActive = (id) => {
       links.forEach(({ link, id: linkId }) => {
         const isActive = linkId === id;
@@ -650,49 +851,33 @@
         if (isActive) link.setAttribute("aria-current", "location");
         else link.removeAttribute("aria-current");
       });
-      schedulePillUpdate();
+      updateNavigationState();
     };
 
     links.forEach(({ link, id }) => link.addEventListener("click", () => setActive(id)));
 
+    let lastActive = null;
     const chooseByScrollPosition = () => {
-      const threshold = Math.max(100, window.innerHeight * 0.3);
-      let selected = sectionMap.has("top") ? "top" : "";
-      sectionMap.forEach((section, id) => {
-        if (section.getBoundingClientRect().top <= threshold) selected = id;
-      });
-      setActive(selected);
+      const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 80;
+      const threshold = headerHeight + 24;
+      const sections = [...sectionMap].map(([id, element]) => ({ id, bounds: element.getBoundingClientRect() })).sort((a,b) => a.bounds.top - b.bounds.top);
+      let selected = sectionMap.has('top') ? 'top' : '';
+      sections.forEach(({ id, bounds }) => { if (bounds.top <= threshold) selected = id; });
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4) {
+        const visible = sections.filter(({ bounds }) => bounds.top < window.innerHeight && bounds.bottom > headerHeight);
+        if (visible.length) selected = visible[visible.length - 1].id;
+      }
+      if (selected !== lastActive) { lastActive = selected; setActive(selected); }
     };
-
-    if ("IntersectionObserver" in window) {
-      const visibility = new Map();
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => visibility.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0));
-        const visible = [...visibility.entries()]
-          .filter(([, ratio]) => ratio > 0)
-          .sort((a, b) => b[1] - a[1]);
-        if (visible.length) setActive(visible[0][0]);
-        else chooseByScrollPosition();
-      }, { rootMargin: "-20% 0px -60%", threshold: [0, 0.1, 0.5, 1] });
-      sectionMap.forEach((section) => observer.observe(section));
-    } else {
-      let scheduled = false;
-      window.addEventListener("scroll", () => {
-        if (scheduled) return;
-        scheduled = true;
-        window.requestAnimationFrame(() => {
-          scheduled = false;
-          chooseByScrollPosition();
-        });
-      }, { passive: true });
-    }
-
+    let frame = 0;
+    const schedule = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => { frame = 0; chooseByScrollPosition(); });
+    };
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
     chooseByScrollPosition();
-    window.addEventListener("resize", schedulePillUpdate, { passive: true });
-    if ("ResizeObserver" in window && desktopNav) {
-      const resizeObserver = new ResizeObserver(schedulePillUpdate);
-      resizeObserver.observe(desktopNav);
-    }
+
   };
 
 
@@ -714,9 +899,119 @@
     const url = new URL(window.location.href);
     if (url.searchParams.has("lang") || locale !== "ar") {
       url.searchParams.set("lang", locale);
-      history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
     }
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    history.replaceState({ ...state, [LOCALE_HISTORY_KEY]: locale }, "", `${url.pathname}${url.search}${url.hash}`);
   };
+  const asTextArrayForSchema = (value) => {
+    if (!Array.isArray(value)) return [];
+    return value.map((item) => {
+      if (typeof item === "string" || typeof item === "number") return textValue(item);
+      if (!item || typeof item !== "object") return "";
+      return textValue(item.title || item.name || item.description);
+    }).filter(Boolean);
+  };
+
+  const getValidRating = (rating) => {
+    if (!rating || typeof rating !== "object") return null;
+    const value = Number(rating.value);
+    const max = Number(rating.max);
+    const reviewCount = Number(rating.reviewCount);
+    if (!Number.isFinite(value) || !Number.isFinite(max) || !Number.isFinite(reviewCount)) return null;
+    if (value <= 0 || max <= 0 || reviewCount <= 0 || value > max) return null;
+    return { value, max, reviewCount };
+  };
+
+  const buildOrganizationSchema = (siteConfig) => {
+    const siteUrl = absoluteHttpUrl(siteConfig.siteUrl, siteConfig.siteUrl);
+    const brandName = textValue(siteConfig.brandName);
+    if (!siteUrl || !brandName) return null;
+    const organizationId = `${siteUrl.replace(/#.*$/, "")}#organization`;
+    const organization = {
+      "@type": "Organization",
+      "@id": organizationId,
+      name: brandName,
+      url: siteUrl,
+    };
+    const logo = siteConfig.logo && typeof siteConfig.logo === "object"
+      ? absoluteHttpUrl(siteConfig.logo.src, siteUrl)
+      : "";
+    if (logo) organization.logo = logo;
+
+    const sameAs = (Array.isArray(siteConfig.socialLinks) ? siteConfig.socialLinks : [])
+      .map((link) => absoluteHttpUrl(link && (link.url || link.href), siteUrl))
+      .filter(Boolean);
+    if (sameAs.length) organization.sameAs = sameAs;
+
+    return organization;
+  };
+
+  const buildCatalogSchema = (siteConfig, courses) => {
+    const configuredSiteUrl = absoluteHttpUrl(siteConfig.siteUrl, siteConfig.siteUrl);
+    const siteUrl = configuredSiteUrl;
+    const brandName = textValue(siteConfig.brandName);
+    if (!siteUrl || !brandName) {
+      return null;
+    }
+
+    const organization = buildOrganizationSchema(siteConfig);
+    const organizationId = organization["@id"];
+
+    const itemListElements = [];
+    courses.forEach((course) => {
+      const name = textValue(course.title);
+      if (!name) return;
+      const item = {
+        "@type": "Course",
+        name,
+        provider: { "@id": organizationId },
+      };
+      const description = textValue(course.shortDescription || course.fullDescription);
+      const courseUrl = absoluteHttpUrl(course.enrollmentUrl || course.detailsUrl || course.url, siteUrl);
+      const image = typeof course.image === "string" ? { src: course.image } : (course.image || {});
+      const imageUrl = absoluteHttpUrl(image.src, siteUrl);
+      const language = textValue(course.language);
+      const category = textValue(course.category);
+      const teaches = asTextArrayForSchema(course.learningOutcomes);
+      const rating = getValidRating(course.rating);
+      if (description) item.description = description;
+      if (courseUrl) item.url = courseUrl;
+      if (imageUrl) item.image = imageUrl;
+      if (language) item.inLanguage = language;
+      if (category) item.about = category;
+      if (teaches.length) item.teaches = teaches;
+      if (rating) {
+        item.aggregateRating = {
+          "@type": "AggregateRating",
+          ratingValue: rating.value,
+          bestRating: rating.max,
+          ratingCount: rating.reviewCount,
+        };
+      }
+
+      itemListElements.push({
+        "@type": "ListItem",
+        position: itemListElements.length + 1,
+        item,
+      });
+    });
+
+    const graph = [organization];
+    if (itemListElements.length) {
+      graph.push({
+        "@type": "ItemList",
+        name: textValue(siteConfig.catalog && siteConfig.catalog.title) || `${brandName} Courses`,
+        numberOfItems: itemListElements.length,
+        itemListElement: itemListElements,
+      });
+    }
+
+    return {
+      "@context": "https://schema.org",
+      "@graph": graph,
+    };
+  };
+
   const deepFreeze = (value) => {
     if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
     Object.values(value).forEach(deepFreeze);
@@ -731,10 +1026,10 @@
     const backendCopy = localizedObject(diploma.translations, locale, "ar");
     const copy = {
       ...localizedObject(paths.translations, locale, "ar"),
-      backend: { ...backendCopy.card, status: backendCopy.statusLabels[diploma.status] },
+      backend: { ...backendCopy.card, visualAlt: backendCopy.visualAlt, status: backendCopy.statusLabels[diploma.status] },
     };
     document.querySelectorAll("[data-path-text]").forEach((element) => {
-      element.textContent = textValue(getByPath(copy, element.dataset.pathText));
+      setLocalizedText(element, textValue(getByPath(copy, element.dataset.pathText)));
     });
     document.querySelectorAll("[data-path-aria]").forEach((element) => {
       element.setAttribute("aria-label", textValue(getByPath(copy, element.dataset.pathAria)));
@@ -749,7 +1044,7 @@
       image.src = offering.image.src;
       image.width = offering.image.width;
       image.height = offering.image.height;
-      image.alt = copy.imageAlt;
+      image.alt = textValue(getByPath(copy, offering.imageAltKey || "imageAlt"));
     });
     document.querySelectorAll("[data-path-status='backend-diploma']").forEach((card) => {
       card.dataset.offeringStatus = diploma.status;
@@ -773,6 +1068,6 @@
   };
 
   window.MTAcademyCore = Object.freeze({
-    lockPageScroll, unlockPageScroll, onReady, textValue, getByPath, firstValue, createElement, setAutoDirection, isNonEmptyArray, localeCode, getSupportedLocales, findLocaleDescriptor, localizedObject, getInitialLocale, safeMediaSource, safeHref, isExternalHttpLink, configureLink, applySiteConfiguration, applyAccessibleLabels, initLanguageSwitching, initMobileNavigation, absoluteHttpUrl, initActiveNavigation, initTopLinks, saveLocale, deepFreeze, renderKidsOffering, renderLearningPaths
+    lockPageScroll, unlockPageScroll, onReady, textValue, getByPath, firstValue, createElement, setAutoDirection, getValidRating, buildOrganizationSchema, buildCatalogSchema, technicalTextParts, isNonEmptyArray, localeCode, getSupportedLocales, findLocaleDescriptor, localizedObject, getInitialLocale, safeMediaSource, safeHref, isExternalHttpLink, configureLink, applySiteConfiguration, applyAccessibleLabels, initLanguageSwitching, initMobileNavigation, absoluteHttpUrl, initActiveNavigation, initTopLinks, initPathNavigation, initMotionSystem, initHeaderMotion, motionDuration, saveLocale, deepFreeze, renderKidsOffering, renderLearningPaths
   });
 })();

@@ -5,12 +5,12 @@
   const COURSE_HASH_KEY = "course";
   const {
     lockPageScroll, unlockPageScroll, onReady, textValue,
-    getByPath, firstValue, createElement, setAutoDirection,
+    getByPath, firstValue, createElement, setAutoDirection, getValidRating, buildCatalogSchema,
     isNonEmptyArray, localeCode, getSupportedLocales, findLocaleDescriptor,
     localizedObject, getInitialLocale, safeMediaSource, safeHref,
     isExternalHttpLink, configureLink, applySiteConfiguration, applyAccessibleLabels,
     initLanguageSwitching, initMobileNavigation, absoluteHttpUrl, initActiveNavigation,
-    initTopLinks, saveLocale, renderKidsOffering, renderLearningPaths,
+    initTopLinks, initPathNavigation, initMotionSystem, initHeaderMotion, motionDuration, saveLocale, renderKidsOffering, renderLearningPaths,
   } = window.MTAcademyCore;
   let motionController = {
     observeElements: () => {},
@@ -21,15 +21,6 @@
     if (typeof tag === "string" || typeof tag === "number") return textValue(tag);
     if (!tag || typeof tag !== "object") return "";
     return textValue(tag.label || tag.name || tag.title);
-  };
-
-  const asTextArrayForSchema = (value) => {
-    if (!Array.isArray(value)) return [];
-    return value.map((item) => {
-      if (typeof item === "string" || typeof item === "number") return textValue(item);
-      if (!item || typeof item !== "object") return "";
-      return textValue(item.title || item.name || item.description);
-    }).filter(Boolean);
   };
 
   const resolvePaymentMethods = (rawSiteConfig, locale, fallbackLocale) => {
@@ -413,7 +404,7 @@
       if (closeTimeoutId !== null) window.clearTimeout(closeTimeoutId);
       closeTimeoutId = null;
       if (immediate) finishDialogClose();
-      else closeTimeoutId = window.setTimeout(finishDialogClose, 230);
+      else closeTimeoutId = window.setTimeout(finishDialogClose, motionDuration());
     };
 
     const openPopup = (trigger = null, automatic = false) => {
@@ -661,104 +652,6 @@
     return { update, getState: () => ({ ...promotionState }) };
   };
 
-  const initHeaderMotion = () => {
-    const header = document.querySelector(".site-header");
-    if (!header) return;
-    let frame = 0;
-
-    const update = () => {
-      frame = 0;
-      header.classList.toggle("is-scrolled", window.scrollY > 16);
-    };
-
-    const scheduleUpdate = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(update);
-    };
-
-    window.addEventListener("scroll", scheduleUpdate, { passive: true });
-    update();
-  };
-
-  const initMotionSystem = () => {
-    const root = document.documentElement;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const configuredStagger = Number.parseFloat(
-      window.getComputedStyle(root).getPropertyValue("--motion-stagger")
-    );
-    const staggerStep = Number.isFinite(configuredStagger) ? configuredStagger : 55;
-    const observed = new WeakSet();
-    let observer = null;
-
-    const reveal = (element) => {
-      if (!(element instanceof HTMLElement)) return;
-      element.classList.add("is-revealed");
-      if (observer) observer.unobserve(element);
-    };
-
-    if (!reducedMotion.matches && "IntersectionObserver" in window) {
-      observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) reveal(entry.target);
-        });
-      }, { rootMargin: "0px 0px 10% 0px", threshold: 0.06 });
-    }
-
-    const observeElements = (elements, options = {}) => {
-      const candidates = [...elements].filter((element) => element instanceof HTMLElement);
-      candidates.forEach((element, index) => {
-        if (observed.has(element) || element.closest("[hidden]")) return;
-        observed.add(element);
-        element.classList.add("motion-reveal");
-        if (options.variant) element.classList.add(`motion-reveal--${options.variant}`);
-        const stagger = options.stagger === false ? 0 : Math.min(index * staggerStep, staggerStep * 4);
-        element.style.setProperty("--motion-delay", `${stagger}ms`);
-
-        if (reducedMotion.matches || !observer) {
-          reveal(element);
-          return;
-        }
-
-        const bounds = element.getBoundingClientRect();
-        if (bounds.bottom <= 0 || bounds.top <= window.innerHeight * 0.94) {
-          window.requestAnimationFrame(() => reveal(element));
-          return;
-        }
-        observer.observe(element);
-      });
-    };
-
-    const refresh = () => {
-      observeElements(document.querySelectorAll(
-        ".courses-section .section-heading, .reviews-section .section-heading, .faq-heading, .payment-copy"
-      ), { stagger: false });
-      observeElements(document.querySelectorAll(".course-card"));
-      observeElements(document.querySelectorAll(".instructor-visual"), { variant: "inline-start", stagger: false });
-      observeElements(document.querySelectorAll(".instructor-content"), { variant: "inline-end", stagger: false });
-      observeElements(document.querySelectorAll(".review-slide"));
-      observeElements(document.querySelectorAll(".payment-method, .payment-card"));
-      observeElements(document.querySelectorAll(".contact-card"), { stagger: false });
-      observeElements(document.querySelectorAll(".footer-grid > *, .footer-bottom"));
-    };
-
-    root.classList.add("motion-ready");
-    const hero = document.querySelector(".hero");
-    if (hero) {
-      hero.classList.add("is-motion-ready");
-      void hero.offsetHeight;
-      window.requestAnimationFrame(() => hero.classList.add("is-revealed"));
-    }
-
-    const updateAmbientState = () => {
-      root.style.setProperty("--ambient-animation-state", document.hidden ? "paused" : "running");
-    };
-    document.addEventListener("visibilitychange", updateAmbientState);
-    updateAmbientState();
-    refresh();
-
-    return { observeElements, refresh };
-  };
-
   const initInstructorStats = () => {
     const stats = document.querySelector(".instructor-stats");
     const values = stats ? [...stats.querySelectorAll(".instructor-stat strong")] : [];
@@ -787,16 +680,16 @@
 
       entries.forEach(({ element, finalText }) => element.setAttribute("aria-label", finalText));
       const start = performance.now();
-      const duration = 620;
-      const formatter = new Intl.NumberFormat(document.documentElement.lang || undefined, {
+      const duration = motionDuration('counter', 620);
+      const formatter = new Intl.NumberFormat("en-US", {
         maximumFractionDigits: 0,
       });
 
       const step = (timestamp) => {
-        const progress = Math.min(1, (timestamp - start) / duration);
+        const progress = reducedMotion.matches ? 1 : Math.min(1, (timestamp - start) / duration);
         const eased = 1 - Math.pow(1 - progress, 3);
         entries.forEach(({ element, finalText, value }) => {
-          element.textContent = progress === 1 ? finalText : formatter.format(Math.round(value * eased));
+          element.textContent = progress === 1 ? finalText : `${formatter.format(Math.round(value * eased))}+`;
         });
         if (progress < 1) window.requestAnimationFrame(step);
       };
@@ -1001,16 +894,6 @@
     if (["coming-soon", "coming_soon", "soon"].includes(status)) return copy("comingSoon");
     if (["closed", "unavailable", "enrollment-closed"].includes(status)) return copy("closed");
     return textValue(course.status);
-  };
-
-  const getValidRating = (rating) => {
-    if (!rating || typeof rating !== "object") return null;
-    const value = Number(rating.value);
-    const max = Number(rating.max);
-    const reviewCount = Number(rating.reviewCount);
-    if (!Number.isFinite(value) || !Number.isFinite(max) || !Number.isFinite(reviewCount)) return null;
-    if (value <= 0 || max <= 0 || reviewCount <= 0 || value > max) return null;
-    return { value, max, reviewCount };
   };
 
   const formatNumber = (value, locale, options = {}) => {
@@ -1561,7 +1444,7 @@
       dialog.classList.add("is-closing");
       if (closeTimer) window.clearTimeout(closeTimer);
       if (immediate) finishDialogClose();
-      else closeTimer = window.setTimeout(finishDialogClose, 230);
+      else closeTimer = window.setTimeout(finishDialogClose, motionDuration());
     };
 
     const clearCourseFromUrl = () => {
@@ -1755,7 +1638,7 @@
         grid.classList.remove("is-filtering-in");
         void grid.offsetHeight;
         grid.classList.add("is-filtering-in");
-        window.setTimeout(() => grid.classList.remove("is-filtering-in"), 240);
+        window.setTimeout(() => grid.classList.remove("is-filtering-in"), motionDuration() + 16);
       }
       motionController.observeElements(grid.querySelectorAll(".course-card"));
 
@@ -1797,7 +1680,7 @@
         const latestMatches = pendingMatches || [];
         pendingMatches = null;
         commitRender(latestMatches, true);
-      }, 95);
+      }, motionDuration('micro'));
     };
 
     const reset = (focusSearch = false) => {
@@ -1986,6 +1869,7 @@
     methods.forEach((method) => {
       const name = textValue(method.name);
       const card = createElement("article", "payment-method");
+      card.dataset.paymentMethod = method.id;
       const image = method.image && typeof method.image === "object" ? method.image : {};
       const imageSource = safeMediaSource(image.src || method.image);
       if (imageSource) {
@@ -2011,6 +1895,13 @@
         setAutoDirection(paragraph);
         body.append(paragraph);
       }
+      if (method.contactRequired && safeHref(whatsapp)) {
+        const link = createElement('a', 'payment-method__inquiry', textValue(method.contactLabel) || textValue(payment.contactLabel));
+        const url = new URL(whatsapp, document.baseURI);
+        url.searchParams.set('text', siteConfig.locale === 'ar' ? `مرحبًا، أريد الاستفسار عن بيانات الدفع عبر ${name} مع MT Academy.` : `Hello, I would like to ask for ${name} payment details for MT Academy arrangements.`);
+        configureLink(link, url.href);
+        body.append(link);
+      }
       card.append(body);
       fragment.append(card);
     });
@@ -2021,85 +1912,8 @@
   const renderStructuredData = (siteConfig, courses) => {
     const script = document.querySelector("#structured-data");
     if (!(script instanceof HTMLScriptElement)) return;
-
-    const configuredSiteUrl = absoluteHttpUrl(siteConfig.siteUrl);
-    const siteUrl = configuredSiteUrl || absoluteHttpUrl(window.location.href);
-    const brandName = textValue(siteConfig.brandName);
-    if (!siteUrl || !brandName) {
-      script.textContent = "";
-      return;
-    }
-
-    const organizationId = `${siteUrl.replace(/#.*$/, "")}#organization`;
-    const organization = {
-      "@type": "Organization",
-      "@id": organizationId,
-      name: brandName,
-      url: siteUrl,
-    };
-    const logo = siteConfig.logo && typeof siteConfig.logo === "object"
-      ? absoluteHttpUrl(siteConfig.logo.src, siteUrl)
-      : "";
-    if (logo) organization.logo = logo;
-
-    const sameAs = (Array.isArray(siteConfig.socialLinks) ? siteConfig.socialLinks : [])
-      .map((link) => absoluteHttpUrl(link && (link.url || link.href), siteUrl))
-      .filter(Boolean);
-    if (sameAs.length) organization.sameAs = sameAs;
-
-    const itemListElements = [];
-    courses.forEach((course) => {
-      const name = textValue(course.title);
-      if (!name) return;
-      const item = {
-        "@type": "Course",
-        name,
-        provider: { "@id": organizationId },
-      };
-      const description = textValue(course.shortDescription || course.fullDescription);
-      const courseUrl = absoluteHttpUrl(course.enrollmentUrl || course.detailsUrl || course.url, siteUrl);
-      const image = getCourseImage(course);
-      const imageUrl = absoluteHttpUrl(image.src, siteUrl);
-      const language = textValue(course.language);
-      const category = textValue(course.category);
-      const teaches = asTextArrayForSchema(course.learningOutcomes);
-      const rating = getValidRating(course.rating);
-      if (description) item.description = description;
-      if (courseUrl) item.url = courseUrl;
-      if (imageUrl) item.image = imageUrl;
-      if (language) item.inLanguage = language;
-      if (category) item.about = category;
-      if (teaches.length) item.teaches = teaches;
-      if (rating) {
-        item.aggregateRating = {
-          "@type": "AggregateRating",
-          ratingValue: rating.value,
-          bestRating: rating.max,
-          ratingCount: rating.reviewCount,
-        };
-      }
-
-      itemListElements.push({
-        "@type": "ListItem",
-        position: itemListElements.length + 1,
-        item,
-      });
-    });
-
-    const graph = [organization];
-    if (itemListElements.length) {
-      graph.push({
-        "@type": "ItemList",
-        name: textValue(siteConfig.catalog && siteConfig.catalog.title) || `${brandName} Courses`,
-        numberOfItems: itemListElements.length,
-        itemListElement: itemListElements,
-      });
-    }
-
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@graph": graph,
-    });
+    const schema = buildCatalogSchema(siteConfig, courses);
+    script.textContent = schema ? JSON.stringify(schema) : "";
   };
 
   const initFaq = (siteConfig) => {
@@ -2147,7 +1961,7 @@
       window.requestAnimationFrame(() => {
         entry.panel.style.maxHeight = "0px";
       });
-      entry.closeTimer = window.setTimeout(() => finishClosingEntry(entry), 320);
+      entry.closeTimer = window.setTimeout(() => finishClosingEntry(entry), motionDuration());
     };
 
     const openEntry = (entry) => {
@@ -2202,7 +2016,7 @@
       panel.hidden = true;
       panel.style.maxHeight = "0px";
       panel.style.overflow = "hidden";
-      panel.style.transition = reducedMotion.matches ? "none" : "max-height 280ms ease";
+      panel.style.transition = reducedMotion.matches ? "none" : "max-height var(--transition-base)";
       panel.setAttribute("role", "region");
       panel.setAttribute("aria-labelledby", buttonId);
       const answerContent = createElement("div", "faq-answer__content");
@@ -2272,7 +2086,7 @@
           body.style.height = `${body.scrollHeight}px`;
           body.style.opacity = "1";
         });
-        animationTimer = window.setTimeout(clearAnimation, 250);
+        animationTimer = window.setTimeout(clearAnimation, motionDuration() + 16);
         return;
       }
 
@@ -2290,7 +2104,7 @@
         details.open = false;
         body.inert = false;
         clearAnimation();
-      }, 250);
+      }, motionDuration() + 16);
     };
 
     summary.setAttribute("aria-expanded", String(isExpanded));
@@ -2401,7 +2215,7 @@
       lightbox.classList.add("is-closing");
       if (lightboxCloseTimer) window.clearTimeout(lightboxCloseTimer);
       if (immediate) finishLightboxClose();
-      else lightboxCloseTimer = window.setTimeout(finishLightboxClose, 230);
+      else lightboxCloseTimer = window.setTimeout(finishLightboxClose, motionDuration());
     };
 
     const openLightbox = (imageIndex, trigger) => {
@@ -2574,7 +2388,7 @@
             queuedDirection = 0;
             navigate(nextDirection);
           }
-        }, 250);
+        }, motionDuration() + 16);
       }
     };
 
@@ -2626,7 +2440,7 @@
         leaveTimer = 0;
         pageIndex = (pageIndex + direction + totalPages) % totalPages;
         render(visualDirection);
-      }, 115);
+      }, motionDuration('micro') + 16);
     };
 
     previousButton.addEventListener("click", () => navigate(-1));
@@ -2759,6 +2573,7 @@
       motionController = initMotionSystem();
       initHeaderMotion();
       initInstructorStats();
+      initPathNavigation();
       initActiveNavigation();
       initTopLinks();
     }
