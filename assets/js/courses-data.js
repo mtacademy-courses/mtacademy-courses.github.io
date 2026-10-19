@@ -175,7 +175,7 @@
       ar: {
         seo: {
           title: "مسارات تعلّم البرمجة | MT Academy",
-          description: "اكتشف كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.",
+          description: "اكتشف كورسات Udemy وبرمجة الأطفال أونلاين من MT Academy. والحجز مفتوح لدبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.",
           socialImageAlt: "MT Academy — كورسات برمجة باللغة العربية"
         },
         headerCta: {
@@ -204,7 +204,7 @@
         hero: {
           eyebrow: "تعلّم البرمجة باللغة العربية",
           title: "طوّر مهاراتك البرمجية مع MT Academy",
-          description: "اختَر مسارك مع MT Academy: كورسات برمجة على Udemy، أو برمجة للأطفال والمراهقين أونلاين لايف من 6 إلى 18 سنة. وقريبًا دبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.",
+          description: "اختَر مسارك مع MT Academy: كورسات برمجة على Udemy، أو برمجة للأطفال والمراهقين أونلاين لايف من 6 إلى 18 سنة. والحجز مفتوح لدبلومة Backend باستخدام Java وSpring Boot للمبتدئين من الصفر.",
           topics: ["هندسة البرمجيات", "قواعد البيانات", "تطوير الويب", "Kotlin", "Android", "REST APIs"],
           cta: {
             label: "اكتشف مسارات التعلّم",
@@ -311,7 +311,7 @@
           items: []
         },
         footer: {
-          statement: "كورسات Udemy وبرمجة الأطفال أونلاين، وقريبًا دبلومة Backend من MT Academy.",
+          statement: "كورسات Udemy وبرمجة الأطفال أونلاين، والحجز مفتوح لدبلومة Backend من MT Academy.",
           navigationTitle: "روابط سريعة",
           categoriesTitle: "مجالات الكورسات",
           contactTitle: "تواصل معنا",
@@ -342,7 +342,7 @@
       en: {
         seo: {
           title: "Programming Learning Paths | MT Academy",
-          description: "Discover Udemy courses and live online kids coding from MT Academy, plus an upcoming Java and Spring Boot backend diploma for complete beginners.",
+          description: "Discover Udemy courses and live online kids coding from MT Academy, plus a Java and Spring Boot backend diploma for complete beginners, now open for registration.",
           socialImageAlt: "MT Academy — programming courses taught in Arabic"
         },
         headerCta: {
@@ -371,7 +371,7 @@
         hero: {
           eyebrow: "Learn programming in Arabic",
           title: "Build your programming skills with MT Academy",
-          description: "Choose your path with MT Academy: Udemy programming courses, live online coding for ages 6–18, or the upcoming Java and Spring Boot Backend diploma for complete beginners.",
+          description: "Choose your path with MT Academy: Udemy programming courses, live online coding for ages 6–18, or the Java and Spring Boot Backend diploma for complete beginners, now open for registration.",
           topics: ["Software Engineering", "Databases", "Web Development", "Kotlin", "Android", "REST APIs"],
           cta: {
             label: "Explore learning paths",
@@ -478,7 +478,7 @@
           items: []
         },
         footer: {
-          statement: "Udemy courses and live online kids coding, with a Backend diploma coming soon from MT Academy.",
+          statement: "Udemy courses and live online kids coding, with registration open for the Backend diploma from MT Academy.",
           navigationTitle: "Quick links",
           categoriesTitle: "Course fields",
           contactTitle: "Contact us",

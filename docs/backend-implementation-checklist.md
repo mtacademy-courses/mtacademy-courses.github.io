@@ -1,60 +1,91 @@
-# Backend diploma implementation and verification
+# Backend diploma: registration landing page
 
-Updated on 2026-10-09. The diploma remains `coming-soon`; registration is not open. No commit, push, or deployment was performed.
+Updated 2026-10-19. Registration is open. Local implementation only; no deployment.
 
-## Confirmed program preview
+## Content ownership
 
-- [x] Preserve the existing `/backend-development-diploma/` route and stable offering ID.
-- [x] Keep study facts in `MTAcademyBackend.plan`: 9 months, a 36-week study plan, 2 sessions weekly, 72 total sessions, up to 5 hours per session, and 360 planned instructional hours.
-- [x] Explain that assignments and independent project work are additional to instructional hours; do not turn the week plan into exact calendar dates.
-- [x] Announce one practical project each month, for 9 projects, with ongoing assignments.
-- [x] Describe student participation in live coding, individual code review, mentorship and practical AI usage without adding an unannounced syllabus.
-- [x] Identify Mohamed Tamer as both instructor and mentor throughout the diploma.
-- [x] Attribute the separate `experience` figures to prior work: over 8 professional years, over 21,697 Udemy learners, over 743 Udemy reviews, over 145 mentorship trainees across over 14 countries. These now derive from shared instructor statistics.
-- [x] Link to the existing Udemy profile and homepage Udemy reviews with accurate source labels; do not present these as diploma reviews.
-- [x] Explain the planned first-cohort capacity of 15–20 students without seat counters or booking claims.
-- [x] Mark curriculum, price and registration opening as forthcoming.
-- [x] Qualify the beginning of 2027 as tentative; no exact start date is published.
-- [x] Keep contact actions inquiry-only, with no registration, payment, subscription or waitlist workflow.
+- `assets/js/backend-diploma-data.js` owns the plan, 8 curriculum stages / 21 modules, 9 monthly projects, session breakdown, graduation expectations, pricing plans, PDF metadata, application/terms collections, 47 grouped FAQs and both translations.
+- Instructor evidence continues to derive from `MTAcademySite.instructorProfile.statistics`. Prior Udemy/mentorship evidence is explicitly attributed to Mohamed Tamer's previous work.
+- `scripts/refresh-backend-page.cjs` renders the complete saved Arabic page, Course/Organization/WebPage JSON-LD and Backend homepage card/status. Run homepage, Kids, then Backend refresh helpers; repeat to check idempotence.
+- `backend-diploma.js` updates the existing bindings without rebuilding disclosures, preserving open states and focus when switching language. It localizes generic and market-specific WhatsApp draft messages and adds expand/collapse controls.
+- Registration uses the verified shared WhatsApp contact. Clicking opens a draft message; the visitor contacts the academy to arrange confirmation and payment.
+- PDF actions use one configured same-origin URL. View opens a new tab; Download uses a meaningful filename. The copied source remains byte-for-byte unchanged.
+- The page opts into full technical-term isolation through shared formatting; other routes retain the existing recognized-term formatting.
 
-## Structure and maintenance
+## PDF coverage checklist (all 15 pages)
 
-- [x] Provide equivalent Arabic/English copy using the existing shared controller and localization system.
-- [x] Derive numeric content from the study/experience objects instead of repeating editable constants.
-- [x] Add a compact six-fact overview, practice cards, instructor/mentor evidence, cohort panel, upcoming announcements, ten native FAQ disclosures and a closing inquiry section.
-- [x] Use the supplied program box, existing social preview and authentic instructor portrait.
-- [x] Update the Backend homepage summary, facts and CTA while preserving the two other cards and their image dimensions/styles.
-- [x] Make `scripts/refresh-backend-page.cjs` synchronize the static Arabic diploma page and its homepage card text bindings.
-- [x] Preserve canonical/hreflang metadata and Organization/WebPage JSON-LD without fabricated offers, ratings, prices or start dates.
-- [x] Update the homepage/diploma sitemap dates and README; Kids sitemap entries remain unchanged.
+- [x] 01: Program identity, beginner suitability, trainer/mentor and practical journey → hero, instructor.
+- [x] 02: 9 months, 36 weeks, 72 sessions, 360 scheduled = 324 learning + 36 breaks, 12–16 independent hours, baseline, support → overview, audience, experience.
+- [x] 03: Stage 1 / module 01, all six Java topic groups → curriculum.
+- [x] 04: Stage 2 / modules 02–05, all teamwork, requirements and problem-solving bullets → curriculum.
+- [x] 05: Stage 3 / modules 06–08, design, SQL/JDBC, indexing and optimization → curriculum.
+- [x] 06: Stage 4 / modules 09–12, Spring Boot 4 / Spring 7, persistence, testing, security → curriculum.
+- [x] 07: Stage 5 / modules 13–14, Linux, microservices, containers and guided Kubernetes/Helm/cloud deployment → curriculum, depth note.
+- [x] 08: Stage 6 / modules 15–16, Testcontainers and GitHub Actions, checks before packaging/deployment → curriculum, depth note.
+- [x] 09: Stage 7 / modules 17–18, architecture and design cases, requirements, alternatives and assumptions → curriculum, depth note.
+- [x] 10: Stage 8 / modules 19–21, reviewed Codex/Claude Code workflows, permissions, secrets and career preparation → curriculum, experience.
+- [x] 11: Projects 01–05 with exact titles, purpose and practical work → monthly project sequence.
+- [x] 12: Projects 06–09, final team capstone with guided deployment → monthly project sequence.
+- [x] 13: Live coding/student practice, assignments, Git evidence, monthly revisions, teamwork, individual contribution, reviewed AI and 300-minute session → experience, session breakdown.
+- [x] 14: Portfolio, engineering evidence, individual/unaided tasks, defensible design, career preparation, repeated core practice vs guided/introductory depth, personal gaps → graduation, depth note.
+- [x] 15: Arabic teaching, 15–20 planned capacity, proposed February 2027 start, exact timetable confirmation, both markets/payment options and every small-print payment note → overview, cohort, pricing, FAQs.
 
-## Verification
+## Accuracy constraints
 
-- Arabic and English diploma/homepage views at 320, 390, 768, 1024 and 1440 px: correct content, lang/dir, metadata, images and no document overflow.
-- All announced numeric facts, the planned-hours qualification, prior-experience attribution and tentative start wording checked in rendered content.
-- Ten FAQ disclosures work with Enter/Space and without JavaScript; Arabic essential content and homepage facts are available without JavaScript.
-- Mobile navigation and Escape, inquiry message encoding, page links, saved language across routes and reload checked.
-- Existing six Udemy courses/course dialog and Kids page smoke checked. Confirmed Udemy course objects/campaign, Kids program facts/levels/sessions/offer and Backend numeric plan/experience remain equal to the pre-visual-update snapshot. Shared rendering changes are limited to offering-specific image descriptors/alt text and shared instructor-link configuration.
-- Study-plan arithmetic, Arabic/English translation field parity, generator idempotence, JavaScript syntax, exact Git asset paths, sitemap parsing and whitespace checked.
-- Desktop/mobile screenshots captured and visually reviewed for both languages. Browser checks record uncaught errors and HTTP asset failures.
+- `status: 'open'` is user-confirmed. February 2027 remains proposed; exact day and weekly timetable are not yet confirmed.
+- Eight stages are a learning sequence, separate from the nine monthly projects.
+- No remaining-seat counter, registration deadline, certificate, accreditation, diploma reviews, job guarantee, unlimited support or per-submission individual review is promised.
+- Egypt: EGP 16,500 full payment; EGP 4,000 + 7 × EGP 2,000 = EGP 18,000 installments.
+- International: USD 650 full payment; USD 150 + 6 × USD 100 = USD 750 installments.
+- Deposits are included; installments start with teaching; all totals cover the complete diploma; dates follow agreed start changes; all 15 booking/payment/withdrawal clauses are published on the page for review before payment.
 
-## Still awaiting announcement
+## Local verification
 
-Detailed curriculum, price, registration opening date, exact start date, session days/times and delivery format remain unannounced. Early 2027 is a tentative plan. Adding actual enrollment requires a deliberate implementation update with approved details; changing a badge alone is insufficient.
+Verification results are recorded below after browser and repository checks. Preview with `python3 -m http.server 8000`, then open `/backend-development-diploma/?lang=ar` or `?lang=en`.
 
-## Artwork, Arabic proofreading and instructor presentation — 2026-10-09
+Completed verification on 2026-10-19:
 
-- [x] Replace both active Backend illustrations with the supplied lossless transparent product-box asset, using one visual descriptor and complete-artwork CSS viewports.
-- [x] Keep the separately sized social preview unchanged; document source and conversion in `backend-image-sources.md`.
-- [x] Add the user-confirmed LinkedIn profile in all three instructor sections through shared configuration and localized labels, including static Arabic fallbacks.
-- [x] Review Backend Arabic, standardize session/cohort terminology, fix awkward wording, and retain all study facts and announcement qualifications.
-- [x] Improve Backend-only portrait framing using the existing authentic source photo, without modifying the face or other paths' portrait styles.
-- [x] Synchronize homepage visual/link maintenance through the existing authoring helper.
+- Arabic/English diploma checks at 360, 390, 768, 1120 and 1440 px; curriculum also expanded fully at every width. No horizontal overflow or missing bindings.
+- Homepage and Kids regression checks in both languages at 360, 390, 768, 1119, 1120 and 1440 px. Six Udemy courses remain present and Backend status is open. No failed local asset responses or uncaught page errors observed.
+- Larger text at 200% with the complete Arabic curriculum expanded: no horizontal overflow.
+- Native curriculum Enter/FAQ Space interaction, expand/collapse, preserved disclosure state on locale change, locale-specific WhatsApp drafts, market messages, localized metadata/canonical and 21-item Course schema passed.
+- Section links clear the fixed header at mobile/desktop widths. Direct Arabic/English `#pricing` entry was also checked.
+- Mobile menu Escape/scroll-lock cleanup, mobile language selection, homepage diploma navigation, blocked-storage locale links, Udemy search/course dialog/history, Kids FAQ/gallery all passed.
+- Saved Arabic contains all 8 stages, 21 modules, 9 projects, prices, open registration and both PDF links without JavaScript; native disclosures also work.
+- Desktop/mobile screenshots of both languages were inspected, including curriculum, pricing and hero; project, experience, instructor, PDF and FAQ views were also reviewed.
+- Original, hosted and browser-downloaded PDF SHA-256: `13da4522268c2c1f781aa8963f79614218435b9da500ffd855f9feb9e32dc551`. The actual file is 15 pages / 2,414,903 bytes. Native download produced the configured filename. View creates a new tab and receives HTTP 200 / application/pdf. Headless Chromium cannot render its built-in PDF viewer; visual PDF reading in that browser environment was not verified. Native browser/mobile PDF handling can vary.
+- `node scripts/check-backend-content.cjs`, `node scripts/check-asset-paths.cjs` (177 references), every JavaScript/CJS syntax check, sitemap XML parsing and `git diff --check` passed. All three authoring helpers were run twice; all four saved HTML pages are unchanged on regeneration.
+- Baseline object comparisons confirm unchanged shared identity/contact/statistics, six Udemy courses, Udemy promotion and complete Kids data. The Kids saved page is unchanged.
 
-Verification: 30 responsive combinations (three routes × two languages × five widths), plus static Arabic and interaction/language regression groups, all pass. LinkedIn URL/labels, image loading, complete box bounds, portrait framing, mobile navigation, FAQ keyboard behavior, no overflow and preserved program data were checked. The WebP alpha and all visible RGB pixels match the supplied PNG exactly. Both authoring helpers are idempotent, JavaScript syntax and 157 exact-case Git asset references pass, and desktop/mobile screenshots were inspected. Detailed results are recorded in the local browser validation artifact. No deployment or external messages are part of this work.
+Remaining factual confirmation: exact start day and weekly timetable. Booking/payment/withdrawal terms are now published in full. February 2027 remains proposed. No external messages, payment transactions, commit, push or deployment were performed.
 
-## Shared platform update — 2026-10-09
+## Application and approved policy implementation
 
-Instructor evidence now derives from `MTAcademySite.instructorProfile.statistics`: more than 21,697 Udemy learners, 743 Udemy reviews, 145 mentorship trainees and 14 mentorship countries, with more than 8 professional years. The Backend numeric plan, visual, status and tentative 2027 timing remain unchanged.
+- [x] Preserve the existing uncommitted registration landing page and unrelated shared data.
+- [x] Publish every paragraph of the 15 approved Arabic clauses, with complete English translations and stable clause anchors.
+- [x] Publish the 12 application fields and complete message template, plus review/confirmation steps and the supplied data-use notice.
+- [x] Separate application from confirmed booking; generic and market-specific draft messages do not claim agreement or reserve a place.
+- [x] Add separate application/acceptance copy controls, native Clipboard API, localized polite feedback, and visible selectable templates without JavaScript.
+- [x] Separate request-sending settlement cutoff from receipt-based seven-calendar-day refund timing and the due-date-based late-payment grace period.
+- [x] Preserve full pre-start refunds without administrative deductions, the agreed-payment-price/72 post-start formula, session availability rules, future-installment cessation, same currency/method conditions, cancellation/change/transfer cases, written late-payment notice and no-fine rule.
+- [x] Preserve fixed confirmed price, payment records, no employment guarantee, personal material use/privacy and statutory rights.
+- [x] Link hero/pricing/navigation/PDF/FAQs to application and terms sections; the original PDF remains unchanged.
+- [x] Extend content validation and synchronize the authoring helper with saved Arabic HTML.
 
-The shared navigation hierarchy, motion system and authoring markup now also serve this page. Verification expanded to 48 browser groups, including 42 route/locale/width combinations, breakpoint focus cleanup, static Arabic, normal/reduced motion, observer fallback and existing interactions. All three helpers are idempotent and 165 exact-case asset references pass. See `platform-maintenance.md` for ownership, payment-information scope and the current validation details; the earlier counts above describe the previous visual-update checkpoint.
+The content supplied directly by the user is the policy source; the existing PDF remains the original programme roadmap. No policy effective date or external legal approval is asserted. The website collects no application information and sends no WhatsApp messages automatically.
+
+Application/policy verification completed locally:
+
+- The full Arabic application message matches the approved source exactly. Every paragraph and formula from all 15 Arabic clauses and all 12 fields was checked against the saved page with JavaScript disabled.
+- Both locales passed 12 responsive combinations: 360, 390, 768, 1119, 1120 and 1440 px. All fields, clauses, 47 FAQ answers, 21 modules and nine projects are present; no hidden translation bindings or document overflow. Both locales also passed 200% text sizing.
+- Actual Clipboard API contents match each localized application and acceptance template, with real line breaks and the payment-system placeholder. Denied and unavailable API cases display localized manual-copy instructions. Locale changes clear stale feedback and switch the copied language.
+- Touch copy, keyboard copy, visible keyboard focus, subsequent Tab navigation, live-status references, unique IDs and all ARIA targets passed. The application and terms sections contain no data-entry form.
+- Source/market WhatsApp URLs use the shared contact, preserve localized application drafts, and contain no acceptance statement. Application/terms anchors clear the fixed header. Both templates remain visible and selectable without JavaScript; copy controls are hidden in the static fallback.
+- Desktop/mobile screenshots were inspected for both languages, including application steps, complete terms, the refund formula and the separate acceptance message. Normal/reduced motion and primary text contrast checks passed.
+- Homepage/Kids responsive checks, Udemy search/course dialog/history, Kids gallery/FAQ, mobile menu/scroll-lock cleanup, language navigation and blocked-storage locale links passed. No uncaught browser errors or failed assets were observed in the completed runs.
+- Baseline comparisons preserve all earlier curriculum/projects/workload/prices/artwork/instructor/PDF facts, shared identity, Udemy course/promotion objects and complete Kids data. Kids and 404 saved pages are unchanged; the homepage change is limited to its Backend CTA wording.
+- Content/asset checks, every JS/CJS syntax check and whitespace checks pass. All three authoring helpers reproduce all four saved pages unchanged. The original PDF checksum remains unchanged.
+
+No messages, application submissions, payments, commit, push or deployment were performed. The exact start day and weekly timetable still require academy confirmation; full booking/payment/withdrawal terms are now public on the page.
+
+Final PDF regression: the native download succeeded with the configured filename, and its SHA-256 matches the unchanged hosted original. View still creates a new tab and receives HTTP 200 / application/pdf; headless native-viewer rendering remains the previously documented verification limit.

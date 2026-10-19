@@ -1,5 +1,7 @@
 # Project correctness review — 2026-10-10
 
+Historical verification snapshot. The 2026-10-19 Backend registration update supersedes the earlier closed-registration status, instructional-hour wording and unpublished-curriculum/pricing notes below. Current scope and verification: [Backend implementation checklist](backend-implementation-checklist.md).
+
 This review inspected the current working tree, rather than treating earlier documentation as verification. Existing UI/UX changes and unrelated work were preserved. No commit, push or deployment was performed.
 
 ## Confirmed defects and repairs

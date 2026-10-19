@@ -1,6 +1,6 @@
 # Backend diploma imagery and instructor links
 
-Updated 2026-10-09.
+Updated 2026-10-19.
 
 ## Supplied product box
 
@@ -13,7 +13,7 @@ Updated 2026-10-09.
 - Descriptive alt text is exposed to assistive technology; the image is not inside an `aria-hidden` container.
 - Printed code and marketing text are artwork, not a source of newly confirmed curriculum details.
 
-The original `backend-announcement.svg` is retained, but no longer used by either main program visual. The existing 1200 × 630 social preview remains accurate and unchanged.
+The original `backend-announcement.svg` is retained, but no longer used by either main program visual. The 1200 × 630 social preview SVG and PNG now say REGISTRATION OPEN. The PNG is rendered from the updated SVG; the supplied product artwork and portrait remain unchanged.
 
 ## Instructor portrait
 

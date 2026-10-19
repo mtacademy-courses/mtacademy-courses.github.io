@@ -3328,10 +3328,10 @@ html[lang="ar"] .promotion-dialog__label {
 }
 
 /* Coming-soon status stays visible while the third path shares the same layout. */
-.coming-soon-badge { display: inline-flex; align-items: center; gap: .5rem; padding: .55rem .85rem; border: 1px solid var(--gold); border-radius: var(--radius-pill); background: var(--gold-light); color: var(--green); font-size: .8rem; font-weight: 850; }
-.coming-soon-badge::before { content: '✦'; }
+.registration-badge { display: inline-flex; align-items: center; gap: .5rem; padding: .55rem .85rem; border: 1px solid var(--gold); border-radius: var(--radius-pill); background: var(--gold-light); color: var(--green); font-size: .8rem; font-weight: 850; }
+.registration-badge::before { content: '✦'; }
 .learning-path--backend { border-color: var(--gold); }
-.learning-path--backend .coming-soon-badge { position: absolute; inset-block-start: 1rem; inset-inline-start: 1rem; z-index: 1; }
+.learning-path--backend .registration-badge { position: absolute; inset-block-start: 1rem; inset-inline-start: 1rem; z-index: 1; }
 .learning-path--backend .learning-path__technologies { margin-block: -.25rem .75rem; color: var(--green); font-size: 1.1rem; font-weight: 800; text-align: start; }
 .learning-path--backend .learning-path__facts { color: var(--green); font-size: .85rem; font-weight: 750; margin-block-end: 1.25rem; }
 .learning-path__visual--backend { padding: 2.75rem 1.5rem 1.5rem; background: radial-gradient(ellipse at 50% 80%, #c9a84c18, transparent 75%), var(--background); }

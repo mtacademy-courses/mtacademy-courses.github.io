@@ -1,10 +1,10 @@
-/** Verify exact Git filename casing, even on a case-insensitive local filesystem. */
+/** Verify exact repository filename casing, including new non-ignored assets, even on a case-insensitive local filesystem. */
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { execFileSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
-const tracked = new Set(execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean));
+const tracked = new Set(execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean));
 const problems = new Map();
 let checks = 0;
 function check(value, location) {
@@ -16,7 +16,7 @@ function check(value, location) {
   checks++;
   if (!tracked.has(asset)) {
     const differentCase = [...tracked].find(file => file.toLowerCase() === asset.toLowerCase());
-    problems.set(`${location}: ${asset}`, differentCase ? `Git stores this as ${differentCase}` : 'Asset is missing from the Git index');
+    problems.set(`${location}: ${asset}`, differentCase ? `Repository stores this as ${differentCase}` : 'Asset is missing or ignored by Git');
   }
 }
 function walk(value, location) {
@@ -36,4 +36,4 @@ for (const file of [...tracked].filter(file => file.endsWith('.html') || file.en
 if (problems.size) {
   for (const [location, message] of problems) console.error(`${location}\n  ${message}`);
   process.exitCode = 1;
-} else console.log(`PASS: ${checks} asset references match exact tracked Git paths.`);
+} else console.log(`PASS: ${checks} asset references match exact repository paths (tracked and new non-ignored files).`);

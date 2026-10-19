@@ -21,7 +21,7 @@ function footerLinks(site,page) {
   const c=site.translations.ar;
   return [link(c.primaryNavigation[0],'primaryNavigation.0',page,''),link(c.primaryNavigation[1],'primaryNavigation.1',page,''),...c.learningNavigation.map((item,i)=>link(item,`learningNavigation.${i}`,page,'',['udemy','kids','backend'][i])),...c.primaryNavigation.slice(2).map((item,i)=>link(item,`primaryNavigation.${i+2}`,page,''))].join('');
 }
-const localizedText = (value, core) => core.technicalTextParts(value).map(part => part.technical
+const localizedText = (value, core, allTerms = false) => core.technicalTextParts(value, allTerms).map(part => part.technical
   ? `<bdi class="technical-name" dir="ltr" lang="en">${escape(part.text)}</bdi>`
   : escape(part.text)).join('');
 module.exports={navigation,footerLinks,escape,localizedText};

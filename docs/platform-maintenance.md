@@ -1,6 +1,6 @@
 # Shared platform maintenance
 
-Updated 2026-10-09.
+Updated 2026-10-19.
 
 ## Instructor evidence
 
@@ -15,7 +15,7 @@ Updated 2026-10-09.
 
 Homepage counters and the Backend credibility section derive their displays from this object. Numeric displays include a trailing `+` and are isolated as LTR in either locale; biographies use explicit “more than” wording. Mentorship trainees are not reviews. These are prior instructor achievements, never Kids enrollment or new diploma results. Individual Udemy course ratings/review counts remain independent.
 
-The homepage’s previous 7-year summary, stale totals and ambiguous mentorship-review paragraph were corrected. Its hero now describes all three paths, explicitly marking Backend as upcoming.
+The homepage’s previous 7-year summary, stale totals and ambiguous mentorship-review paragraph were corrected. Its hero now describes all three paths, announcing open Backend registration.
 
 ## Global navigation
 
@@ -54,7 +54,7 @@ Promotional timing and campaign dates are not animation durations and remain unc
 
 The two added cards describe academy payment arrangements and have localized inquiry actions through the existing WhatsApp contact. Each message names the requested method; opening a link does not send the message automatically. Existing manual-method cards also have inquiry links. Direct Udemy purchases still use Udemy checkout and course links.
 
-Bank account, beneficiary, recipient, IBAN/SWIFT, country, fees, currencies and processing-time details were not supplied and are not invented. Contact is used to obtain transfer instructions. There is no new checkout, transfer form, processor or Backend enrollment workflow.
+Bank account, beneficiary, recipient, IBAN/SWIFT, country, fees, currencies and processing-time details were not supplied and are not invented. Contact is used to obtain transfer instructions. The Backend page uses WhatsApp to arrange booking/payment and publishes its separately owned program prices. There is no automated checkout or transfer processor.
 
 The new 720 × 420 SVG assets are simple original transfer/bank illustrations, not official payment-provider logos. They live under `assets/images/payment/` with lowercase filenames.
 
@@ -69,7 +69,7 @@ node scripts/refresh-backend-page.cjs
 node scripts/check-asset-paths.cjs
 ```
 
-The homepage helper synchronizes the header/footer, data-bound Arabic copy, instructor counters and complete static payment cards. The Kids/Backend helpers synchronize their full saved pages; the Backend helper also maintains its homepage preview and the shared instructor LinkedIn link. All are Node standard-library authoring tools. GitHub Pages serves the saved files directly without a build.
+The homepage helper synchronizes the header/footer, data-bound Arabic copy, instructor counters and complete static payment cards. The Kids/Backend helpers synchronize their full saved pages; the Backend helper also maintains its homepage card and the shared instructor LinkedIn link. All are Node standard-library authoring tools. GitHub Pages serves the saved files directly without a build.
 
 Verify idempotence, both locales, widths around 1120px, keyboard/focus behavior, reduced motion, no-JavaScript content, course dialogs/history, Kids gallery and image paths before publishing. Source changes do not publish the site automatically.
 
@@ -97,3 +97,13 @@ The original Udemy campaign panel appears inside its catalog section; the shared
 `buildOrganizationSchema` owns the shared organization identity for runtime and saved HTML on all three learning routes. `buildCatalogSchema` owns homepage course structured data; individual course ratings remain independent of instructor totals. `refresh-homepage.cjs` synchronizes Arabic title, descriptions, social metadata and JSON-LD, plus 404 title/description. The Kids and Backend generators use the shared organization builder too.
 
 After editing relevant content, run all three refresh helpers, asset validation and syntax checks. A second run must leave all four saved HTML files unchanged. See `docs/project-audit.md` for the latest verified fixes.
+
+## Backend registration update — 2026-10-19
+
+The complete Backend landing page now publishes the supplied roadmap, projects, workload, graduation expectations and both pricing markets. Registration is open; February 2027 is a proposed start. `backend-diploma-data.js` owns program facts and translations; instructor evidence and contact identity remain shared. Native PDF links use the unchanged 15-page original in `assets/documents/`. See `backend-implementation-checklist.md` for source coverage and current verification. Earlier verification snapshots above describe the October 9 baseline.
+
+## Application and full terms
+
+`backend-diploma-data.js` now owns a 12-field application template, 15 approved policy clauses, a separate acceptance message and 47 grouped FAQs in both languages. `bookingPolicy.refund` defines seven calendar days from receipt and the sending-date settlement cutoff; `bookingPolicy.latePayment` separately defines the seven-day due-date grace and written-notice condition. The complete terms are saved in HTML at `#booking-terms`; application instructions are at `#apply`.
+
+Application submission alone reserves no place. Completed information, agreement, required payment and academy confirmation are all required for booking confirmation. Generic WhatsApp drafts contain no acceptance statement. The optional clipboard controls copy static templates only on click and give localized feedback; unsupported/denied clipboard access leaves the full text available for manual copying. There is no application form, personal-data persistence or automated message submission. The original PDF is unchanged and links to current webpage instructions/terms are shown beside it.

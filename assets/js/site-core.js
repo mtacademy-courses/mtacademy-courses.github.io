@@ -280,10 +280,10 @@
 
   // Preserve the source text while isolating familiar technical names in Arabic prose.
   // Authoring helpers use the same parts to keep saved HTML and runtime rendering aligned.
-  const technicalTextParts = (value) => {
+  const technicalTextParts = (value, allTerms = false) => {
     const source = String(value);
     if (!/[\u0600-\u06ff]/.test(source)) return [{ text: source, technical: false }];
-    const terms = /\b(?:MT Academy|Spring Boot|Code Review|Live Coding|MIT App Inventor|Code\.org|Scratch 3|REST APIs|JavaScript|Backend|Python|Udemy|Java|HTML|CSS|AI)\b/g;
+    const terms = allTerms ? /[A-Za-z][A-Za-z0-9]*(?:[.+/#-][A-Za-z0-9]+)*(?:[ &/]+[A-Za-z0-9][A-Za-z0-9.+/#-]*)*/g : /\b(?:MT Academy|Spring Boot|Code Review|Live Coding|MIT App Inventor|Code\.org|Scratch 3|REST APIs|JavaScript|Backend|Python|Udemy|Java|HTML|CSS|AI)\b/g;
     const parts = [];
     let position = 0;
     for (const match of source.matchAll(terms)) {
@@ -295,8 +295,8 @@
     return parts;
   };
 
-  const setLocalizedText = (element, value) => {
-    element.replaceChildren(...technicalTextParts(value).map(part => {
+  const setLocalizedText = (element, value, allTerms = false) => {
+    element.replaceChildren(...technicalTextParts(value, allTerms).map(part => {
       if (!part.technical) return document.createTextNode(part.text);
       const term = createElement('bdi', 'technical-name', part.text);
       term.dir = 'ltr';
@@ -347,7 +347,7 @@
         return;
       }
 
-      setLocalizedText(element, value);
+      setLocalizedText(element, value, siteConfig.isolateTechnicalTerms === true);
       element.hidden = false;
       setAutoDirection(element);
     });

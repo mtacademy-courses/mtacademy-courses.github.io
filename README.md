@@ -5,7 +5,7 @@
 
 ![MT Academy Course Catalog](assets/images/brand/social-preview.png)
 
-A fast, responsive, bilingual website for **MT Academy**, with three learning paths: programming courses on **Udemy**, a live online **Kids Coding Bootcamp** for ages 6–18, and an upcoming **Backend Development Diploma with Java & Spring Boot** for complete beginners.
+A fast, responsive, bilingual website for **MT Academy**, with three learning paths: programming courses on **Udemy**, a live online **Kids Coding Bootcamp** for ages 6–18, and a **Backend Development Diploma with Java & Spring Boot** for complete beginners.
 
 The website is Arabic-first, includes a complete English interface, and is built with semantic HTML, modern CSS, and vanilla JavaScript. It has no framework, package manager, build step, external font, or runtime dependency.
 
@@ -20,8 +20,8 @@ The website is Arabic-first, includes a complete English interface, and is built
 - Responsive course catalog with search and category filters
 - Detailed course dialogs with shareable URL hashes and browser history support
 - Instructor profile, learner reviews, payment methods, and contact options
-- Shared homepage learning-path discovery, with separate data for Udemy, Kids, and the upcoming Backend diploma
-- A bilingual Backend program preview with a confirmed study plan, projects, mentorship, code review, and qualified coming-soon announcements
+- Shared homepage learning-path discovery, with separate data for Udemy, Kids, and the Backend diploma, now open for registration
+- A complete bilingual Backend landing page with open registration, the full curriculum, monthly projects, mentorship, pricing and the original roadmap PDF
 - Dedicated kids page with five levels, genuine session imagery, and parent FAQs
 - Accessible keyboard navigation, labels, dialogs, and live result announcements
 - SEO metadata, Open Graph preview, sitemap, robots file, and structured data
@@ -65,7 +65,7 @@ cd mtacademy-courses.github.io
 python3 -m http.server 8000
 ```
 
-Then open [the homepage](http://localhost:8000/) [the kids page](http://localhost:8000/kids-coding-bootcamp/), or [the Backend announcement](http://localhost:8000/backend-development-diploma/). Test English with `?lang=en`, and Arabic with `?lang=ar`.
+Then open [the homepage](http://localhost:8000/) [the kids page](http://localhost:8000/kids-coding-bootcamp/), or [the Backend diploma](http://localhost:8000/backend-development-diploma/). Test English with `?lang=en`, and Arabic with `?lang=ar`.
 
 Opening `index.html` directly is not recommended because URL hashes, navigation history, and 404 behavior are best tested through a local server.
 
@@ -75,13 +75,13 @@ Opening `index.html` directly is not recommended because URL hashes, navigation 
 .
 ├── index.html                       # Homepage and existing Udemy catalog
 ├── kids-coding-bootcamp/index.html   # Static kids landing page
-├── backend-development-diploma/index.html # Static coming-soon announcement
+├── backend-development-diploma/index.html # Static registration landing page
 ├── 404.html                         # Localized error page
 ├── assets/
 │   ├── css/
 │   │   ├── styles.css               # Shared primitives and Udemy/homepage styles
 │   │   ├── kids-coding-bootcamp.css  # Kids page styles
-│   │   └── backend-diploma.css       # Announcement page styles
+│   │   └── backend-diploma.css       # Registration page styles
 │   ├── js/
 │   │   ├── site-core.js             # Shared locale, navigation, metadata, scroll lock
 │   │   ├── site-data.js             # Shared academy identity/contact facts
@@ -90,8 +90,9 @@ Opening `index.html` directly is not recommended because URL hashes, navigation 
 │   │   ├── kids-data.js             # Independent kids content, gallery and offer
 │   │   ├── kids.js                  # Kids page controller
 │   │   ├── learning-paths-data.js    # Shared homepage cards and translations
-│   │   ├── backend-diploma-data.js   # Confirmed upcoming diploma facts/status
-│   │   └── backend-diploma.js        # Announcement page controller
+│   │   ├── backend-diploma-data.js   # Program facts, curriculum, projects, prices and translations
+│   │   └── backend-diploma.js        # Registration page controller
+│   ├── documents/                 # Original Backend diploma roadmap PDF
 │   └── images/
 │       ├── brand/, courses/, payment/, reviews/
 │       ├── kids/sessions/           # Optimized full-size images and thumbnails
@@ -102,7 +103,7 @@ Opening `index.html` directly is not recommended because URL hashes, navigation 
 ├── scripts/shared-markup.cjs        # Shared static navigation/footer markup
 ├── scripts/refresh-homepage.cjs      # Homepage content/stats/payments/navigation authoring
 ├── scripts/refresh-kids-page.cjs     # Optional authoring helper for static Arabic HTML
-├── scripts/refresh-backend-page.cjs  # Optional announcement authoring helper
+├── scripts/refresh-backend-page.cjs  # Optional registration page authoring helper
 ├── docs/kids-image-sources.md        # Asset mapping and attribution
 ├── docs/examples/                    # Executable visual demonstrations
 ├── sitemap.xml
@@ -135,27 +136,38 @@ All page controllers share locale storage (`mt-academy-locale`), safe links, met
 
 `renderLearningPaths(locale)` in `site-core.js` updates generic `data-path-*` bindings. Backend title, summary, facts, CTA, status, visual and localized alt text are resolved from the diploma's separate data source. `renderKidsOffering(locale)` now manages only the independent Kids discount; the Udemy campaign remains in the catalog controller.
 
-The two current cards retain their large box/cover images and occupy the first desktop row. The upcoming diploma spans the full row below; mobile stacks all three in semantic order (Udemy, Kids, Backend). The six-item primary header groups the three paths under an accessible native Learning paths disclosure, in Udemy → Kids → Backend order. Mobile shows the same hierarchy expanded, below `70rem` (1120px). Kids-specific shortcuts remain inside the Kids page. The shared JavaScript cutoff matches the CSS. Content layout breakpoints remain independent.
+The two current cards retain their large box/cover images and occupy the first desktop row. The Backend diploma uses the shared learning-path card layout; mobile stacks all three in semantic order (Udemy, Kids, Backend). The six-item primary header groups the three paths under an accessible native Learning paths disclosure, in Udemy → Kids → Backend order. Mobile shows the same hierarchy expanded, below `70rem` (1120px). Kids-specific shortcuts remain inside the Kids page. The shared JavaScript cutoff matches the CSS. Content layout breakpoints remain independent.
 
-### Upcoming Backend diploma
+### Backend diploma — registration open
 
-The static announcement lives at [`backend-development-diploma/index.html`](backend-development-diploma/index.html), served at `/backend-development-diploma/`. It presents the **Backend Development Diploma with Java & Spring Boot** for complete beginners: 9 months, a 36-week study plan, 2 sessions weekly, 72 sessions of up to 5 instructional hours each, 360 planned instructional hours, and 9 monthly practical projects. Assignments and independent project work are additional to instructional hours. The announced study duration and week plan do not define exact calendar dates or breaks.
+The complete landing page lives at [`backend-development-diploma/index.html`](backend-development-diploma/index.html), served at `/backend-development-diploma/`. It is designed for complete beginners with basic computer/file-management skills. The plan is 9 training months, 36 weeks, 72 live sessions, two sessions each week and nine monthly projects. Each five-hour scheduled block includes breaks: **360 scheduled hours = 324 learning hours + 36 break hours**. Independent practice is an additional **12–16 hours each week**.
 
-Edit [`assets/js/backend-diploma-data.js`](assets/js/backend-diploma-data.js) for both languages, metadata, optional inquiry messages, and confirmed program facts. Its `plan` object owns the numeric study facts, capacity (15–20), tentative start year (2027), and registration/curriculum/price announcement states. The `experience` alias reads shared instructor statistics: over 8 professional years, over 21,697 Udemy learners, over 743 Udemy reviews, and over 145 mentorship trainees across over 14 countries. These figures are explicitly attributed to prior teaching/mentorship, not to this new diploma. Both language variants derive numeric copy from these sources, preserving the lower-bound meaning. Its single `status: 'coming-soon'` value supplies the homepage and announcement-page badge via localized `statusLabels`. There is no enrollment, price, promotion, deadline, or subscription backend.
+Edit [`assets/js/backend-diploma-data.js`](assets/js/backend-diploma-data.js) for central numeric facts, all 8 stages / 21 modules and their complete topics, nine projects, learning activities, session breakdown, graduation expectations, pricing, PDF metadata, the 12-field application message, all 15 booking/payment/withdrawal clauses, a separate acceptance message and 47 grouped FAQs in Arabic and English. Java 17 precedes SQL, then Spring Boot 4 / Spring 7. Core topics receive repeated practice; Kubernetes deployment is guided; sharding, service mesh and mTLS are introductory. Shared instructor statistics and genuine Udemy evidence remain attributed to prior teaching/mentorship.
 
-After editing preview copy, navigation, or shared contact facts, synchronize the saved Arabic page and the Backend homepage card:
+`status: 'open'` supplies the homepage and diploma badge. The proposed start is **February 2027**, with a planned **15–20 students**; the exact day and weekly timetable will be confirmed before the cohort begins. WhatsApp buttons use the verified shared contact with localized draft messages, including market-specific pricing messages. Visitors arrange booking confirmation and payment with the academy.
+
+Egyptian pricing: **EGP 16,500** in full, or **EGP 18,000** installments (EGP 4,000 deposit + 7 × EGP 2,000). International pricing: **USD 650** in full, or **USD 750** installments (USD 150 deposit + 6 × USD 100). The deposit is included in the total. Installments start with teaching; dates follow agreed start changes. The complete booking, payment and withdrawal terms are published on the page and must be read before payment.
+
+The application section provides the 12 requested fields and a complete copyable WhatsApp message. Sending information is an application only. Booking requires completed information, agreement to terms, required payment and academy confirmation. The separate acceptance-message copy action does not send acceptance or confirm a booking. No application-data form or storage was added; locale preferences retain the existing behavior.
+
+All 15 approved clauses are visible in saved HTML and translated fully. `bookingPolicy` keeps the refund deadline (seven calendar days from receiving the request, with the sending date as settlement cutoff) separate from the late-installment grace period (seven days from the due date, with written notice). The refund formula uses the agreed payment-system total divided by 72 and sessions delivered and available to the student. Copy controls use the native Clipboard API after a click, with localized live feedback and manual-copy fallback.
+
+The original 15-page PDF is hosted unchanged at `assets/documents/mt-academy-backend-diploma-overview-roadmap.pdf`. One configuration URL supplies separate native View PDF (new tab) and Download PDF actions. The PDF is unchanged and does not replace the current webpage application instructions and full terms. Curriculum, projects and prices are also available directly in the page, including saved Arabic HTML without JavaScript.
+
+After editing page copy, navigation, or shared contact facts, synchronize the saved Arabic page and the Backend homepage card:
 
 ```bash
 node scripts/refresh-backend-page.cjs
+node scripts/check-backend-content.cjs
 ```
 
 This helper uses Node's standard library and synchronizes the diploma page, its homepage card/visual, and the homepage instructor LinkedIn link. GitHub Pages serves the saved HTML without a build. Essential Arabic content and native FAQ disclosures work without JavaScript; the existing controller supplies English and saved language preference. The Kids navigation/footer links are maintained by its own data and authoring helper; run `node scripts/refresh-kids-page.cjs` after changing those.
 
-The homepage card and diploma hero use the supplied product box, optimized losslessly as `assets/images/backend/backend-development-diploma-box.webp`. Its transparency and complete artwork are preserved; descriptor-driven CSS excludes only outer transparent margins. The existing social preview source is `assets/images/backend/backend-social-preview.svg`; its unchanged PNG is 1200 × 630. See [`docs/backend-image-sources.md`](docs/backend-image-sources.md) for provenance, viewport bounds and verification.
+The homepage card and diploma hero use the supplied product box, optimized losslessly as `assets/images/backend/backend-development-diploma-box.webp`. Its transparency and complete artwork are preserved; descriptor-driven CSS excludes only outer transparent margins. The existing social preview source is `assets/images/backend/backend-social-preview.svg`; its updated registration-open PNG is 1200 × 630. See [`docs/backend-image-sources.md`](docs/backend-image-sources.md) for provenance, viewport bounds and verification.
 
 To use future approved program artwork, update `backend-diploma-data.js`'s `visual` path, actual dimensions and viewport bounds, update `visualAlt` in both languages, then regenerate the page/homepage. The learning-path registry reuses that descriptor for runtime rendering. Update social metadata only if replacing the separately sized social preview. The Backend portrait uses the original shared photo with a closer head-and-upper-body CSS frame; other paths retain their portrait styles.
 
-Registration is not open; detailed curriculum, price, and the registration opening are coming soon. The beginning of 2027 is tentative, with no exact start date. The page describes assignments, live coding, code review, mentorship by Mohamed Tamer, and responsible AI usage without inventing a syllabus or delivery format. Existing Udemy profile/review links are labeled by their actual source; WhatsApp is inquiry-only. Opening enrollment requires confirmed dates, delivery details, curriculum, fees, contact/enrollment destinations, and a deliberate implementation update. Changing a badge alone is insufficient; the current data/controller intentionally implement an announcement page.
+The page uses native curriculum/FAQ disclosures, keyboard-accessible expand/collapse controls, section shortcuts, responsive layouts and the shared language/navigation/motion system. Course structured data reflects visible program information without inventing exact dates, reviews, accreditation or offers. See [`docs/backend-implementation-checklist.md`](docs/backend-implementation-checklist.md) for the complete 15-page source mapping and verification record. The exact start day and weekly timetable still require confirmation through the academy. Full application instructions and terms are published at `#apply` and `#booking-terms`.
 
 ### Instructor LinkedIn profile
 
@@ -175,6 +187,7 @@ After editing shared facts, navigation or payments, synchronize saved Arabic con
 node scripts/refresh-homepage.cjs
 node scripts/refresh-kids-page.cjs
 node scripts/refresh-backend-page.cjs
+node scripts/check-backend-content.cjs
 node scripts/check-asset-paths.cjs
 ```
 
@@ -297,7 +310,7 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
-Built for practical programming education, with an upcoming Java and Spring Boot backend path.
+Built for practical programming education, with registration open for the Java and Spring Boot backend path.
 
 
 Latest correctness review: [Project audit](docs/project-audit.md). Shared locale/history and saved SEO ownership are documented in [Platform maintenance](docs/platform-maintenance.md).

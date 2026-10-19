@@ -1,5 +1,7 @@
 # UI/UX refinement — 2026-10-09
 
+Historical verification snapshot. The 2026-10-19 Backend registration update supersedes the earlier closed-registration status, instructional-hour wording and unpublished-curriculum/pricing notes below. Current scope and verification: [Backend implementation checklist](backend-implementation-checklist.md).
+
 ## Observed problems and resulting behavior
 
 - The October promotion occupied most of the initial mobile viewport ahead of the academy introduction. The original campaign panel now appears with its Udemy catalog. The campaign's dates, discount, automatic popup, countdowns and purchase destinations are unchanged. Its floating flag is compact on mobile and hidden while the homepage hero, a menu or a dialog is visible.
