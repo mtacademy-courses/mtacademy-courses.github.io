@@ -192,9 +192,56 @@
     refund: {calendarDays: 7, clockStarts: 'request-received', settlementCutoff: 'request-sent'},
     latePayment: {graceDays: 7, clockStarts: 'installment-due', writtenNoticeRequired: true}
   };
+  /** Approved clarification: complete text lives here; excerpts and FAQ answers reuse it. */
+  function buildCareerOutcomesNotice(locale) {
+    const ar = locale === 'ar';
+    const choose = (english, arabic) => ar ? arabic : english;
+    const paragraphs = choose([
+      'The Backend Development with Java & Spring Boot diploma is an educational and practical programme intended to develop students’ skills and help them prepare for the job market.',
+      'Enrolling in or completing the diploma does not include a guarantee of obtaining a job, internship or freelance work, earning a particular income, or reaching a specified professional level within a particular timeframe.',
+      'Results vary between students according to their starting level, commitment to attendance and practice, assignment submissions, use of feedback, continued practice, and the requirements of the job market and employers.',
+      'Support with CVs, LinkedIn profiles, projects and interview preparation consists of educational and advisory services. It does not represent a commitment to employment or acceptance by any organization.',
+      'Published reviews and experiences reflect their authors’ experiences and do not guarantee the same results for every student.',
+      'MT Academy commits to providing the agreed content, training, follow-up and services in accordance with the diploma details and booking terms. This clarification does not remove students’ legal rights or the withdrawal and refund terms.'
+    ], [
+      'دبلومة الـBackend Development with Java & Spring Boot برنامج تعليمي وتطبيقي هدفه تطوير مهارات الطالب ومساعدته في الاستعداد لسوق العمل.',
+      'الاشتراك في الدبلومة أو إتمامها لا يتضمن ضمان الحصول على وظيفة أو فرصة تدريب أو عمل حر أو تحقيق دخل معين أو الوصول لمستوى مهني محدد خلال مدة معينة.',
+      'النتائج بتختلف من طالب للتاني حسب مستواه والتزامه بالحضور والتطبيق وتسليم التكليفات والاستفادة من الملاحظات وممارسته المستمرة ومتطلبات سوق العمل وجهات التوظيف.',
+      'المساعدة في تجهيز الـCV والـLinkedIn والمشاريع والتدريب على المقابلات هي خدمات تعليمية وإرشادية ولا تمثل تعهدا بالتوظيف أو القبول لدى أي جهة.',
+      'التقييمات والتجارب المنشورة بتعبر عن تجارب أصحابها ولا تضمن تحقيق نفس النتائج لكل طالب.',
+      'تلتزم MT Academy بتقديم المحتوى والتدريب والمتابعة والخدمات المتفق عليها وفق تفاصيل الدبلومة وشروط الحجز. والتوضيح ده لا يلغي حقوق الطالب القانونية أو شروط الانسحاب والاسترداد.'
+    ]);
+    const notice = {
+      title: choose('Important clarification about employment and professional outcomes', 'توضيح مهم بخصوص التوظيف والنتائج المهنية'),
+      importantLabel: choose('Important', 'مهم'),
+      paragraphs,
+      generalSummary: choose('Enrolling in or completing the diploma does not guarantee a job, internship, freelance work, a particular income, or reaching a specified professional level within a particular timeframe.', 'الاشتراك في الدبلومة أو إتمامها لا يضمن وظيفة أو فرصة تدريب أو عملًا حرًا أو دخلًا معينًا أو الوصول لمستوى مهني محدد خلال مدة معينة.'),
+      careerSupportSummary: paragraphs[3],
+      experienceSummary: paragraphs[4],
+      serviceCommitmentSummary: paragraphs[5],
+      readFullLabel: choose('Read the full employment and outcomes clarification', 'اقرأ توضيح التوظيف والنتائج المهنية'),
+      refundTermsLabel: choose('Read the withdrawal and refund terms', 'اقرأ شروط الانسحاب والاسترداد'),
+      faqGroupTitle: choose('Employment & professional outcomes', 'التوظيف والنتائج المهنية')
+    };
+    notice.faqItems = [
+      {id:'employment', question:choose('Does enrolling in or completing the diploma guarantee a job?', 'هل الاشتراك في الدبلومة أو إتمامها يضمن وظيفة؟'), answer:notice.generalSummary},
+      {id:'internship-freelance', question:choose('Is an internship or freelance work guaranteed?', 'هل فيه ضمان فرصة تدريب أو عمل حر؟'), answer:choose('No. Enrolling in or completing the diploma does not guarantee an internship or freelance work.', 'لأ. الاشتراك في الدبلومة أو إتمامها لا يضمن فرصة تدريب أو عملًا حرًا.')},
+      {id:'income-outcome', question:choose('Is a particular income guaranteed?', 'هل فيه ضمان لتحقيق دخل معين؟'), answer:choose('No. Enrolling in or completing the diploma does not guarantee earning a particular income.', 'لأ. الاشتراك في الدبلومة أو إتمامها لا يضمن تحقيق دخل معين.')},
+      {id:'professional-level', question:choose('Is a specified professional level guaranteed within a fixed period?', 'هل فيه ضمان للوصول لمستوى مهني محدد خلال مدة معينة؟'), answer:choose('No. Enrolling in or completing the diploma does not guarantee reaching a specified professional level within a particular timeframe.', 'لأ. الاشتراك في الدبلومة أو إتمامها لا يضمن الوصول لمستوى مهني محدد خلال مدة معينة.')},
+      {id:'individual-results', question:choose('Why do results vary between students?', 'ليه النتائج بتختلف من طالب للتاني؟'), answer:paragraphs[2]},
+      {id:'career-support', question:choose('Does CV, LinkedIn or interview support represent an employment commitment?', 'هل المساعدة في CV وLinkedIn والمقابلات تعهّد بالتوظيف؟'), answer:notice.careerSupportSummary},
+      {id:'published-experiences', question:choose('Do published reviews guarantee the same results for me?', 'هل التقييمات والتجارب المنشورة تضمن لي نفس النتائج؟'), answer:notice.experienceSummary},
+      {id:'academy-commitment', question:choose('What does MT Academy commit to providing?', 'MT Academy ملتزمة بتقديم إيه؟'), answer:notice.serviceCommitmentSummary},
+      {id:'career-notice-rights', question:choose('Does this clarification affect my withdrawal, refund or legal rights?', 'هل التوضيح ده بيأثر على حقوقي القانونية أو الانسحاب والاسترداد؟'), answer:notice.serviceCommitmentSummary,
+        secondaryHref:'#terms-withdrawal-before-start', secondaryLinkLabel:notice.refundTermsLabel}
+    ].map(item => ({...item,group:'career',href:'#career-outcomes-notice',linkLabel:notice.readFullLabel}));
+    return notice;
+  }
+
   // Approved application/policy copy. Tokens keep repeated programme facts centralized.
   function buildEnrollmentContent(locale) {
     const ar = locale === 'ar';
+    const careerOutcomesNotice = buildCareerOutcomesNotice(locale);
     const choose = (en, arabic) => ar ? arabic : en;
     const egypt = pricingPlans.find(p => p.id === 'egypt');
     const international = pricingPlans.find(p => p.id === 'international');
@@ -351,10 +398,10 @@
     "enTitle": "Participation and employment expectations",
     "arTitle": "المشاركة وعدم ضمان وظيفة",
     "en": [
-      "Benefiting from the diploma requires attendance, practice, assignment submissions, and applying feedback. Training and mentorship do not include a guarantee of employment."
+      "Benefiting from the diploma requires attendance, practice, assignment submissions, and applying feedback."
     ],
     "ar": [
-      "الاستفادة من الدبلومة محتاجة حضور وتطبيق وتسليم تكليفات ومراجعة الملاحظات. التدريب والمتابعة لا يتضمنوا ضمان الحصول على وظيفة."
+      "الاستفادة من الدبلومة محتاجة حضور وتطبيق وتسليم تكليفات ومراجعة الملاحظات."
     ]
   },
   {
@@ -489,7 +536,36 @@
       copyFailureLabel: application.copyFailureLabel,
       contactLabel: choose('Contact the academy on WhatsApp', 'تواصل مع الأكاديمية على WhatsApp')
     };
-    return {application,bookingTerms};
+    const participation = bookingTerms.clauses.find(clause => clause.id === 'participation');
+    participation.title = careerOutcomesNotice.title;
+    participation.paragraphs.push(...careerOutcomesNotice.paragraphs);
+    return {application,bookingTerms,careerOutcomesNotice};
+  }
+
+  function buildPaymentMethods(locale, confirmationNote) {
+    const ar = locale === 'ar';
+    const pick = pair => pair[ar ? 1 : 0];
+    const methods = [
+      ['instapay', 'InstaPay', 'إنستا باي'],
+      ['vodafone-cash', 'Vodafone Cash', 'فودافون كاش'],
+      ['paypal', 'PayPal', 'باي بال'],
+      ['western-union', 'Western Union', 'ويسترن يونيون'],
+      ['bank-transfer', 'Bank transfer', 'تحويل بنكي']
+    ].map(([id, english, arabic]) => ({id, name: ar ? arabic : english}));
+    const transferNote = pick(['Contact the academy to confirm a suitable payment method and receive transfer details before paying.', 'تواصل مع الأكاديمية لتأكيد طريقة الدفع المناسبة لك واستلام بيانات التحويل قبل الدفع.']);
+    const names = methods.map(method => method.name);
+    const methodList = names.slice(0, -1).join(ar ? '، ' : ', ') + (ar ? ' أو ' : ', or ') + names.at(-1);
+    return {
+      title: pick(['Available payment methods', 'طرق الدفع المتاحة']),
+      description: pick(['Explore the available payment channels, then contact the academy to coordinate the details.', 'اختَر وسيلة الدفع المناسبة ليك، ونسّق التفاصيل مباشرة مع الأكاديمية.']),
+      methods,
+      coordinationNote: `${transferNote} ${confirmationNote}`,
+      contactLabel: pick(['Contact us to arrange payment', 'تواصل لتنسيق الدفع']),
+      inquiryMessage: pick(['Hello, I would like details about the available payment methods for the Backend Development with Java & Spring Boot diploma.', 'أهلاً، حابب أعرف تفاصيل طرق الدفع المتاحة لدبلومة Backend Development with Java & Spring Boot.']),
+      faqQuestion: pick(['What payment methods are available?', 'إيه طرق الدفع المتاحة؟']),
+      faqAnswer: `${methodList}. ${transferNote}`,
+      faqLinkLabel: pick(['Explore payment methods', 'شوف طرق الدفع المتاحة'])
+    };
   }
 
   const translations = {};
@@ -565,6 +641,7 @@
       closing: { title:pick(['Ready to build your first backend?', 'جاهز تبني أول Backend بإيدك؟']), description:pick(['Applications are open. Review the programme, read the terms, prepare your information and contact MT Academy to begin your application.', 'التقديم مفتوح. راجع البرنامج، اقرأ الشروط، جهّز بياناتك وتواصل مع MT Academy لبدء طلب التقديم.']) }
     };
     Object.assign(translations[locale], buildEnrollmentContent(locale));
+    translations[locale].paymentMethods = buildPaymentMethods(locale, translations[locale].registrationNote);
     const additionalFaqs = [
       ['application-information','application','What information should I send?','ما البيانات اللي أبعتها؟',
         'Send all 12 fields in one message: Arabic and English names, email, WhatsApp with country code, residence, study/work, programming background, goal, equipment/internet, time commitment, availability in Cairo time, and preferred payment system.',
@@ -625,9 +702,6 @@
       ['payment-confirmation','payments','What payment confirmations will I receive?','هستلم إيه بعد كل دفعة؟',
         'Confirmation of the amount paid and the remaining balance. Keep receipts, booking confirmation and the installment schedule.',
         'تأكيد بالمبلغ المدفوع والمتبقي. احتفظ بالإيصالات وتأكيد الحجز وجدول الأقساط.','#terms-payment-records'],
-      ['employment','programme','Is employment guaranteed?','هل فيه ضمان وظيفة؟',
-        'No. Training and mentorship do not guarantee employment. Progress requires attendance, practice, assignments and applying feedback.',
-        'لأ. التدريب والمتابعة لا يضمنوا الحصول على وظيفة. الاستفادة محتاجة حضور وتطبيق وتكليفات ومراجعة الملاحظات.','#terms-participation'],
       ['material-use','programme','Can I share materials or record sessions?','أقدر أشارك المواد أو أسجل السيشنات؟',
         'Materials are for personal use. Sharing, selling, publishing or student recording requires permission. Respect the trainer’s and other students’ privacy.',
         'المواد للاستخدام الشخصي. مشاركتها أو بيعها أو نشرها أو تسجيل الطالب للسيشنات يحتاج إذن. احترم خصوصية المدرب وباقي الطلاب.','#terms-materials'],
@@ -646,8 +720,12 @@
       if (i === 19 || i === 21) { item.href = i === 19 ? '#apply' : '#booking-terms'; item.linkLabel = pick(['Read the full section','اقرأ القسم كاملًا']); }
     });
     faq.items.push(...additionalFaqs.map(([id,group,qEn,qAr,aEn,aAr,href])=>({id,group,question:pick([qEn,qAr]),answer:pick([aEn,aAr]),href,linkLabel:pick(['Read the full section','اقرأ القسم كاملًا'])})));
+    faq.items.push(...translations[locale].careerOutcomesNotice.faqItems);
+    const paymentMethods = translations[locale].paymentMethods;
+    faq.items.push({id:'payment-methods', group:'payments', question:paymentMethods.faqQuestion, answer:paymentMethods.faqAnswer, href:'#diploma-payment-methods', linkLabel:paymentMethods.faqLinkLabel});
     faq.groups = [
       {id:'programme', title:pick(['About the diploma','عن الدبلومة'])},
+      {id:'career', title:translations[locale].careerOutcomesNotice.faqGroupTitle},
       {id:'application', title:pick(['Application & confirmation','التقديم وتأكيد الحجز'])},
       {id:'payments', title:pick(['Payments & installments','الدفع والأقساط'])},
       {id:'withdrawals', title:pick(['Withdrawal, refunds & changes','الانسحاب والاسترداد والتغييرات'])}

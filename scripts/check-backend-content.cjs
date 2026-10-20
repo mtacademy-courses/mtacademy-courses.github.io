@@ -41,8 +41,38 @@ for (const locale of ['ar', 'en']) {
   assert.deepEqual(Array.from(copy.curriculum.stages, stage => stage.modules.length), [1,4,3,4,2,2,2,3]);
   assert.equal(copy.curriculum.stages.flatMap(stage => stage.modules).length, 21);
   assert.equal(copy.projects.items.length, p.projectCount);
-  assert.equal(copy.faq.items.length, 47);
-  assert.equal(copy.faq.groups.length, 4);
+  assert.equal(copy.faq.items.length, 56);
+  assert.equal(copy.faq.groups.length, 5);
+  const paymentMethods = copy.paymentMethods;
+  const paymentIds = ['instapay','vodafone-cash','paypal','western-union','bank-transfer'];
+  assert.deepEqual(Array.from(paymentMethods.methods, method => method.id), paymentIds);
+  assert.deepEqual(Array.from(paymentMethods.methods, method => method.name), locale === 'ar'
+    ? ['إنستا باي','فودافون كاش','باي بال','ويسترن يونيون','تحويل بنكي']
+    : ['InstaPay','Vodafone Cash','PayPal','Western Union','Bank transfer']);
+  assert.ok(paymentMethods.coordinationNote.endsWith(copy.registrationNote));
+  const paymentFaq = copy.faq.items.filter(item => item.id === 'payment-methods');
+  assert.equal(paymentFaq.length, 1);
+  assert.equal(paymentFaq[0].group, 'payments');
+  assert.equal(paymentFaq[0].answer, paymentMethods.faqAnswer);
+  assert.equal(paymentFaq[0].href, '#diploma-payment-methods');
+  for (const method of paymentMethods.methods) assert.ok(paymentFaq[0].answer.includes(method.name));
+  const notice = copy.careerOutcomesNotice;
+  assert.equal(notice.paragraphs.length, 6);
+  // Approved source fingerprints; paragraphs are joined with one blank line.
+  const approvedNoticeHash = locale === 'ar'
+    ? '94314df607e97d3fb168cd27e1611ff08b83d0876d7abb350707269b2d2ba7d1'
+    : 'a159a1c079029468e0cc09d6819895e4a6a223c175a941dba715ff2be8f0a5d6';
+  assert.equal(createHash('sha256').update(notice.paragraphs.join('\n\n')).digest('hex'), approvedNoticeHash);
+  const participation = copy.bookingTerms.clauses.find(clause => clause.id === 'participation');
+  assert.equal(participation.title, notice.title);
+  assert.deepEqual(participation.paragraphs.slice(1), notice.paragraphs);
+  assert.equal(notice.faqItems.length, 9);
+  assert.equal(copy.faq.items.filter(item => item.group === 'career').length, 9);
+  assert.equal(new Set(notice.faqItems.map(item => item.id)).size, 9);
+  assert.ok(notice.faqItems.every(item => item.href === '#career-outcomes-notice'));
+  assert.equal(notice.careerSupportSummary, notice.paragraphs[3]);
+  assert.equal(notice.experienceSummary, notice.paragraphs[4]);
+  assert.equal(notice.serviceCommitmentSummary, notice.paragraphs[5]);
   assert.equal(copy.application.fields.length, 12);
   assert.equal(new Set(copy.application.fields.map(field => field.id)).size, 12);
   assert.equal(copy.bookingTerms.clauses.length, 15);
@@ -93,7 +123,27 @@ for (const kind of ['application','bookingTerms']) {
   assert.ok(html.includes(`data-message-template="${kind}"`));
   assert.ok(html.includes(`data-copy-template="${kind}"`));
 }
+const placements = Array.from(html.matchAll(/data-career-notice="([^"]+)"/g), match => match[1]);
+assert.deepEqual(Array.from(html.matchAll(/data-diploma-payment-method="([^"]+)"/g), match => match[1]), ['instapay','vodafone-cash','paypal','western-union','bank-transfer']);
+assert.equal((html.match(/id="diploma-payment-methods"/g) || []).length, 1);
+assert.ok(html.indexOf('data-career-notice="pricing"') < html.indexOf('id="diploma-payment-methods"'));
+for (const [i, method] of diploma.translations.ar.paymentMethods.methods.entries()) {
+  assert.ok(html.includes(`data-config-text="paymentMethods.methods.${i}.name">${method.name}</strong>`));
+}
+for (const key of ['title','description','coordinationNote','contactLabel']) assert.ok(html.includes(`data-config-text="paymentMethods.${key}"`));
+assert.ok(html.includes('data-inquiry-key="paymentMethods.inquiryMessage"'));
+assert.deepEqual(placements.sort(), ['application','evidence','graduation','hero','pricing']);
+assert.equal((html.match(/id="career-outcomes-notice"/g) || []).length, 1);
+assert.equal((html.match(/data-career-outcomes-full/g) || []).length, 1);
+for (let i = 0; i < 6; i++) {
+  assert.equal((html.match(new RegExp(`data-config-text="careerOutcomesNotice\\.paragraphs\\.${i}"`, 'g')) || []).length, 1);
+}
+for (const placement of placements) assert.ok(html.includes(`aria-labelledby="career-notice-${placement}-label"`));
+const allIds = Array.from(html.matchAll(/\bid="([^"]+)"/g), match => match[1]);
+assert.equal(new Set(allIds).size, allIds.length, 'Unique saved IDs');
 const ids = new Set(Array.from(html.matchAll(/\bid="([^"]+)"/g), match => match[1]));
 for (const match of html.matchAll(/href="#([^"]+)"/g)) assert.ok(ids.has(match[1]), `Anchor target ${match[1]}`);
-console.log('PASS: 15 terms / 12 application fields / 47 FAQs, distinct policy clocks, templates and section anchors.');
+console.log('PASS: 15 terms / 12 application fields / 56 FAQs, distinct policy clocks, templates and section anchors.');
+console.log('PASS: five bilingual payment channels, derived FAQ, localized inquiry and saved Arabic section.');
+console.log('PASS: approved six-paragraph clarification, nine outcome FAQs, five notices and one canonical anchor.');
 console.log('PASS: Backend workload, payments, 8 stages / 21 modules / 9 projects, locale parity, PDF and saved Arabic fallback.');

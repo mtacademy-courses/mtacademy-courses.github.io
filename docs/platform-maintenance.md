@@ -104,6 +104,21 @@ The complete Backend landing page now publishes the supplied roadmap, projects, 
 
 ## Application and full terms
 
-`backend-diploma-data.js` now owns a 12-field application template, 15 approved policy clauses, a separate acceptance message and 47 grouped FAQs in both languages. `bookingPolicy.refund` defines seven calendar days from receipt and the sending-date settlement cutoff; `bookingPolicy.latePayment` separately defines the seven-day due-date grace and written-notice condition. The complete terms are saved in HTML at `#booking-terms`; application instructions are at `#apply`.
+`backend-diploma-data.js` now owns a 12-field application template, 15 approved policy clauses, a separate acceptance message and 56 grouped FAQs in both languages. `bookingPolicy.refund` defines seven calendar days from receipt and the sending-date settlement cutoff; `bookingPolicy.latePayment` separately defines the seven-day due-date grace and written-notice condition. The complete terms are saved in HTML at `#booking-terms`; application instructions are at `#apply`.
 
 Application submission alone reserves no place. Completed information, agreement, required payment and academy confirmation are all required for booking confirmation. Generic WhatsApp drafts contain no acceptance statement. The optional clipboard controls copy static templates only on click and give localized feedback; unsupported/denied clipboard access leaves the full text available for manual copying. There is no application form, personal-data persistence or automated message submission. The original PDF is unchanged and links to current webpage instructions/terms are shown beside it.
+
+
+## Career-outcomes clarification — 2026-10-20
+
+`careerOutcomesNotice` in Backend diploma data owns the six approved bilingual paragraphs and contextual summaries. Clause 13 incorporates those paragraphs with the existing participation requirement; other clauses and the total of 15 remain intact. The full text is available at `#career-outcomes-notice`, with the original `#terms-participation` link preserved.
+
+The Backend authoring helper reuses one callout renderer at five decision points (hero, instructor/reviews, graduation/career preparation, shared pricing and application). Five unique label IDs and ordinary links make the static notices accessible without JavaScript. They are not alerts, dialogs or overlays. Nine career-outcome FAQs reuse central summaries/paragraphs; the rights answer also links to withdrawal/refund terms. There are now 55 FAQs across five groups.
+
+The existing controller already localizes the new bindings; no shared/controller changes are required. No acceptance wording, application message, payment rule or original PDF content changes. The homepage, Udemy and Kids content remain outside this update.
+
+## Backend payment methods — 2026-10-20
+
+The Backend pricing section now contains `#diploma-payment-methods`, after the shared career-outcomes notice and before the existing payment notes. `buildPaymentMethods` owns the five IDs and localized names, and derives the related FAQ answer from that list. The page has 56 FAQs. No provider accounts, payment links, fees, currencies or method-specific eligibility are asserted.
+
+The authoring helper renders a semantic list of non-interactive tiles with decorative neutral SVGs. The Backend controller resolves the payment contact's `data-inquiry-key` through the existing content lookup and shared WhatsApp URL, preserving generic and pricing-plan drafts. A page-scoped initial-fragment correction waits for load/fonts/layout and cancels on visitor input; this addresses an existing first-English-visit heading offset without changing shared navigation. No new dependencies, checkout, form or production build step are required.

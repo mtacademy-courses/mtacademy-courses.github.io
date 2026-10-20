@@ -31,7 +31,42 @@ const pdfActions = (compact = false) => `<div class="diploma-pdf-actions${compac
 const list = (key, items, css = '') => `<ul${css ? ` class="${css}"` : ''}>${items.map((item,i)=>text('li',`${key}.${i}`,item)).join('')}</ul>`;
 const practiceCards = (key, items) => items.map((item,i)=>`<article class="diploma-practice-card">${text('h3',`${key}.${i}.title`,item.title)}${text('p',`${key}.${i}.description`,item.description)}</article>`).join('');
 const policyLinks = (includeApplication = true) => `<div class="diploma-policy-links">${includeApplication ? `<a href="#apply" data-config-text="application.title">${copy.application.title}</a>` : ''}<a href="#booking-terms" data-config-text="application.termsLabel">${copy.application.termsLabel}</a></div>`;
-const faqDetails = (item,index) => `<details><summary data-config-text="faq.items.${index}.question">${localized(item.question)}</summary>${text('p',`faq.items.${index}.answer`,item.answer)}${item.href?`<a class="diploma-faq-reference" href="${escape(item.href)}" data-config-href="faq.items.${index}.href" data-config-text="faq.items.${index}.linkLabel">${localized(item.linkLabel)}</a>`:''}</details>`;
+const faqDetails = (item,index) => {
+  const reference = (hrefKey,labelKey) => item[hrefKey] ? `<a class="diploma-faq-reference" href="${escape(item[hrefKey])}" data-config-href="faq.items.${index}.${hrefKey}" data-config-text="faq.items.${index}.${labelKey}">${localized(item[labelKey])}</a>` : '';
+  return `<details><summary data-config-text="faq.items.${index}.question">${localized(item.question)}</summary>${text('p',`faq.items.${index}.answer`,item.answer)}${reference('href','linkLabel')}${reference('secondaryHref','secondaryLinkLabel')}</details>`;
+};
+const careerNotice = (placement, summaryKey, includeCommitment = false) => {
+  const notice = copy.careerOutcomesNotice;
+  const emphasis = ['hero','pricing'].includes(placement) ? 'strong' : 'span';
+  return `<aside class="diploma-career-notice diploma-career-notice--${placement}" data-career-notice="${placement}" aria-labelledby="career-notice-${placement}-label">
+    <div class="diploma-career-notice__label"><span class="diploma-career-notice__icon" aria-hidden="true">!</span><strong id="career-notice-${placement}-label" data-config-text="careerOutcomesNotice.importantLabel">${localized(notice.importantLabel)}</strong></div>
+    <p class="diploma-career-notice__summary">${text(emphasis,`careerOutcomesNotice.${summaryKey}`,notice[summaryKey])}</p>
+${includeCommitment ? text('p','careerOutcomesNotice.serviceCommitmentSummary',notice.serviceCommitmentSummary,'diploma-career-notice__commitment') : ''}
+    <div class="diploma-career-notice__links"><a href="#career-outcomes-notice" data-config-text="careerOutcomesNotice.readFullLabel">${localized(notice.readFullLabel)}</a>${includeCommitment ? `<a href="#terms-withdrawal-before-start" data-config-text="careerOutcomesNotice.refundTermsLabel">${localized(notice.refundTermsLabel)}</a>` : ''}</div>
+  </aside>`;
+};
+const termsClause = (clause,i) => {
+  const isCareer = clause.id === 'participation';
+  const title = isCareer ? `<h3 id="career-outcomes-notice" data-config-text="bookingTerms.clauses.${i}.title">${localized(clause.title)}</h3>` : text('h3',`bookingTerms.clauses.${i}.title`,clause.title);
+  const paragraphs = isCareer
+    ? text('p',`bookingTerms.clauses.${i}.paragraphs.0`,clause.paragraphs[0]) + `<div data-career-outcomes-full>${copy.careerOutcomesNotice.paragraphs.map((paragraph,j)=>text('p',`careerOutcomesNotice.paragraphs.${j}`,paragraph)).join('')}</div>`
+    : clause.paragraphs.map((paragraph,j)=>text('p',`bookingTerms.clauses.${i}.paragraphs.${j}`,paragraph)+(clause.id==='withdrawal-after-start'&&j===1?`<div class="diploma-refund-formula">${text('p','bookingTerms.refundFormula.perSession',copy.bookingTerms.refundFormula.perSession)}${text('p','bookingTerms.refundFormula.refund',copy.bookingTerms.refundFormula.refund)}${text('p','bookingTerms.refundFormula.inputs',copy.bookingTerms.refundFormula.inputs,'diploma-refund-inputs')}</div>`:'')).join('');
+  return `<li id="terms-${clause.id}" data-booking-clause="${clause.id}"${isCareer?' class="diploma-career-clause"':''}>${title}${paragraphs}</li>`;
+};
+// Neutral channel illustrations, not payment-provider logos or interactive controls.
+const paymentIcons = {
+  'instapay': '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="m13 6-3 6h4l-3 6"/>',
+  'vodafone-cash': '<path d="M20 7V5a2 2 0 0 0-2-2H6a3 3 0 0 0 0 6h14v12H6a3 3 0 0 1-3-3V6m17 7h-5v4h5"/>',
+  'paypal': '<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20m-15 5h4m5 0h1"/>',
+  'western-union': '<circle cx="12" cy="10" r="8"/><ellipse cx="12" cy="10" rx="3" ry="8"/><path d="M4 10h16M5 22h14m-3-3 3 3-3 3"/>',
+  'bank-transfer': '<path d="m2 8 10-6 10 6H2Zm2 3v8m5-8v8m6-8v8m5-8v8M2 22h20"/>'
+};
+const paymentMethodsSection = () => `<section class="diploma-payment-methods" id="diploma-payment-methods" aria-labelledby="diploma-payment-methods-title">
+  <div class="diploma-payment-methods__heading"><h3 id="diploma-payment-methods-title" data-config-text="paymentMethods.title">${localized(copy.paymentMethods.title)}</h3>${text('p','paymentMethods.description',copy.paymentMethods.description)}</div>
+  <ul class="diploma-payment-methods__list">${copy.paymentMethods.methods.map((method,i)=>`<li class="diploma-payment-method" data-diploma-payment-method="${escape(method.id)}"><span class="diploma-payment-method__icon" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">${paymentIcons[method.id]}</svg></span>${text('strong',`paymentMethods.methods.${i}.name`,method.name)}</li>`).join('')}</ul>
+  <div class="diploma-payment-methods__footer">${text('p','paymentMethods.coordinationNote',copy.paymentMethods.coordinationNote)}${register('button button--secondary',copy.paymentMethods.inquiryMessage,'paymentMethods.contactLabel','data-inquiry-key="paymentMethods.inquiryMessage"')}</div>
+</section>`;
+
 let moduleNumber = 0;
 const sections = `
     <nav class="diploma-section-nav" aria-label="${copy.sectionNav.label}" data-config-aria="sectionNav.label">${copy.sectionNav.items.map((item,i)=>`<a href="${item.href}" data-config-text="sectionNav.items.${i}.label">${escape(item.label)}</a>`).join('')}</nav>
@@ -75,11 +110,13 @@ const sections = `
         ${text('p', 'mentor.attribution', copy.mentor.attribution, 'diploma-attribution')}
         ${text('p', 'mentor.evidence', copy.mentor.evidence)}
         <div class="diploma-evidence-links"><a href="${escape(diploma.evidenceLinks.udemy)}" data-config-href="evidenceLinks.udemy" data-config-text="mentor.udemyLabel" target="_blank" rel="noopener noreferrer">${escape(copy.mentor.udemyLabel)}</a><a href="${diploma.evidenceLinks.reviews}" data-config-href="evidenceLinks.reviews" data-config-text="mentor.reviewsLabel">${escape(copy.mentor.reviewsLabel)}</a>${linkedIn}</div>
+        ${careerNotice('evidence','experienceSummary')}
       </div>
     </section>
     <section class="diploma-section" aria-labelledby="graduation-title">
       ${heading('graduation','graduation-title')}
       <div class="diploma-graduation">${practiceCards('graduation.items',copy.graduation.items)}</div>
+      ${careerNotice('graduation','careerSupportSummary')}
     </section>
     <section class="diploma-section diploma-cohort" aria-labelledby="cohort-title">
       <div>${text('p','cohort.eyebrow',copy.cohort.eyebrow,'eyebrow')}<h2 id="cohort-title" data-config-text="cohort.title">${escape(copy.cohort.title)}</h2></div>
@@ -94,6 +131,8 @@ const sections = `
         <div class="diploma-price-card__installments">${text('p','pricing.installmentLabel',copy.pricing.installmentLabel)}<strong dir="ltr" data-config-text="pricing.plans.${i}.total">${plan.total}</strong><p><span data-config-text="pricing.depositLabel">${copy.pricing.depositLabel}</span>: <bdi data-config-text="pricing.plans.${i}.deposit">${plan.deposit}</bdi></p>${text('p',`pricing.plans.${i}.installments`,plan.installments)}<p class="diploma-price-equation" dir="ltr" data-config-text="pricing.plans.${i}.equation">${plan.equation}</p></div>
         ${register('button',plan.inquiryMessage,`pricing.plans.${i}.contactLabel`,`data-pricing-plan="${i}"`)}
       </article>`).join('')}</div>
+      ${careerNotice('pricing','generalSummary',true)}
+      ${paymentMethodsSection()}
       ${list('pricing.notes',copy.pricing.notes,'diploma-payment-notes')}${policyLinks()}
       ${text('p','registrationNote',copy.registrationNote,'diploma-registration-note')}
     </section>
@@ -114,15 +153,13 @@ const sections = `
         ${text('p','application.confirmationNotice',copy.application.confirmationNotice,'diploma-confirmation-notice')}
         <p id="application-privacy" class="diploma-privacy-note" data-config-text="application.privacyNotice">${localized(copy.application.privacyNotice)}</p>
       </div>
+      ${careerNotice('application','generalSummary')}
       <div class="diploma-actions"><button class="button button--secondary" type="button" data-copy-template="application" aria-describedby="application-copy-feedback" data-config-text="application.copyLabel" hidden>${copy.application.copyLabel}</button>${register('button',copy.inquiryMessage,'application.whatsappLabel')}</div>
       <p class="diploma-copy-feedback" id="application-copy-feedback" data-copy-feedback="application" role="status" aria-live="polite" aria-atomic="true"></p>
     </section>
     <section class="diploma-section diploma-policy" id="booking-terms" aria-labelledby="booking-terms-title">
       ${heading('bookingTerms','booking-terms-title')}
-      <ol class="diploma-terms-list">${copy.bookingTerms.clauses.map((clause,i)=>`<li id="terms-${clause.id}" data-booking-clause="${clause.id}">
-        ${text('h3',`bookingTerms.clauses.${i}.title`,clause.title)}
-        ${clause.paragraphs.map((paragraph,j)=>text('p',`bookingTerms.clauses.${i}.paragraphs.${j}`,paragraph)+(clause.id==='withdrawal-after-start'&&j===1?`<div class="diploma-refund-formula">${text('p','bookingTerms.refundFormula.perSession',copy.bookingTerms.refundFormula.perSession)}${text('p','bookingTerms.refundFormula.refund',copy.bookingTerms.refundFormula.refund)}${text('p','bookingTerms.refundFormula.inputs',copy.bookingTerms.refundFormula.inputs,'diploma-refund-inputs')}</div>`:'')).join('')}
-      </li>`).join('')}</ol>
+      <ol class="diploma-terms-list">${copy.bookingTerms.clauses.map(termsClause).join('')}</ol>
       <div class="diploma-acceptance" id="acceptance-message">
         <h3 id="acceptance-title" data-config-text="bookingTerms.acceptanceTitle">${localized(copy.bookingTerms.acceptanceTitle)}</h3>
         ${text('p','bookingTerms.acceptanceInstructions',copy.bookingTerms.acceptanceInstructions)}
@@ -197,6 +234,7 @@ const html = `<!doctype html>
         ${text('p', 'hero.announcement', copy.hero.announcement, 'diploma-announcement')}
         <div class="diploma-actions">${register()}<a class="button button--secondary" href="#curriculum" data-config-text="hero.detailsLabel">${copy.hero.detailsLabel}</a></div>
         ${text('p','registrationNote',copy.registrationNote,'diploma-registration-note')}
+        ${careerNotice('hero','generalSummary')}
         ${policyLinks()}
         ${pdfActions(true)}
       </div>

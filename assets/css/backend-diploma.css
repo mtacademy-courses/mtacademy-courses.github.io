@@ -102,6 +102,20 @@ html[dir="rtl"] .diploma-hero__technologies { text-align: right; }
 .diploma-price-card .button { margin-block-start: auto; }
 .diploma-payment-notes { margin-block: 1.75rem 1rem; padding-inline-start: 1.25rem; color: var(--text-muted); font-size: .9rem; line-height: 1.9; }
 .diploma-payment-notes li + li { margin-block-start: .35rem; }
+.diploma-payment-methods { margin-block: 1.5rem; padding: clamp(1.25rem,3vw,2rem); border: 1px solid var(--border); border-radius: 1rem; background: white; }
+.diploma-payment-methods__heading h3 { margin-block: 0 .5rem; font-size: clamp(1.25rem,2.5vw,1.6rem); }
+.diploma-payment-methods__heading p { margin-block: 0; color: var(--text-muted); font-size: .95rem; line-height: 1.8; }
+.diploma-payment-methods__list { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,8rem),1fr)); gap: .75rem; list-style: none; padding: 0; margin-block: 1.5rem; }
+.diploma-payment-method { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; min-width: 0; padding: 1.25rem .75rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--background); text-align: center; }
+.diploma-payment-method strong { font-size: 1rem; line-height: 1.6; overflow-wrap: anywhere; }
+.diploma-payment-method__icon { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: .85rem; color: var(--green); background: #e8c96a33; }
+.diploma-payment-method__icon svg { width: 2rem; height: 2rem; }
+.diploma-payment-methods__footer { display: flex; align-items: center; flex-wrap: wrap; gap: 1.25rem 2rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--border); }
+.diploma-payment-methods__footer p { flex: 1 1 28rem; margin: 0; color: var(--text-muted); font-size: .95rem; line-height: 1.9; }
+.diploma-payment-methods__footer .button { max-width: 100%; white-space: normal; }
+@media (min-width: 42rem) and (max-width: 69.99rem) {
+  .diploma-payment-methods__list { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
 .diploma-document { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 2rem; padding: clamp(1.25rem,4vw,2.5rem); border: 1px solid var(--border); border-radius: 1.25rem; background: #e8c96a18; }
 .diploma-document .diploma-section-heading { margin-block-end: .75rem; }
 .diploma-document__icon { display: grid; align-content: center; gap: .5rem; width: 5rem; height: 7rem; text-align: center; border: 1px solid var(--gold); border-radius: .5rem 1.5rem .5rem .5rem; background: white; color: var(--green); font-weight: 850; font-size: 1.2rem; }
@@ -203,3 +217,25 @@ html[dir="rtl"] :is(.diploma-application-fields,.diploma-application-steps ol,.d
 }
 
 .diploma-application .diploma-section-heading .technical-name { white-space: nowrap; }
+
+/* Contextual outcome notices share one full clarification in clause 13. */
+.diploma-career-notice { min-width: 0; margin-block: 1.5rem; padding: 1.1rem 1.25rem; border: 1px solid var(--gold); border-inline-start-width: 4px; border-radius: .75rem; background: #e8c96a20; color: var(--green); }
+.diploma-career-notice__label { display: flex; align-items: center; gap: .5rem; margin-block-end: .5rem; font-size: .9rem; }
+.diploma-career-notice__icon { display: inline-grid; place-items: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--green); color: white; font-weight: 850; font-size: .85rem; flex-shrink: 0; }
+.diploma-career-notice p { margin-block: 0 .75rem; color: var(--green); line-height: 1.8; font-size: .95rem; }
+.diploma-career-notice__summary strong { font-weight: 750; }
+.diploma-career-notice .diploma-career-notice__commitment { color: var(--text-muted); }
+.diploma-career-notice__links { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+.diploma-career-notice__links a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--green); font-weight: 750; font-size: .85rem; text-decoration: underline; text-underline-offset: .25rem; }
+.diploma-career-notice--hero { padding: .85rem 1rem; margin-block: 1rem .5rem; max-width: 40rem; }
+.diploma-career-notice--hero p { font-size: .9rem; line-height: 1.8; margin-block-end: .35rem; }
+.diploma-career-notice--hero .diploma-career-notice__label { font-size: .85rem; }
+.diploma-career-notice--evidence, .diploma-career-notice--graduation { border-color: var(--border); border-inline-start-color: var(--gold); background: white; }
+.diploma-career-notice--application { max-width: 57rem; }
+.diploma-career-notice--pricing { padding: clamp(1.25rem,3vw,2rem); margin-block: 1.5rem 1rem; }
+.diploma-career-notice .technical-name { white-space: normal; overflow-wrap: anywhere; }
+.diploma-terms-list > .diploma-career-clause { margin-block: 1rem; padding: clamp(1.25rem,3vw,2rem); border: 1px solid var(--gold); border-radius: 1rem; background: #e8c96a20; }
+.diploma-terms-list > .diploma-career-clause h3 { font-size: 1.3rem; font-weight: 850; }
+.diploma-terms-list > .diploma-career-clause [data-career-outcomes-full] p { font-size: 1rem; line-height: 1.95; }
+.diploma-career-clause [data-config-text="careerOutcomesNotice.paragraphs.1"] { color: var(--green); font-weight: 750; }
+.diploma-career-clause [data-config-text="careerOutcomesNotice.paragraphs.5"] { padding-block-start: 1rem; border-block-start: 1px solid #c9a84c70; color: var(--green); font-weight: 700; }

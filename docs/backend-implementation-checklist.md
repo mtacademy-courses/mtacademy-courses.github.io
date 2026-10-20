@@ -1,10 +1,10 @@
 # Backend diploma: registration landing page
 
-Updated 2026-10-19. Registration is open. Local implementation only; no deployment.
+Updated 2026-10-20. Registration is open. Local implementation only; no deployment.
 
 ## Content ownership
 
-- `assets/js/backend-diploma-data.js` owns the plan, 8 curriculum stages / 21 modules, 9 monthly projects, session breakdown, graduation expectations, pricing plans, PDF metadata, application/terms collections, 47 grouped FAQs and both translations.
+- `assets/js/backend-diploma-data.js` owns the plan, 8 curriculum stages / 21 modules, 9 monthly projects, session breakdown, graduation expectations, pricing plans, PDF metadata, application/terms collections, 56 grouped FAQs and both translations.
 - Instructor evidence continues to derive from `MTAcademySite.instructorProfile.statistics`. Prior Udemy/mentorship evidence is explicitly attributed to Mohamed Tamer's previous work.
 - `scripts/refresh-backend-page.cjs` renders the complete saved Arabic page, Course/Organization/WebPage JSON-LD and Backend homepage card/status. Run homepage, Kids, then Backend refresh helpers; repeat to check idempotence.
 - `backend-diploma.js` updates the existing bindings without rebuilding disclosures, preserving open states and focus when switching language. It localizes generic and market-specific WhatsApp draft messages and adds expand/collapse controls.
@@ -89,3 +89,49 @@ Application/policy verification completed locally:
 No messages, application submissions, payments, commit, push or deployment were performed. The exact start day and weekly timetable still require academy confirmation; full booking/payment/withdrawal terms are now public on the page.
 
 Final PDF regression: the native download succeeded with the configured filename, and its SHA-256 matches the unchanged hosted original. View still creates a new tab and receives HTTP 200 / application/pdf; headless native-viewer rendering remains the previously documented verification limit.
+
+
+## Employment and professional outcomes — 2026-10-20
+
+Implementation checklist:
+
+- [x] Audit the clean repository baseline and current clause 13, employment FAQ, career activities and prior-review attribution.
+- [x] Maintain the six approved Arabic paragraphs and supplied English translation once in `careerOutcomesNotice`, with contextual summaries and FAQ answers derived from it.
+- [x] Expand clause 13, retaining its attendance/practice/assignments/feedback requirement and `#terms-participation` anchor. The clause count remains 15; `#career-outcomes-notice` identifies the full clarification heading.
+- [x] Add five normal-flow notices: hero, instructor/review evidence, career-preparation/graduation, shared pricing area and application action. All link to the full clarification; pricing also links to withdrawal/refund terms and reiterates the academy’s service commitments and retained rights.
+- [x] Update the employment FAQ and add eight related questions, for nine outcome FAQs and 55 total questions across five groups.
+- [x] Preserve application/acceptance templates, WhatsApp drafts, all other policy clauses, prices, curriculum, projects and the original PDF. No additional consent gate or data-entry form is introduced.
+- [x] Render static Arabic, runtime translations and reusable notice markup from the same data. Extend focused checks for source fingerprints, paragraph/FAQ/notice counts, canonical links and unique IDs.
+
+The clarification excludes guarantees of a job, internship, freelance work, a particular income or a professional level within a particular timeframe. It explains individual and market factors, educational/advisory career support and individual reviews. It retains agreed academy services, legal rights, withdrawal and refund terms. It is not a new refund exclusion or general waiver.
+
+Verification completed locally on 2026-10-20:
+
+- Both languages passed at 360, 390, 768, 1119, 1120 and 1440 px: five visible notices, six exact full-text paragraphs, 15 clauses and 55 FAQs, with no horizontal overflow or missing translations. Both languages also passed 200% text sizing.
+- Every repeated notice reaches the single full-text heading below the fixed header. The legacy participation anchor remains functional. Saved Arabic and notice links work without JavaScript; IDs and ARIA references are unique and valid. Keyboard focus/Enter, language switching with preserved disclosures and reduced-motion checks passed.
+- Actual desktop/mobile screenshots were inspected for the hero, evidence, career preparation, pricing, application and full clarification, including the retained commitments and rights.
+- Application/acceptance Clipboard API contents and manual-copy fallbacks passed in both languages. WhatsApp drafts remain unchanged and do not assert acceptance. Mobile menu, scroll lock, FAQ controls, homepage navigation, Udemy search/dialog/history and Kids FAQ/gallery passed. No uncaught browser errors or failed local assets were observed.
+- Baseline comparisons confirm the other 14 clauses, pricing, application and acceptance content, curriculum/projects and instructor attribution remain unchanged. Shared Udemy/Kids data and saved homepage, Kids and 404 pages are unchanged.
+- Both PDF actions passed: View opens a tab and receives HTTP 200 / application/pdf; native download uses the configured filename and matches the original SHA-256. Headless Chromium's built-in PDF viewer rendering remains unverified; the original file is unchanged.
+- Backend content checks, asset checks (177 references), JavaScript/CJS syntax checks and `git diff --check` passed. All three authoring helpers were run in order and repeated, reproducing all four saved pages without changes.
+
+No messages, submissions, payments, commit, push, publication or deployment were performed for this update.
+
+## Available payment methods — 2026-10-20
+
+- [x] Preserve the uncommitted career-outcomes implementation and audit pricing, policy, FAQ, contact and rendering patterns.
+- [x] Centralize five bilingual methods (InstaPay, Vodafone Cash, PayPal, Western Union and bank transfer), coordination guidance and an inquiry draft; derive one new FAQ from their names, for 56 total FAQs.
+- [x] Render a shared, responsive section after the pricing career notice, with neutral decorative SVGs and non-interactive tiles. No account data, checkout, payment restrictions or new contractual conditions are introduced.
+- [x] Preserve all prior content and use the existing verified WhatsApp configuration for a localized, user-initiated draft. Initial fragment positioning is corrected after localized layout, unless the visitor has interacted.
+- [x] Synchronize saved Arabic, runtime translations and authoring/check helpers.
+
+Local verification:
+
+- Arabic and English passed at 360, 390, 768, 1119, 1120 and 1440 px, with exactly five correctly named methods, the derived FAQ and localized inquiry URL. No horizontal overflow or clipped labels was observed. Both locales passed 200% text sizing.
+- Desktop and mobile screenshots in both languages were inspected. The career notice remains above the payment section; the shared section serves both markets. Keyboard focus and Enter on the contact action passed using a locally intercepted WhatsApp destination; no external message was sent. Saved Arabic, method names and the contact draft also work without JavaScript.
+- Twenty-four settled fragment-navigation combinations passed for the payment section, full career clarification and legacy participation clause, in both languages at mobile/desktop sizes with normal/reduced motion.
+- Existing copy controls (including denied/unavailable clipboard fallbacks), localized drafts, PDF view/download, menu/scroll lock, disclosures, homepage navigation, Udemy search/dialog/history and Kids FAQ/gallery passed. Homepage/Kids checks covered both languages at all six widths. IDs, ARIA references, focus, reduced motion and existing text contrast checks passed.
+- Baseline comparisons confirm all prior 55 FAQ entries and every earlier bilingual datum remain unchanged, including pricing, policy, application/acceptance templates, curriculum/projects and outcome paragraphs. Saved homepage, Kids and 404 files remain byte-identical to this task's baseline. The downloaded and hosted PDF still match the original checksum; native headless PDF-viewer rendering remains the previously recorded verification limit.
+- Content/asset checks (177 references), changed JavaScript/CJS syntax checks and whitespace checks pass. Repeating the three established authoring helpers reproduces all four saved pages unchanged.
+
+No commit, push, publication, payment transaction or deployment was performed.
