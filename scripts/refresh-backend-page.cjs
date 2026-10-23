@@ -150,6 +150,8 @@ const sections = `
         ${text('p','application.introduction',copy.application.introduction)}
         <ol class="diploma-application-fields">${copy.application.fields.map((field,i)=>`<li data-application-field="${field.id}">${text('span',`application.fields.${i}.prompt`,field.prompt)}</li>`).join('')}</ol>
         ${text('p','application.nextSteps',copy.application.nextSteps)}
+        ${text('p','application.prerequisitesNote',copy.application.prerequisitesNote)}
+        ${text('p','application.prePaymentNotice',copy.application.prePaymentNotice)}
         ${text('p','application.confirmationNotice',copy.application.confirmationNotice,'diploma-confirmation-notice')}
         <p id="application-privacy" class="diploma-privacy-note" data-config-text="application.privacyNotice">${localized(copy.application.privacyNotice)}</p>
       </div>

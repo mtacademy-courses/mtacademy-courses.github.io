@@ -186,6 +186,7 @@ html[dir="rtl"] .diploma-price-card .diploma-price, html[dir="rtl"] .diploma-pri
 .diploma-application-message .diploma-message-greeting { color: var(--green); font-weight: 800; font-size: 1.1rem; }
 .diploma-application-fields { margin-block: 1.5rem; padding-inline-start: 1.5rem; line-height: 1.9; color: var(--text-muted); }
 .diploma-application-fields li + li { margin-block-start: .65rem; }
+.diploma-application-fields [data-config-text] { white-space: pre-line; }
 .diploma-application-fields li::marker, .diploma-terms-list > li::marker { color: var(--green); font-weight: 800; }
 html[dir="rtl"] :is(.diploma-application-fields,.diploma-application-steps ol,.diploma-terms-list) { list-style-type: arabic-indic; }
 .diploma-application-message .diploma-confirmation-notice, .diploma-application-message .diploma-privacy-note { padding-block-start: 1rem; border-block-start: 1px solid var(--border); }

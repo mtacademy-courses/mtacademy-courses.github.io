@@ -41,7 +41,7 @@ for (const locale of ['ar', 'en']) {
   assert.deepEqual(Array.from(copy.curriculum.stages, stage => stage.modules.length), [1,4,3,4,2,2,2,3]);
   assert.equal(copy.curriculum.stages.flatMap(stage => stage.modules).length, 21);
   assert.equal(copy.projects.items.length, p.projectCount);
-  assert.equal(copy.faq.items.length, 56);
+  assert.equal(copy.faq.items.length, 58);
   assert.equal(copy.faq.groups.length, 5);
   const paymentMethods = copy.paymentMethods;
   const paymentIds = ['instapay','vodafone-cash','paypal','western-union','bank-transfer'];
@@ -73,12 +73,28 @@ for (const locale of ['ar', 'en']) {
   assert.equal(notice.careerSupportSummary, notice.paragraphs[3]);
   assert.equal(notice.experienceSummary, notice.paragraphs[4]);
   assert.equal(notice.serviceCommitmentSummary, notice.paragraphs[5]);
-  assert.equal(copy.application.fields.length, 12);
-  assert.equal(new Set(copy.application.fields.map(field => field.id)).size, 12);
+  const application = copy.application;
+  assert.equal(application.fields.length, 17);
+  assert.deepEqual(Array.from(application.fields, field => field.id), ['arabic-name','english-name','age','email','whatsapp','residence','study-work','programming-level','technologies-used','actual-experience','independent-project','professional-links','goal','equipment-internet','commitment','availability','payment-preference']);
+  assert.equal(new Set(application.fields.map(field => field.id)).size, 17);
+  const approvedApplicationHash = locale === 'ar'
+    ? '96ca09d83387225178abf8efd84656a65e88322b059ef9cfa7a6e1be45f8d8f6'
+    : '8cca86c8557b9267812ab6510d9810c6317b89817eb1e05d0080ed87f04a6954';
+  assert.equal(createHash('sha256').update(application.messageTemplate).digest('hex'), approvedApplicationHash, 'Exact approved application message, including line breaks');
+  assert.equal(application.fields[7].prompt.split('\n').length, 2);
+  assert.equal(application.fields[12].prompt.split('\n').length, 3);
+  assert.ok(application.fields[11].prompt.includes(locale === 'ar' ? 'اختياري ومش شرط للتقديم' : 'Optional and not required to apply'));
+  const numbering = Array.from(application.messageTemplate.matchAll(/^([0-9٠-٩]+)- /gm), match => match[1]);
+  assert.deepEqual(numbering, Array.from({length:17}, (_,i) => locale === 'ar' ? String(i+1).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]) : String(i+1)));
+  const closing = ['nextSteps','prerequisitesNote','prePaymentNotice','confirmationNotice','privacyNotice'].map(key => application[key]);
+  assert.equal(application.messageTemplate.split('\n').slice(-5).join('\n'), closing.join('\n'));
+  assert.equal(copy.faq.items.find(item => item.id === 'suitability-review').answer, application.nextSteps);
+  assert.equal(copy.faq.items.find(item => item.id === 'actual-experience').answer, application.fields[9].prompt);
+  assert.equal(copy.faq.items.find(item => item.id === 'application-data-use').answer, application.privacyNotice);
+  assert.ok(copy.faq.items.find(item => item.id === 'application-information').answer.includes(String(application.fields.length)));
   assert.equal(copy.bookingTerms.clauses.length, 15);
   assert.equal(new Set(copy.bookingTerms.clauses.map(clause => clause.id)).size, 15);
-  assert.equal((copy.application.messageTemplate.match(/^[0-9٠-٩]+- /gm) || []).length, 12);
-  assert.ok(copy.application.messageTemplate.includes('\n\n'));
+  assert.equal((copy.application.messageTemplate.match(/^[0-9٠-٩]+- /gm) || []).length, 17);
   assert.ok(copy.bookingTerms.acceptanceTemplate.includes('........'));
   assert.ok(copy.application.privacyNotice);
   assert.ok(copy.bookingTerms.refundFormula.perSession.includes(String(p.totalSessions)));
@@ -114,7 +130,11 @@ assert.ok(html.includes(`href="${diploma.document.url}" target="_blank" rel="noo
 assert.ok(html.includes('تم فتح باب الحجز'));
 assert.ok(!/coming.soon|plannedInstructionHours/.test(html));
 assert.equal((html.match(/data-booking-clause=/g) || []).length, 15);
-assert.equal((html.match(/data-application-field=/g) || []).length, 12);
+assert.equal((html.match(/data-application-field=/g) || []).length, 17);
+assert.deepEqual(Array.from(html.matchAll(/data-application-field="([^"]+)"/g), match => match[1]), Array.from(diploma.translations.ar.application.fields, field => field.id));
+for (const key of ['nextSteps','prerequisitesNote','prePaymentNotice','confirmationNotice','privacyNotice']) {
+  assert.equal((html.match(new RegExp(`data-config-text="application\\.${key}"`, 'g')) || []).length, 1);
+}
 for (const id of ['apply','booking-terms','application-privacy','acceptance-message']) {
   assert.ok(html.includes(`id="${id}"`));
 }
@@ -143,7 +163,8 @@ const allIds = Array.from(html.matchAll(/\bid="([^"]+)"/g), match => match[1]);
 assert.equal(new Set(allIds).size, allIds.length, 'Unique saved IDs');
 const ids = new Set(Array.from(html.matchAll(/\bid="([^"]+)"/g), match => match[1]));
 for (const match of html.matchAll(/href="#([^"]+)"/g)) assert.ok(ids.has(match[1]), `Anchor target ${match[1]}`);
-console.log('PASS: 15 terms / 12 application fields / 56 FAQs, distinct policy clocks, templates and section anchors.');
+console.log('PASS: 15 terms / 17 application fields / 58 FAQs, distinct policy clocks, templates and section anchors.');
+console.log('PASS: exact approved bilingual application templates, numbering, multiline options, five closing paragraphs and suitability FAQs.');
 console.log('PASS: five bilingual payment channels, derived FAQ, localized inquiry and saved Arabic section.');
 console.log('PASS: approved six-paragraph clarification, nine outcome FAQs, five notices and one canonical anchor.');
 console.log('PASS: Backend workload, payments, 8 stages / 21 modules / 9 projects, locale parity, PDF and saved Arabic fallback.');

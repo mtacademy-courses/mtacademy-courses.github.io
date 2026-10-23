@@ -439,6 +439,11 @@
     "ar": "الاسم بالإنجليزي:"
   },
   {
+    "id": "age",
+    "en": "Age:",
+    "ar": "العمر:"
+  },
+  {
     "id": "email",
     "en": "Email address:",
     "ar": "البريد الإلكتروني:"
@@ -450,37 +455,57 @@
   },
   {
     "id": "residence",
-    "en": "Country of residence and city:",
+    "en": "Country and city of residence:",
     "ar": "بلد الإقامة والمدينة:"
   },
   {
     "id": "study-work",
-    "en": "Current study or work:",
+    "en": "Current studies or work:",
     "ar": "الدراسة أو العمل الحالي:"
   },
   {
     "id": "programming-level",
-    "en": "Programming level: complete beginner or some background? If you have experience, briefly describe it:",
-    "ar": "مستواك في البرمجة: مبتدئ تماما ولا عندك خلفية؟ ولو عندك خلفية اذكرها باختصار:"
+    "en": "Which description best matches your level?\nComplete beginner / Currently learning and have not worked yet / Have programming internship, training or work experience.",
+    "ar": "أنهي وصف أقرب لمستواك؟\nمبتدئ تماما / بتتعلم ولسه مشتغلتش / عندك خبرة تدريب أو شغل في البرمجة."
+  },
+  {
+    "id": "technologies-used",
+    "en": "If you have a programming background, list the languages and technologies you have actually used:",
+    "ar": "لو عندك خلفية في البرمجة اذكر اللغات والتقنيات اللي استخدمتها فعليا:"
+  },
+  {
+    "id": "actual-experience",
+    "en": "If you have worked or trained in programming, describe your role, the technologies used and the duration of your actual experience. This means time spent working or training, not time spent studying:",
+    "ar": "لو اشتغلت أو اتدربت في البرمجة اذكر دورك والتقنيات المستخدمة ومدة الخبرة الفعلية. المقصود هنا مدة العمل أو التدريب وليس مدة المذاكرة:"
+  },
+  {
+    "id": "independent-project",
+    "en": "Have you built a project yourself? If yes, describe its idea, your role and the most significant part you were able to implement independently. Include a project link if you have one:",
+    "ar": "هل نفذت مشروع بنفسك؟ لو آه اذكر فكرته ودورك فيه وأهم جزء قدرت تنفذه بشكل مستقل. ولو عندك لينك للمشروع ابعته:"
+  },
+  {
+    "id": "professional-links",
+    "en": "LinkedIn and GitHub links, if available. Optional and not required to apply:",
+    "ar": "لينك الـLinkedIn والـGitHub إن وجدوا. اختياري ومش شرط للتقديم:"
   },
   {
     "id": "goal",
-    "en": "Your goal for the diploma:",
-    "ar": "هدفك من الدبلومة:"
+    "en": "What is your current goal?\nStart from zero / Prepare for your first opportunity / Change careers / Improve your skills in your current job.\nBriefly explain the main area you need to work on:",
+    "ar": "هدفك الحالي إيه؟\nتبدأ من الصفر / تجهز لأول فرصة / تغير مجال شغلك / تطور مستواك في شغلك الحالي.\nوضح باختصار أهم حاجة محتاج تشتغل عليها:"
   },
   {
     "id": "equipment-internet",
-    "en": "Do you have access to a laptop or computer and suitable internet for the sessions?",
+    "en": "Do you have a laptop or computer and a suitable internet connection for the sessions?",
     "ar": "هل متاح عندك لابتوب أو كمبيوتر وإنترنت مناسب للسيشنات؟"
   },
   {
     "id": "commitment",
-    "en": "Can you commit to two sessions per week and additional time for practice and assignments?",
-    "ar": "هل تقدر تلتزم بسيشنين أسبوعيا وتخصص وقت إضافي للتطبيق والتكليفات؟"
+    "en": "Can you commit to two sessions per week for 9 months? How much time can you dedicate to practice and assignments outside the sessions each week?",
+    "ar": "هل تقدر تلتزم بسيشنين أسبوعيا لمدة 9 شهور؟ وقد إيه تقدر تخصص للتطبيق والتكليفات خارج السيشنات كل أسبوع؟"
   },
   {
     "id": "availability",
-    "en": "Suitable days and times, in Cairo time:",
+    "en": "Suitable days and times in Cairo time:",
     "ar": "الأيام والأوقات المناسبة ليك بتوقيت القاهرة:"
   },
   {
@@ -491,19 +516,21 @@
 ];
     const application = {
       title: choose('How to apply', 'خطوات التقديم'),
-      description: choose('Prepare your information, review the terms, then contact MT Academy on WhatsApp. An application is the first step; it does not reserve a place.', 'جهّز بياناتك، اقرأ الشروط، وبعدها تواصل مع MT Academy على WhatsApp. التقديم هو الخطوة الأولى، وإرسال البيانات وحده مش بيحجز مكان.'),
+      description: choose('Send your information in one WhatsApp message so we can review your level and goals before a booking decision. Applying does not reserve a place.', 'ابعت بياناتك في رسالة واحدة على WhatsApp عشان نراجع مستواك وهدفك قبل قرار الحجز. إرسال طلب التقديم وحده مش بيحجز مكان.'),
       greeting: choose('Welcome to MT Academy', 'أهلا بيك في MT Academy'),
-      introduction: choose('To apply for the Backend Development with Java & Spring Boot diploma, send the following information in one message:', 'للتقديم على دبلومة الـBackend Development with Java & Spring Boot ابعت لنا البيانات دي في رسالة واحدة:'),
+      introduction: choose("To help us review whether the Backend Development with Java & Spring Boot diploma suits your level and goals, send us the following information in one message:", "عشان نراجع مناسبة دبلومة الـBackend Development with Java & Spring Boot لمستواك وهدفك ابعت لنا البيانات دي في رسالة واحدة:"),
       fields: fields.map(field => ({id:field.id, prompt:choose(field.en,field.ar)})),
-      nextSteps: choose('After reviewing your information, we will confirm whether the diploma suits your level and clarify the schedule, cost, and booking, payment, and withdrawal terms before any payment.', 'بعد مراجعة البيانات هنأكد معاك مناسبة الدبلومة لمستواك ونوضح لك تفاصيل المواعيد والتكلفة وشروط الحجز والدفع والانسحاب قبل أي دفع.'),
-      confirmationNotice: choose('Sending your information is an application only. Your booking is confirmed after completing the steps and receiving a confirmation message from the academy.', 'إرسال البيانات طلب تقديم فقط. الحجز بيتأكد بعد استكمال الخطوات واستلام رسالة تأكيد من الأكاديمية.'),
-      privacyNotice: choose('Your information will be used for applications, communication, and organizing study. Do not send an identity-card image, bank-card details, or any verification codes.', 'البيانات هتستخدم للتقديم والتواصل وتنظيم الدراسة. مش مطلوب تبعت صورة بطاقة أو بيانات بطاقة بنكية أو أي أكواد تحقق.'),
+      nextSteps: choose("The diploma starts completely from zero. After reviewing your answers, we will explain how well it suits your level. If you have actual experience and want to develop specific areas, we will discuss whether private mentorship would be suitable before you make a booking decision.", "الدبلومة بتبدأ من الصفر تماما. بعد مراجعة إجاباتك هنوضح لك مدى مناسبتها لمستواك. ولو عندك خبرة فعلية وهدفك تطوير نقاط محددة هنناقش معاك مدى مناسبة المنتورشيب الخاص قبل اتخاذ قرار الحجز."),
+      prerequisitesNote: choose("You do not need to have studied programming before, have projects or hold professional accounts to apply.", "مش مطلوب تكون درست برمجة قبل كده أو يكون عندك مشاريع أو حسابات مهنية عشان تقدم."),
+      prePaymentNotice: choose("Before any payment, we will explain the schedule, cost, booking, payment and withdrawal terms, and the scope of commitments and professional outcomes.", "هنوضح لك تفاصيل المواعيد والتكلفة وشروط الحجز والدفع والانسحاب وحدود الالتزام والنتائج المهنية قبل أي دفع."),
+      confirmationNotice: choose("Sending your information is an application only. Booking is confirmed after completing the required steps and receiving a confirmation message from the academy.", "إرسال البيانات طلب تقديم فقط. الحجز بيتأكد بعد استكمال الخطوات واستلام رسالة تأكيد من الأكاديمية."),
+      privacyNotice: choose("Your information will be used to review your application, communicate with you and organize your studies. You do not need to send an identity-document image, bank-card details or any verification codes.", "البيانات هتستخدم لمراجعة التقديم والتواصل وتنظيم الدراسة. مش مطلوب تبعت صورة بطاقة أو بيانات بطاقة بنكية أو أي أكواد تحقق."),
       stepsTitle: choose('From application to confirmed booking', 'من طلب التقديم لتأكيد الحجز'),
       steps: choose([
-        'Complete your application information.', 'Clarify scheduling, pricing and terms with the academy before paying.',
+        'Send your information in one message for a review of your level and goals.', 'Discuss suitability, scheduling, cost, terms and the scope of commitments and professional outcomes with the academy before paying.',
         'Read and agree to the terms.', 'Pay the required amount.', 'Receive your booking confirmation from the academy.'
       ], [
-        'استكمل بيانات التقديم.', 'راجع المواعيد والتكلفة والشروط مع الأكاديمية قبل الدفع.',
+        'ابعت بياناتك في رسالة واحدة لمراجعة مستواك وهدفك.', 'ناقش مناسبة الدبلومة والمواعيد والتكلفة والشروط وحدود الالتزام والنتائج المهنية مع الأكاديمية قبل الدفع.',
         'اقرأ الشروط ووافق عليها.', 'سدّد المبلغ المطلوب.', 'استلم تأكيد الحجز من الأكاديمية.'
       ]),
       templateTitle: choose('Your application message', 'رسالة بيانات التقديم'),
@@ -517,7 +544,7 @@
     const digit = n => ar ? String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]) : String(n);
     application.messageTemplate = [application.greeting, application.introduction,
       application.fields.map((field,i)=>`${digit(i+1)}- ${field.prompt}`).join('\n'),
-      application.nextSteps, application.confirmationNotice, application.privacyNotice].join('\n\n');
+      application.nextSteps, application.prerequisitesNote, application.prePaymentNotice, application.confirmationNotice, application.privacyNotice].join('\n');
     const bookingTerms = {
       title: choose('Booking, payment & withdrawal terms', 'شروط الحجز والدفع والانسحاب'),
       description: choose('Before confirming your booking in the Backend Development with Java & Spring Boot diploma, please read the following terms:', 'قبل تأكيد حجزك في دبلومة الـBackend Development with Java & Spring Boot يرجى قراءة الشروط التالية:'),
@@ -642,10 +669,16 @@
     };
     Object.assign(translations[locale], buildEnrollmentContent(locale));
     translations[locale].paymentMethods = buildPaymentMethods(locale, translations[locale].registrationNote);
+    const application = translations[locale].application;
     const additionalFaqs = [
       ['application-information','application','What information should I send?','ما البيانات اللي أبعتها؟',
-        'Send all 12 fields in one message: Arabic and English names, email, WhatsApp with country code, residence, study/work, programming background, goal, equipment/internet, time commitment, availability in Cairo time, and preferred payment system.',
-        'ابعت الحقول الـ12 في رسالة واحدة: الاسم بالعربي والإنجليزي، الإيميل، WhatsApp بكود الدولة، الإقامة، الدراسة أو العمل، خلفيتك البرمجية، هدفك، الجهاز والإنترنت، الالتزام بالوقت، المواعيد بتوقيت القاهرة ونظام الدفع المفضل.','#apply'],
+        `Send the ${application.fields.length} fields in the application message together in one WhatsApp message. They cover your details, programming level, actual experience, independent work, goals and availability. Professional links are optional.`,
+        `ابعت الحقول الـ${application.fields.length} الموجودة في رسالة التقديم مع بعض في رسالة واحدة على WhatsApp. بتشمل بياناتك ومستواك في البرمجة وخبرتك الفعلية وشغلك المستقل وهدفك ووقتك المتاح. الروابط المهنية اختيارية.`,'#apply'],
+      ['actual-experience','application','Does experience duration mean time spent studying?','مدة الخبرة المقصود بيها مدة المذاكرة؟',
+        application.fields.find(field => field.id === 'actual-experience').prompt,
+        application.fields.find(field => field.id === 'actual-experience').prompt,'#apply'],
+      ['suitability-review','application','How is suitability reviewed if I already have experience?','إزاي بتراجعوا مناسبة الدبلومة لو عندي خبرة؟',
+        application.nextSteps, application.nextSteps,'#apply'],
       ['application-only','application','Does sending my information reserve a place?','هل إرسال بياناتي بيحجز مكان؟',
         'No. Sending information is an application only. A place is not reserved just by sending your details.',
         'لأ. إرسال البيانات طلب تقديم فقط، ومش بيحجز مكان لوحده.','#terms-confirmation'],
@@ -706,7 +739,7 @@
         'Materials are for personal use. Sharing, selling, publishing or student recording requires permission. Respect the trainer’s and other students’ privacy.',
         'المواد للاستخدام الشخصي. مشاركتها أو بيعها أو نشرها أو تسجيل الطالب للسيشنات يحتاج إذن. احترم خصوصية المدرب وباقي الطلاب.','#terms-materials'],
       ['application-data-use','application','How is my application information used?','بيانات التقديم بتُستخدم في إيه؟',
-        'For applications, communication and organizing study.', 'للتقديم والتواصل وتنظيم الدراسة.','#application-privacy'],
+        application.privacyNotice, application.privacyNotice,'#application-privacy'],
       ['sensitive-information','application','Should I send identity documents, bank-card details or verification codes?','أبعت صورة بطاقة أو بيانات بطاقة بنكية أو أكواد تحقق؟',
         'No. These are not requested. Send only the application information listed on this page.',
         'لأ. البيانات دي مش مطلوبة. ابعت بيانات التقديم الموضحة في الصفحة فقط.','#application-privacy'],
@@ -715,6 +748,7 @@
         'اقرأ الشروط كاملة واستكمل بيانات التقديم، واملأ نظام الدفع المختار في رسالة الموافقة المنفصلة، وبعدها ابعتها للأكاديمية قبل الدفع. النسخ لا يرسل موافقة ولا يؤكد حجزًا.','#acceptance-message']
     ];
     const faq = translations[locale].faq;
+    faq.items[1].answer += ` ${application.prerequisitesNote}`;
     faq.items.forEach((item,i) => {
       item.group = i < 16 ? 'programme' : i < 19 ? 'payments' : 'application';
       if (i === 19 || i === 21) { item.href = i === 19 ? '#apply' : '#booking-terms'; item.linkLabel = pick(['Read the full section','اقرأ القسم كاملًا']); }

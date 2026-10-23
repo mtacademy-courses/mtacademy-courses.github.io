@@ -1,10 +1,10 @@
 # Backend diploma: registration landing page
 
-Updated 2026-10-20. Registration is open. Local implementation only; no deployment.
+Updated 2026-10-23. Registration is open. Local implementation only; no deployment.
 
 ## Content ownership
 
-- `assets/js/backend-diploma-data.js` owns the plan, 8 curriculum stages / 21 modules, 9 monthly projects, session breakdown, graduation expectations, pricing plans, PDF metadata, application/terms collections, 56 grouped FAQs and both translations.
+- `assets/js/backend-diploma-data.js` owns the plan, 8 curriculum stages / 21 modules, 9 monthly projects, session breakdown, graduation expectations, pricing plans, PDF metadata, application/terms collections, 58 grouped FAQs and both translations.
 - Instructor evidence continues to derive from `MTAcademySite.instructorProfile.statistics`. Prior Udemy/mentorship evidence is explicitly attributed to Mohamed Tamer's previous work.
 - `scripts/refresh-backend-page.cjs` renders the complete saved Arabic page, Course/Organization/WebPage JSON-LD and Backend homepage card/status. Run homepage, Kids, then Backend refresh helpers; repeat to check idempotence.
 - `backend-diploma.js` updates the existing bindings without rebuilding disclosures, preserving open states and focus when switching language. It localizes generic and market-specific WhatsApp draft messages and adds expand/collapse controls.
@@ -59,7 +59,9 @@ Completed verification on 2026-10-19:
 
 Remaining factual confirmation: exact start day and weekly timetable. Booking/payment/withdrawal terms are now published in full. February 2027 remains proposed. No external messages, payment transactions, commit, push or deployment were performed.
 
-## Application and approved policy implementation
+## Application and approved policy implementation — initial version
+
+Historical record: the original 12-field application below was superseded by the 17-field revision on 2026-10-23. Policy clauses remain unchanged.
 
 - [x] Preserve the existing uncommitted registration landing page and unrelated shared data.
 - [x] Publish every paragraph of the 15 approved Arabic clauses, with complete English translations and stable clause anchors.
@@ -135,3 +137,24 @@ Local verification:
 - Content/asset checks (177 references), changed JavaScript/CJS syntax checks and whitespace checks pass. Repeating the three established authoring helpers reproduces all four saved pages unchanged.
 
 No commit, push, publication, payment transaction or deployment was performed.
+
+## Revised application message — 2026-10-23
+
+- [x] Audit the clean baseline, instructions, 12-field application, generator, controller, styles, saved HTML and application FAQs.
+- [x] Publish all 17 approved Arabic fields and the supplied English equivalent, with multiline level/goal options and all five closing paragraphs. Retain existing semantic IDs where appropriate; derive clipboard numbering and message text from central data.
+- [x] Clarify suitability review, actual work/training versus study time, independent project contributions, optional professional links and the conditional discussion of private mentorship. Add no age limit, prior-study/project requirement, consent gate, form or automatic decision/transfer.
+- [x] Update nearby steps and existing application-information, beginner and data-use FAQs; add two focused experience/suitability questions. There are 58 FAQs across five groups.
+- [x] Preserve the separate acceptance message, all 15 policy clauses, prices/installments, five payment channels, six outcomes paragraphs, five notices, instructor evidence, curriculum/projects, original PDF and existing WhatsApp drafts.
+- [x] Synchronize saved Arabic and runtime English, preserve multiline layout, extend focused checks and update current documentation.
+
+Local verification:
+
+- Both generated templates match the complete supplied messages exactly, including single line breaks, 17 sequential field numbers, two-line level options, three-line goals and the five closing paragraphs. Approved-message fingerprints protect both translations in the content helper.
+- The saved/rendered message matched the approved content at 360, 390, 768, 1119, 1120 and 1440 px in both languages. No horizontal overflow or new form controls appeared. Both locales passed 200% text sizing, and the complete Arabic fallback remains readable/selectable with JavaScript disabled.
+- Actual Clipboard API output matched the approved Arabic and English source. Keyboard copy/visible focus, localized feedback, switching language before another copy, clearing stale feedback and preserving an open FAQ passed. Both copy controls also passed denied/unavailable clipboard cases in both languages; the acceptance template remains unchanged.
+- Desktop/mobile screenshots in both languages were inspected for the steps, application message, multiline experience/goal questions and complete closing notes. IDs/ARIA references, heading count, normal/reduced motion and existing contrast checks passed.
+- Payment-method checks passed all 12 language/width combinations. PDF new-tab response/download integrity, generic and payment inquiry drafts, mobile menu/scroll lock, homepage navigation, Udemy search/dialog/history and Kids FAQ/gallery passed. Homepage/Kids responsive checks passed all six widths in both languages. No uncaught browser errors or failed local assets were observed. Headless native PDF-viewer rendering remains the previously documented verification limit.
+- Baseline object comparisons confirm all non-application content is unchanged, apart from the three updated FAQ answers and two new questions. Shared Udemy/Kids data, generic/pricing/payment drafts, policies, acceptance and outcome text are unchanged; homepage, Kids, 404 and the Backend controller are byte-identical to this task's baseline.
+- Backend content and asset checks (177 references), changed JavaScript/CJS syntax checks and `git diff --check` passed. Repeating the established homepage/Kids/Backend authoring helpers reproduced all four saved HTML pages without changes.
+
+No external messages, application submissions, payments, commit, push, publication or deployment were performed.

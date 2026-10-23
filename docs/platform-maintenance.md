@@ -104,7 +104,7 @@ The complete Backend landing page now publishes the supplied roadmap, projects, 
 
 ## Application and full terms
 
-`backend-diploma-data.js` now owns a 12-field application template, 15 approved policy clauses, a separate acceptance message and 56 grouped FAQs in both languages. `bookingPolicy.refund` defines seven calendar days from receipt and the sending-date settlement cutoff; `bookingPolicy.latePayment` separately defines the seven-day due-date grace and written-notice condition. The complete terms are saved in HTML at `#booking-terms`; application instructions are at `#apply`.
+`backend-diploma-data.js` now owns a 17-field application template, 15 approved policy clauses, a separate acceptance message and 58 grouped FAQs in both languages. `bookingPolicy.refund` defines seven calendar days from receipt and the sending-date settlement cutoff; `bookingPolicy.latePayment` separately defines the seven-day due-date grace and written-notice condition. The complete terms are saved in HTML at `#booking-terms`; application instructions are at `#apply`.
 
 Application submission alone reserves no place. Completed information, agreement, required payment and academy confirmation are all required for booking confirmation. Generic WhatsApp drafts contain no acceptance statement. The optional clipboard controls copy static templates only on click and give localized feedback; unsupported/denied clipboard access leaves the full text available for manual copying. There is no application form, personal-data persistence or automated message submission. The original PDF is unchanged and links to current webpage instructions/terms are shown beside it.
 
@@ -122,3 +122,11 @@ The existing controller already localizes the new bindings; no shared/controller
 The Backend pricing section now contains `#diploma-payment-methods`, after the shared career-outcomes notice and before the existing payment notes. `buildPaymentMethods` owns the five IDs and localized names, and derives the related FAQ answer from that list. The page has 56 FAQs. No provider accounts, payment links, fees, currencies or method-specific eligibility are asserted.
 
 The authoring helper renders a semantic list of non-interactive tiles with decorative neutral SVGs. The Backend controller resolves the payment contact's `data-inquiry-key` through the existing content lookup and shared WhatsApp URL, preserving generic and pricing-plan drafts. A page-scoped initial-fragment correction waits for load/fonts/layout and cancels on visitor input; this addresses an existing first-English-visit heading offset without changing shared navigation. No new dependencies, checkout, form or production build step are required.
+
+## Revised application and suitability review — 2026-10-23
+
+The application now has 17 fields and five closing paragraphs in both languages. Existing field IDs are retained where their meaning still applies (`goal` and `commitment` included); five new IDs cover age, used technologies, actual experience, independent projects and professional links. A prompt may contain newline-separated options. The saved template and runtime text preserve them through safe text rendering and `white-space: pre-line`; clipboard content derives directly from the same prompts and paragraph properties.
+
+The approved messages have exact SHA-256 checks, including numbering and line breaks, in the Backend content helper. The suitability and actual-experience FAQs reuse central application text; the information FAQ derives its count from the field array. Beginner and data-use answers are updated, with 58 FAQs total. The existing controller, WhatsApp drafts, separate acceptance message and all policy/payment/outcomes content remain unchanged.
+
+Private mentorship is only a conditional suitability discussion for applicants with actual experience and specific goals. No age restriction, mandatory professional profile/project, new application form, automated screening, acceptance or service transfer is added. Current details are in the latest dated section of the implementation checklist; earlier verification records describe the versions tested at those dates.
