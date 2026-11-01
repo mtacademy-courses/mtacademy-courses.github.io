@@ -14,11 +14,11 @@
   const siteConfig = {
     ...window.MTAcademySite,
     promotion: {
-      id: "october-2026-30-off",
+      id: "november-2026-30-off",
       enabled: true,
       discountPercent: 30,
-      startsAt: "2026-10-01T00:00:00+03:00",
-      endsAt: "2026-11-01T00:00:00+02:00",
+      startsAt: "2026-11-01T00:00:00+02:00",
+      endsAt: "2026-12-01T00:00:00+02:00",
       timeZone: "Africa/Cairo",
       target: "#courses",
       autoOpenDelay: 1500
@@ -182,11 +182,11 @@
           label: "تواصل عبر واتساب"
         },
         promotion: {
-          offerLabel: "عرض أكتوبر لفترة محدودة",
-          floatingLabel: "خصم {discount}% • عرض أكتوبر",
-          floatingOpenLabel: "فتح تفاصيل عرض أكتوبر بخصم {discount}%",
+          offerLabel: "عرض نوفمبر لفترة محدودة",
+          floatingLabel: "خصم {discount}% • عرض نوفمبر",
+          floatingOpenLabel: "فتح تفاصيل عرض نوفمبر بخصم {discount}%",
           headline: "خصم {discount}% على كورسات MT Academy المتاحة على Udemy",
-          supportingText: "اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض أكتوبر.",
+          supportingText: "اختَر الكورس المناسب وابدأ تطوير مهاراتك قبل انتهاء عرض نوفمبر.",
           popupSupportingText: "ابدأ رحلتك التعليمية الآن واستفد من خصم {discount}% على كورسات Udemy المتاحة قبل انتهاء العرض.",
           countdownIntro: "متبقي على انتهاء العرض",
           daysLabel: "يوم",
@@ -195,11 +195,11 @@
           secondsLabel: "ثانية",
           ctaLabel: "احصل على خصم {discount}%",
           courseBadge: "خصم {discount}%",
-          closeLabel: "إغلاق عرض أكتوبر",
+          closeLabel: "إغلاق عرض نوفمبر",
           validityText: "العرض ساري حتى نهاية يوم {endDate}.",
           linkClarification: "اختر الكورس المناسب واستخدم خيار التسجيل المتاح للحصول على تفاصيل العرض.",
-          activationMessage: "عرض أكتوبر متاح الآن.",
-          expirationMessage: "انتهى عرض أكتوبر."
+          activationMessage: "عرض نوفمبر متاح الآن.",
+          expirationMessage: "انتهى عرض نوفمبر."
         },
         hero: {
           eyebrow: "تعلّم البرمجة باللغة العربية",
@@ -349,11 +349,11 @@
           label: "Contact on WhatsApp"
         },
         promotion: {
-          offerLabel: "OCTOBER LIMITED-TIME OFFER",
-          floatingLabel: "{discount}% OFF • October offer",
-          floatingOpenLabel: "Open the {discount}% off October offer",
+          offerLabel: "NOVEMBER LIMITED-TIME OFFER",
+          floatingLabel: "{discount}% OFF • November offer",
+          floatingOpenLabel: "Open the {discount}% off November offer",
           headline: "Get {discount}% off available MT Academy courses on Udemy",
-          supportingText: "Choose the right course and start building your skills before the October offer ends.",
+          supportingText: "Choose the right course and start building your skills before the November offer ends.",
           popupSupportingText: "Start learning today and save {discount}% on available Udemy courses before the offer ends.",
           countdownIntro: "Offer ends in",
           daysLabel: "Days",
@@ -362,11 +362,11 @@
           secondsLabel: "Seconds",
           ctaLabel: "Get {discount}% off",
           courseBadge: "{discount}% OFF",
-          closeLabel: "Close October offer",
+          closeLabel: "Close November offer",
           validityText: "Offer valid through {endDate}.",
           linkClarification: "Choose a course and use its enrollment option to access the offer details.",
-          activationMessage: "The October offer is now available.",
-          expirationMessage: "The October offer has ended."
+          activationMessage: "The November offer is now available.",
+          expirationMessage: "The November offer has ended."
         },
         hero: {
           eyebrow: "Learn programming in Arabic",
